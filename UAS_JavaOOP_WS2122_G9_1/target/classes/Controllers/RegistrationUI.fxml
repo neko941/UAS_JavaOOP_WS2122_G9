@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="755.0" prefWidth="490.0" style="-fx-background-color: #2a2727;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SignUpController">
+    <children>
+        <TextField fx:id="firstNameTextField" layoutX="73.0" layoutY="93.0" prefHeight="30.0" prefWidth="344.0" promptText="First name" />
+        <TextField fx:id="lastNameTextField" layoutX="73.0" layoutY="159.0" prefHeight="30.0" prefWidth="344.0" promptText="Last name" />
+        <TextField fx:id="usernameTextField" layoutX="73.0" layoutY="228.0" prefHeight="35.0" prefWidth="344.0" promptText="Username" />
+        <TextField fx:id="emailTextField" layoutX="75.0" layoutY="296.0" prefHeight="35.0" prefWidth="344.0" promptText="Email address" />
+        <PasswordField fx:id="passwordTextField" layoutX="73.0" layoutY="413.0" prefHeight="35.0" prefWidth="344.0" promptText="Password" />
+        <PasswordField fx:id="confirmPasswordTextField" layoutX="73.0" layoutY="557.0" prefHeight="35.0" prefWidth="344.0" promptText="Confirm password" />
+        <Button fx:id="registerButton" layoutX="75.0" layoutY="628.0" mnemonicParsing="false" onAction="#registerUserOnAction" prefHeight="35.0" prefWidth="344.0" style="-fx-background-color: #007dff;" text="Register" textFill="WHITE" />
+        <Button fx:id="closeButton" layoutX="75.0" layoutY="683.0" mnemonicParsing="false" onAction="#CloseButtonOnAction" prefHeight="35.0" prefWidth="344.0" text="Close" />
+        <Button layoutX="209.0" layoutY="52.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Sign in" textFill="WHITE" />
+        <Label fx:id="passwordLengthConstraint" layoutX="77.0" layoutY="457.0" prefHeight="18.0" prefWidth="146.0" text="+ 6-20 character long" textFill="WHITE" />
+        <Label fx:id="passwordUpperCaseConstraint" layoutX="75.0" layoutY="493.0" prefHeight="18.0" prefWidth="150.0" text="+ at least 1 uppercase letter" textFill="WHITE" />
+        <Label fx:id="passwordLowerCaseConstraint" layoutX="75.0" layoutY="511.0" prefHeight="18.0" prefWidth="146.0" text="+ at least 1 lowercase letter" textFill="WHITE" />
+        <Label fx:id="passwordSpecialCharacterConstraint" layoutX="76.0" layoutY="475.0" text="+ at least 1 special character" textFill="WHITE" />
+        <Label fx:id="passwordDigitConstraint" layoutX="75.0" layoutY="531.0" prefHeight="18.0" prefWidth="150.0" text="+ at least 1 digit" textFill="WHITE" />
+        <Label fx:id="emailWarning" layoutX="431.0" layoutY="305.0" text="✓" textFill="WHITE" />
+        <Label fx:id="confirmPasswordWarning" layoutX="75.0" layoutY="593.0" text="Matched the password" textFill="WHITE" />
+        <Label fx:id="usernameSpaceConstraint" layoutX="73.0" layoutY="362.0" prefHeight="18.0" prefWidth="150.0" text="+ no space" textFill="WHITE" />
+        <Label fx:id="usernameSpecialCharacterConstraint" layoutX="73.0" layoutY="380.0" prefHeight="18.0" prefWidth="150.0" text="+ no special character" textFill="WHITE" />
+        <Label fx:id="usernameLengthConstraint" layoutX="73.0" layoutY="344.0" prefHeight="18.0" prefWidth="150.0" text="+ 6-20 character long" textFill="WHITE" />
+        <Label layoutX="70.0" layoutY="21.0" text="Sign up with your email" textFill="WHITE">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <Label layoutX="75.0" layoutY="56.0" text="Already have an account?" textFill="#b4b4b4" />
+    </children>
+</AnchorPane>
