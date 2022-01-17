@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="550.0" style="-fx-background-color: #2a2727;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="550.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
     <children>
-        <Label layoutX="102.0" layoutY="149.0" text="Username" textFill="WHITE">
+        <Label layoutX="102.0" layoutY="149.0" text="Username" textFill="GREY">
             <font>
                 <Font size="18.0" />
             </font>
@@ -18,7 +18,7 @@
             <font>
                 <Font size="14.0" />
             </font></TextField>
-        <Label layoutX="101.0" layoutY="241.0" text="Password" textFill="WHITE">
+        <Label layoutX="101.0" layoutY="241.0" text="Password" textFill="GREY">
             <font>
                 <Font size="18.0" />
             </font>
@@ -27,7 +27,7 @@
             <font>
                 <Font size="14.0" />
             </font></PasswordField>
-        <Button fx:id="LoginButton" layoutX="101.0" layoutY="327.0" mnemonicParsing="false" onAction="#loginButtonOnAction" prefHeight="30.0" prefWidth="354.0" style="-fx-background-color: #007dff;" text="Login Now" textFill="WHITE">
+        <Button fx:id="LoginButton" layoutX="101.0" layoutY="327.0" mnemonicParsing="false" onAction="#loginButtonOnAction" prefHeight="30.0" prefWidth="354.0" style="-fx-background-color: #13a98e; -fx-cursor: hand;" text="Login Now" textFill="WHITE">
             <font>
                 <Font size="14.0" />
             </font></Button>
@@ -36,11 +36,16 @@
                 <Font size="16.0" />
             </font>
         </Label>
-        <Button fx:id="SignUpButton" layoutX="290.0" layoutY="444.0" mnemonicParsing="false" onAction="#SignUpButtonOnAction" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Register→" textFill="WHITE">
+        <Button fx:id="SignUpButton" layoutX="290.0" layoutY="444.0" mnemonicParsing="false" onAction="#SignUpButtonOnAction" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Register→" textFill="#13a98e">
             <font>
                 <Font size="16.0" />
             </font></Button>
-        <Label fx:id="LoginMessageLabel" alignment="CENTER" layoutX="65.0" layoutY="386.0" prefHeight="26.0" prefWidth="405.0" textFill="#fa0000">
+      <Button fx:id="ForgotButton" layoutX="183.0" layoutY="484.0" mnemonicParsing="false" onAction="#ForgotButtonOnAction" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Forgot your password?" underline="true">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+        <Label fx:id="LoginMessageLabel" alignment="CENTER" layoutX="72.0" layoutY="380.0" prefHeight="26.0" prefWidth="405.0" textFill="#fa0000">
             <font>
                 <Font size="16.0" />
             </font>
@@ -50,9 +55,9 @@
                 <Font size="18.0" />
             </font>
         </Label>
-        <Label layoutX="159.0" layoutY="69.0" text="Log into your account" textFill="WHITE">
+        <Label alignment="CENTER" layoutX="159.0" layoutY="69.0" text="Log into your account" textFill="#0ea488">
             <font>
-                <Font size="24.0" />
+                <Font name="System Bold" size="24.0" />
             </font>
         </Label>
     </children>

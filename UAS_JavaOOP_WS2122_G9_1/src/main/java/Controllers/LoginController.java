@@ -21,6 +21,7 @@ public class LoginController
     @FXML private TextField EmailLogin;
     @FXML private PasswordField PasswordLogin;
     @FXML private Button SignUpButton;
+    @FXML private Button ForgotButton;
 
     public void loginButtonOnAction(ActionEvent event){
         if(EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false)
@@ -51,10 +52,22 @@ public class LoginController
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("RegistrationUI.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            Stage SignUpStage = new Stage();
+            SignUpStage.setScene(new Scene(root));
+            SignUpStage.show();
+        } catch (IOException e) {
+            System.err.println(String.format("Error: %s", e.getMessage()));
+        }
+    }
+
+    @FXML
+    public void ForgotButtonOnAction(ActionEvent event){
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("ForgotPassword.fxml"));
+            Stage ForgotStage = new Stage();
+            ForgotStage.setScene(new Scene(root));
+            ForgotStage.show();
         } catch (IOException e) {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
