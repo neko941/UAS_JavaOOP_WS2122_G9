@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import Controllers.MultiThreading;
 
 import java.io.IOException;
 
@@ -19,6 +20,9 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch();
+
+        MultiThreading EmailThread = new MultiThreading("Send Email Thread");
+        EmailThread.start();
 //        ExportTxt ExportTxt = new ExportTxt();
 //        ExportTxt.export("users");
     }

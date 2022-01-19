@@ -6,6 +6,9 @@
 package Controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -14,7 +17,12 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
+import java.io.IOException;
 import java.util.Arrays;
+
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import static Controllers.EmailUtils.verificationEmail;
 
@@ -103,8 +111,7 @@ public class RegistrationController {
                 .allMatch(val -> val == true);
     }
 
-    public void registerUserOnAction(ActionEvent event)
-    {
+    public void registerUserOnAction(ActionEvent event) throws IOException {
         if (checkAllTextField())
         {
             verification = Security.generateRandomNumber();
