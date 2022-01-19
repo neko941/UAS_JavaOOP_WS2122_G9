@@ -7,12 +7,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="755.0" prefWidth="490.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SignUpController">
+<AnchorPane prefHeight="755.0" prefWidth="490.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RegistrationController">
     <children>
         <TextField fx:id="firstNameTextField" layoutX="73.0" layoutY="93.0" prefHeight="30.0" prefWidth="344.0" promptText="First name" />
         <TextField fx:id="lastNameTextField" layoutX="73.0" layoutY="159.0" prefHeight="30.0" prefWidth="344.0" promptText="Last name" />
-        <TextField fx:id="usernameTextField" layoutX="73.0" layoutY="296.0" prefHeight="35.0" prefWidth="344.0" promptText="Username" />
         <TextField fx:id="emailTextField" layoutX="73.0" layoutY="225.0" prefHeight="35.0" prefWidth="344.0" promptText="Email address" />
+        <TextField fx:id="usernameTextField" layoutX="73.0" layoutY="296.0" prefHeight="35.0" prefWidth="344.0" promptText="Username" />
         <PasswordField fx:id="passwordTextField" layoutX="73.0" layoutY="413.0" prefHeight="35.0" prefWidth="344.0" promptText="Password" />
         <PasswordField fx:id="confirmPasswordTextField" layoutX="73.0" layoutY="557.0" prefHeight="35.0" prefWidth="344.0" promptText="Confirm password" />
         <Button fx:id="registerButton" layoutX="75.0" layoutY="628.0" mnemonicParsing="false" onAction="#registerUserOnAction" prefHeight="35.0" prefWidth="344.0" style="-fx-background-color: #0ea488;" text="Register" textFill="WHITE" />

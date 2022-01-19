@@ -1,6 +1,5 @@
 package TimeScheduler.uas_javaoop_ws2122_g9;
 
-import Controllers.ExportTxt;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,8 +19,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch();
-        ExportTxt ExportTxt = new ExportTxt();
-        ExportTxt.export("users");
+//        ExportTxt ExportTxt = new ExportTxt();
+//        ExportTxt.export("users");
     }
 }
 
