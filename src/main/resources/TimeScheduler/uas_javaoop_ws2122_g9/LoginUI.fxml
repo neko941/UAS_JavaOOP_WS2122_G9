@@ -7,34 +7,57 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="550.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
     <children>
-        <Label layoutX="105.0" layoutY="83.0" text="Username">
+        <Label layoutX="102.0" layoutY="149.0" text="Username" textFill="GREY">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
-        <TextField fx:id="EmailLogin" layoutX="202.0" layoutY="83.0" prefHeight="26.0" prefWidth="226.0" />
-        <Label layoutX="105.0" layoutY="152.0" text="Password">
+        <TextField fx:id="EmailLogin" layoutX="101.0" layoutY="177.0" prefHeight="26.0" prefWidth="354.0">
+            <font>
+                <Font size="14.0" />
+            </font></TextField>
+        <Label layoutX="101.0" layoutY="241.0" text="Password" textFill="GREY">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
-        <PasswordField fx:id="PasswordLogin" layoutX="202.0" layoutY="152.0" prefHeight="26.0" prefWidth="226.0" />
-        <Button fx:id="LoginButton" layoutX="218.0" layoutY="200.0" mnemonicParsing="false" onAction="#loginButtonOnAction" prefHeight="26.0" prefWidth="167.0" style="-fx-cursor: hand;" text="Login" />
-        <Button fx:id="CancelButton" layoutX="218.0" layoutY="242.0" mnemonicParsing="false" onAction="#cancelButtonOnAction" prefHeight="26.0" prefWidth="167.0" text="Cancel" />
-        <Label layoutX="202.0" layoutY="328.0" text="Not a user?">
+        <PasswordField fx:id="PasswordLogin" layoutX="101.0" layoutY="269.0" prefHeight="26.0" prefWidth="354.0">
             <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
-        <Button fx:id="SignUpButton" layoutX="301.0" layoutY="322.0" mnemonicParsing="false" onAction="#SignUpButtonOnAction" prefHeight="40.0" prefWidth="112.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Sign Up!" textFill="#3c33b7" underline="true">
+                <Font size="14.0" />
+            </font></PasswordField>
+        <Button fx:id="LoginButton" layoutX="101.0" layoutY="327.0" mnemonicParsing="false" onAction="#loginButtonOnAction" prefHeight="30.0" prefWidth="354.0" style="-fx-background-color: #13a98e; -fx-cursor: hand;" text="Login Now" textFill="WHITE">
             <font>
-                <Font size="18.0" />
+                <Font size="14.0" />
             </font></Button>
-        <Label fx:id="LoginMessageLabel" alignment="CENTER" layoutX="99.0" layoutY="285.0" prefHeight="26.0" prefWidth="405.0" textFill="#fa0000">
+        <Label layoutX="157.0" layoutY="451.0" text="Not registered yet?" textFill="#b4b4b4">
             <font>
                 <Font size="16.0" />
+            </font>
+        </Label>
+        <Button fx:id="SignUpButton" layoutX="290.0" layoutY="444.0" mnemonicParsing="false" onAction="#SignUpButtonOnAction" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Register→" textFill="#13a98e">
+            <font>
+                <Font size="16.0" />
+            </font></Button>
+      <Button fx:id="ForgotButton" layoutX="183.0" layoutY="484.0" mnemonicParsing="false" onAction="#ForgotButtonOnAction" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Forgot your password?" underline="true">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+        <Label fx:id="LoginMessageLabel" alignment="CENTER" layoutX="72.0" layoutY="380.0" prefHeight="26.0" prefWidth="405.0" textFill="#fa0000">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label layoutX="225.0" layoutY="41.0" text="Welcome Back" textFill="GREY">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="159.0" layoutY="69.0" text="Log into your account" textFill="#0ea488">
+            <font>
+                <Font name="System Bold" size="24.0" />
             </font>
         </Label>
     </children>
