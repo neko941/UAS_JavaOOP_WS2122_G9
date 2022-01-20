@@ -27,15 +27,13 @@ public class User
     private String antiPhishing;
 
     // constructor
-    public User(String email, String username, String password, String firstName, String lastName, String userID, String antiPhishing)
+    public User(String email, String username, String password, String firstName, String lastName)
     {
         this.email = email;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userID = userID;
-        this.antiPhishing = antiPhishing;
     }
 
     // getters and setters

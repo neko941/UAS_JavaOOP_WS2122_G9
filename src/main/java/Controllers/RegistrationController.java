@@ -5,10 +5,10 @@
 
 package Controllers;
 
+import Models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -25,12 +25,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import static Controllers.EmailUtils.verificationEmail;
+import static ExternalConnections.DBUtilities.insertNewUser;
 
 public class RegistrationController {
     @FXML private Button closeButton;
 
     @FXML private TextField usernameTextField;
     @FXML private TextField emailTextField;
+    @FXML private TextField confirmCodeTextField;
+    @FXML private TextField firstNameTextField;
+    @FXML private TextField lastNameTextField;
     @FXML private PasswordField passwordTextField;
     @FXML private PasswordField confirmPasswordTextField;
 
@@ -50,6 +54,7 @@ public class RegistrationController {
     String defaultColor = "black";
 
     String verification;
+    User user;
 
     public boolean checkValidAndChangeColor(boolean check,boolean space, Label label)
     {
@@ -114,11 +119,36 @@ public class RegistrationController {
     public void registerUserOnAction(ActionEvent event) throws IOException {
         if (checkAllTextField())
         {
+            // create verification code
             verification = Security.generateRandomNumber();
+            // send code to user's email
             verificationEmail(emailTextField.getText(), verification);
+            // save user info
+            user = new User( emailTextField.getText(),
+                    usernameTextField.getText(),
+                    passwordTextField.getText(),
+                    firstNameTextField.getText(),
+                    lastNameTextField.getText());
+            // confirm code
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/UI/RegistrationEmailConfirmUI.fxml"));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                System.err.println(String.format("Error: %s", e.getMessage()));
+            }
         };
+
     }
 
+    public void ContinueButtonOnAction(ActionEvent event) {
+        if (!((String)confirmCodeTextField.getText()).equals(verification))
+        {
+//            insertNewUser(user);
+        }
+    }
     public void CloseButtonOnAction(ActionEvent event) {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
