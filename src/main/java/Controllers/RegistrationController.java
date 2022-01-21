@@ -22,10 +22,9 @@ import java.util.Arrays;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import static Controllers.ConfigController.getDataFromConfig;
+
 import static Controllers.EmailUtils.verificationEmail;
 import static Controllers.ColorController.changeTextFieldColor;
-import static ExternalConnections.DBUtilities.insertNewUser;
 
 public class RegistrationController {
     @FXML private Button closeButton;

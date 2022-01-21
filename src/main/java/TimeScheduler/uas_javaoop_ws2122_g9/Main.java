@@ -22,8 +22,6 @@ public class Main extends Application {
        MultiThreading EmailThread = new MultiThreading("Send Email Thread");
        EmailThread.start();
        launch();
-//        ExportTxt ExportTxt = new ExportTxt();
-//        ExportTxt.export("users");
    }
 }
 
