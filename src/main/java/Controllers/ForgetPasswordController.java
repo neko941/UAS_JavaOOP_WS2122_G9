@@ -99,8 +99,6 @@ public class ForgetPasswordController {
         }
     }
 
-
-
     public void resetPasswordOnAction(ActionEvent event) {
         if (checkAllTextFieldResetPasswordUI())
         {
