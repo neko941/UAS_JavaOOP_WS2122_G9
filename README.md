@@ -1,16 +1,6 @@
 # UAS_JavaOOP_WS2122_G9
 
-If you want to start the LoginUI please comment
-
-```
-public class Main {
-    public static void main(String[] args) {
-        Application.launch(CalendarController.class,args);
-    }
-}
-```
-
-and recomment
+If you want to start the LoginUI please use
 
 ```
 public class Main extends Application {
@@ -25,8 +15,6 @@ public class Main extends Application {
         MultiThreading EmailThread = new MultiThreading("Send Email Thread");
         EmailThread.start();
         launch();
-//        ExportTxt ExportTxt = new ExportTxt();
-//        ExportTxt.export("users");
     }
 }
 ```
