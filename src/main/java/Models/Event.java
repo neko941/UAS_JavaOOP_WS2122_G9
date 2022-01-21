@@ -1,70 +1,176 @@
 /**
- * Author: neko941
- * Created on: 2021-12-13
+ * Author: neko941, jatenderjossan
+ * Created on: Dec. 28, 2021
  *
  * This class provides model for an event
  */
 
 package Models;
 
+import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class Event
-{
-    /**
-     * @param eventID: unique
-     * @param eventName
-     * @param eventStartTime
-     * @param eventEndTime
-     * @param reminderTime: exact time to send reminder
-     * @param participants
-     * @param priority
-     *
-     * in java.util.Date, year = year - 1900, month = month - 1
-     */
+public class Event {
 
-    private String eventID;
+    // ID of the event
+    private int eventID;
+    // name of the event
     private String eventName;
-    private Date eventStartTime;
-    private Location location;
-    private Date reminderTime;
+    // date of the event
+    private LocalDate date;
+    // starting time of the event
+    private LocalTime time;
+    // duration of the event
+    private int duration;
+    // participants participating
     private ArrayList<User> participants;
-    private String priority;
+    // attachments needed for the event
+    private ArrayList<File> attachments;
+    // location of the event
+    private Location location;
+    // reminder for the event
+    private Reminder e_reminder;
+    // the priority of the event
+    private Priority e_priority;
 
-
-
-    // constructor
-    public Event(String eventName, Date eventStartTime, Date reminderTime, Location location, ArrayList<User> participants, String priority)
-    {
+    /**
+     * Constructor for creating an event
+     *
+     * @param eventName - name of the event
+     * @param date - date of the event
+     * @param time - starting time of the event
+     * @param duration - duration of the event in minutes
+     * @param participants - list of participants
+     * @param attachments - list of attachments
+     * @param location - location of the event
+     * @param reminder - selected reminder for the event
+     * @param priority - selected priority for the event
+     */
+    public Event(String eventName, LocalDate date, LocalTime time, int duration, Location location,
+                 ArrayList<User> participants, ArrayList<File> attachments, Reminder reminder, Priority priority) {
         this.eventName = eventName;
-        this.eventStartTime = eventStartTime;
-        this.reminderTime = reminderTime;
-        this.location = location;
-        // this.participants = new ArrayList<User>();
+        this.date = date;
+        this.time = time;
+        this.duration = duration;
         this.participants = participants;
-        this.priority = priority;
+        this.attachments = attachments;
+        this.location = location;
+        this.e_reminder = reminder;
+        this.e_priority = priority;
     }
 
-    // getters and setters
-    public String getEventID() {return this.eventID;}
-    public void setEventID(String eventID) {this.eventID = eventID;}
+    /**
+     * Constructor for creating an event
+     *
+     * @param eventName - name of the event
+     * @param date - date of the event
+     * @param time - starting time of the event
+     * @param duration - duration of the event in minutes
+     * @param participants - list of participants
+     * @param attachments - list of attachments
+     * @param location - location of the event
+     * @param reminder - selected reminder for the event
+     * @param priority - selected priority for the event
+     */
+    public Event(int eventID, String eventName, LocalDate date, LocalTime time, int duration, Location location,
+                 ArrayList<User> participants, ArrayList<File> attachments, Reminder reminder, Priority priority) {
+        this.eventID = eventID;
+        this.eventName = eventName;
+        this.date = date;
+        this.time = time;
+        this.duration = duration;
+        this.participants = participants;
+        this.attachments = attachments;
+        this.location = location;
+        this.e_reminder = reminder;
+        this.e_priority = priority;
+    }
 
-    public String getName() {return this.eventName;}
-    public void setName(String eventName) {this.eventName = eventName;}
+    public void setEventID(int eventID) {
+        this.eventID = eventID;
+    }
 
-    public Date getEventStartTime() {return this.eventStartTime;}
-    public void setDate(Date eventStartTime) {this.eventStartTime = eventStartTime;}
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 
-    public Location getLocation() {return this.location;}
-    public void setLocation(Location location) {this.location = location;}
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
-    public Date getReminderTime() {return this.reminderTime;}
-    public void setReminderTime(Date reminderTime) {this.reminderTime = reminderTime;}
+    /**
+     * @param time - starting time of the event
+     */
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
 
-    public ArrayList<User> getParticipants() {return this.participants;}
-    public void setParticipants(ArrayList<User> participants) {this.participants = participants;}
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 
-    public String getPriority() {return this.priority;}
-    public void setPriority(String priority) {this.priority = priority;}
+    public void setParticipants(ArrayList<User> participants) {
+        this.participants = participants;
+    }
+
+    public void setAttachments(ArrayList<File> attachments) {
+        this.attachments = attachments;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setReminder(Reminder reminder) {
+        this.e_reminder = reminder;
+    }
+
+    public void setPriority(Priority priority) {
+        this.e_priority = priority;
+    }
+
+    public int getEventID() {
+        return eventID;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    /**
+     * @return starting time of an event
+     */
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public ArrayList<User> getParticipants() {
+        return participants;
+    }
+
+    public ArrayList<File> getAttachments() {
+        return attachments;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public Reminder getReminder() {
+        return e_reminder;
+    }
+
+    public Priority getPriority() {
+        return e_priority;
+    }
 }

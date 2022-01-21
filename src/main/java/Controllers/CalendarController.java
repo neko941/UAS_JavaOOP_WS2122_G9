@@ -3,12 +3,8 @@ package Controllers;
 import com.calendarfx.model.CalendarSource;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 

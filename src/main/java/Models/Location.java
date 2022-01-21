@@ -3,13 +3,15 @@
  * Created on: Dec. 25, 2021
  *
  * The Location.java class represents a location which a user can create
- * in order to save the location of an event
+ *      in order to save the location of an event
  */
 
 package Models;
 
 public class Location {
 
+    // location ID
+    private int locationID;
     // street of a location
     private String street;
     // house Number of a location
@@ -46,9 +48,36 @@ public class Location {
         this.room = room;
     }
 
+    /**
+     * Constructor for fetching a location from the database
+     *
+     * @param locationID - ID of the location
+     * @param street - street of a location
+     * @param streetNumber - house Number of a location
+     * @param zip - zip of a location
+     * @param city - city of a location
+     * @param country - country of a location
+     * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
+     * @param room -  room of the building
+     */
+    public Location(int locationID, String street, String streetNumber, String zip, String city, String country, String building, String room) {
+        this.locationID = locationID;
+        this.street = street;
+        this.streetNumber = streetNumber;
+        this.zip = zip;
+        this.city = city;
+        this.country = country;
+        this.building = building;
+        this.room = room;
+    }
+
     //###############################################
     //                   Setter
     //###############################################
+
+    public void setLocationID (int locationID) {
+        this.locationID = locationID;
+    }
 
     public void setStreet(String street) {
         this.street = street;
@@ -81,6 +110,10 @@ public class Location {
     //###############################################
     //                   Getter
     //###############################################
+
+    public int getLocationID() {
+        return locationID;
+    }
 
     public String getStreet() {
         return street;

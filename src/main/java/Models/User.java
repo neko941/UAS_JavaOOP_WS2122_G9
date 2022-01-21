@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * Author: neko941, jatenderjossan
  * Created on: 2021-12-13
  *
  * This class provides model for a user
@@ -18,22 +18,52 @@ public class User
      * @param userID: unique
      * @param antiPhishing: a string that user set
      */
-    private String email;
-    private String username;
-    private String password;
+    private int userID;
     private String firstName;
     private String lastName;
-    private String userID;
-    private String antiPhishing;
+    private String username;
+    private String password;
+    private String email;
 
     // constructor
-    public User(String email, String username, String password, String firstName, String lastName)
+    public User(String email, String username, String password, String firstName, String lastName, int userID)
     {
-        this.email = email;
-        this.username = username;
-        this.password = password;
+        this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    /**
+     * Constructor for creating a user
+     *
+     * @param firstName - firstname of user
+     * @param lastName - lastname of user
+     * @param username - username of user
+     * @param password - password of user
+     * @param email - email of user
+     */
+    public User (String firstName, String lastName, String username, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    /**
+     * Constructor for fetching a user as a participant from database and adding it to the participants list
+     *
+     * @param username - username of the user
+     * @param email - email of the user
+     * @param userID - userID of the user
+     */
+    public User (String username, String email, int userID) {
+        this.username = username;
+        this.email = email;
+        this.userID = userID;
     }
 
     // getters and setters
@@ -50,11 +80,8 @@ public class User
     public void setFirstname(String firstName) {this.firstName = firstName;}
 
     public String getLastname() { return lastName; }
-    public void setLastname(String lastname) { this.lastName = lastName; }
+    public void setLastname(String lastname) { this.lastName = lastname; }
 
-    public String getId() {return userID;}
-    public void setId(String userID) {this.userID = userID;}
-
-    public String getAntiPhishing() {return antiPhishing;}
-    public void setAntiPhishing(String antiPhishing) {this.antiPhishing = antiPhishing;}
+    public int getId() {return userID;}
+    public void setId(int userID) {this.userID = userID;}
 }
