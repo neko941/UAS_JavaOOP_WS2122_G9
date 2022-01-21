@@ -1,15 +1,7 @@
 package Controllers;
 
 import ExternalConnections.DBUtilities;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.Style;
-import com.calendarfx.model.CalendarSource;
-import com.calendarfx.view.CalendarView;
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -22,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import java.io.IOException;
-import javafx.application.Application;
 
 public class LoginController {
     @FXML private Button CancelButton;
@@ -92,7 +83,7 @@ public class LoginController {
     @FXML
     public void ForgotButtonOnAction(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/UI/ForgotPassword.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/UI/ForgotPasswordUI.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

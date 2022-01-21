@@ -7,15 +7,11 @@
 
 package Controllers;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import Models.Event;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -88,6 +84,45 @@ public class EmailUtils
             e.printStackTrace();
         }
     }
+
+   public static void reminderEmail(Event event)
+   {
+       try
+       {
+           // get session
+           getSession();
+
+           //set email message details
+           Message mess = new MimeMessage(session);
+
+           //set from email address
+           mess.setFrom(new InternetAddress(systemEmail));
+
+           //set to email address or destination email address
+//           mess.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
+
+           //set email subject
+           mess.setSubject("SCHEDULER REMINDER");
+
+           //set email content
+//           String mailText = "<h3><strong> Your Code: </strong></h3>";
+//           String codeBold = "<h1><strong>" + code +  "</strong></h1>";
+//           mess.setContent(mailText + codeBold, "text/html; charset=utf-8");
+
+           // set send day
+           mess.setSentDate(new Date());
+
+           //set message text
+           mess.saveChanges();
+
+           //send the message
+           Transport.send(mess);
+       }
+       catch (Exception e)
+       {
+           e.printStackTrace();
+       }
+   }
 
 //    public static void sendEmail(User user, Event event)
 //    {

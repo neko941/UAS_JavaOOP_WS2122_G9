@@ -17,19 +17,14 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.EmailUtils.verificationEmail;
+import static Controllers.ColorController.changeTextFieldColor;
 import static ExternalConnections.DBUtilities.insertNewUser;
 
 public class RegistrationController {
@@ -54,31 +49,8 @@ public class RegistrationController {
     @FXML private Label passwordSpecialCharacterConstraint;
     @FXML private Label passwordDigitConstraint;
 
-    static String errorColor = getDataFromConfig("errorColor");
-    static String validColor = getDataFromConfig("validColor");
-    static String defaultColor = getDataFromConfig("defaultColor");
-
     String verification;
     User user;
-
-    public boolean changeTextFieldColor(boolean check,boolean space, Label label)
-    {
-        if(space)
-        {
-            label.setStyle("-fx-text-fill:" + defaultColor);
-        }
-        else {
-            if (check)
-            {
-                label.setStyle("-fx-text-fill:" + validColor);
-            }
-            else
-            {
-                label.setStyle("-fx-text-fill:" + errorColor);
-            }
-        }
-        return check;
-    }
 
     public boolean checkAllTextField()
     {
@@ -149,7 +121,7 @@ public class RegistrationController {
     }
 
     public void ContinueButtonOnAction(ActionEvent event) {
-        if (!((String)confirmCodeTextField.getText()).equals(verification))
+        if (((String)confirmCodeTextField.getText()).equals(verification))
         {
 //            insertNewUser(user);
         }
