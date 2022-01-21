@@ -66,7 +66,6 @@ public class LoginController {
         } else {
             LoginMessageLabel.setText("Please enter email and password");
         }
-
     }
 
 

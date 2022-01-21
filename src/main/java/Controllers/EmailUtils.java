@@ -19,33 +19,16 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
+import static Controllers.ConfigController.getDataFromConfig;
+
 public class EmailUtils
 {
-    static String systemEmail;
-    static String systemEmailPassword;
+    static String systemEmail = getDataFromConfig("systemEmail");
+    static String systemEmailPassword = getDataFromConfig("systemEmailPassword");
     static Session session;
-
-    public static void getSystemEmailInfo()
-    {
-        JSONParser parser = new JSONParser();
-
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = (JSONObject) parser.parse(new FileReader("src/main/resources/config.json"));
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        systemEmail = (String) jsonObject.get("systemEmail");
-        systemEmailPassword = (String) jsonObject.get("systemEmailPassword");
-    }
 
     public static void getSession()
     {
-        // get system email info
-        getSystemEmailInfo();
-
         // your host email smtp server details
         Properties pr = new Properties();
         pr.setProperty("mail.smtp.host", "smtp.gmail.com");

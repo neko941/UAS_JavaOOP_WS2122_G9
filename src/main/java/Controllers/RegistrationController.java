@@ -17,13 +17,18 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBUtilities.insertNewUser;
 
@@ -49,14 +54,14 @@ public class RegistrationController {
     @FXML private Label passwordSpecialCharacterConstraint;
     @FXML private Label passwordDigitConstraint;
 
-    String errorColor = "red";
-    String validColor ="green";
-    String defaultColor = "black";
+    static String errorColor = getDataFromConfig("errorColor");
+    static String validColor = getDataFromConfig("validColor");
+    static String defaultColor = getDataFromConfig("defaultColor");
 
     String verification;
     User user;
 
-    public boolean checkValidAndChangeColor(boolean check,boolean space, Label label)
+    public boolean changeTextFieldColor(boolean check,boolean space, Label label)
     {
         if(space)
         {
@@ -79,37 +84,37 @@ public class RegistrationController {
     {
         return Arrays   .asList(
                         // check username
-                        checkValidAndChangeColor(   Validation.checkLength(usernameTextField.getText(), 6, 20),
+                        changeTextFieldColor(   Validation.checkLength(usernameTextField.getText(), 6, 20),
                                 usernameTextField.getText().isBlank(),
                                 usernameLengthConstraint),
-                        checkValidAndChangeColor(   Validation.checkNoSpace(usernameTextField.getText()),
+                        changeTextFieldColor(   Validation.checkNoSpace(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameSpaceConstraint),
-                        checkValidAndChangeColor(   Validation.checkNoSpecialCharacter(usernameTextField.getText()),
+                        changeTextFieldColor(   Validation.checkNoSpecialCharacter(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameSpecialCharacterConstraint),
                         // check email
-                        checkValidAndChangeColor(   Validation.checkInputEmail(emailTextField.getText()),
+                        changeTextFieldColor(   Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailWarning),
                         // check password
-                        checkValidAndChangeColor(   Validation.checkLength(passwordTextField.getText(), 6, 20),
+                        changeTextFieldColor(   Validation.checkLength(passwordTextField.getText(), 6, 20),
                                 passwordTextField.getText().isBlank(),
                                 passwordLengthConstraint),
-                        checkValidAndChangeColor(   Validation.checkUpper(passwordTextField.getText()),
+                        changeTextFieldColor(   Validation.checkUpper(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordUpperCaseConstraint),
-                        checkValidAndChangeColor(   Validation.checkLower(passwordTextField.getText()),
+                        changeTextFieldColor(   Validation.checkLower(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordLowerCaseConstraint),
-                        checkValidAndChangeColor(   Validation.checkPunctuation(passwordTextField.getText()),
+                        changeTextFieldColor(   Validation.checkPunctuation(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordSpecialCharacterConstraint),
-                        checkValidAndChangeColor(   Validation.checkDigit(passwordTextField.getText()),
+                        changeTextFieldColor(   Validation.checkDigit(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordDigitConstraint),
                         // check confirm password
-                        checkValidAndChangeColor(   passwordTextField.getText().equals(confirmPasswordTextField.getText()),
+                        changeTextFieldColor(   passwordTextField.getText().equals(confirmPasswordTextField.getText()),
                                 confirmPasswordTextField.getText().isBlank(),
                                 confirmPasswordWarning))
                 .stream()
