@@ -48,16 +48,27 @@ public class LoginController {
 //    }
 
     public void loginButtonOnAction(ActionEvent event) {
-        if (EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false) {
-            if (DBUtilities.verifyUser(EmailLogin.getText(), PasswordLogin.getText())) {
-                LoginMessageLabel.setText("Congratulations!");
-            } else {
-                LoginMessageLabel.setText("Invalid Login. Please try again");
-            }
-        } else {
-            LoginMessageLabel.setText("Please enter email and password");
+//        if (EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false) {
+//            if (DBUtilities.verifyUser(EmailLogin.getText(), PasswordLogin.getText())) {
+//                LoginMessageLabel.setText("Congratulations!");
+//            } else {
+//                LoginMessageLabel.setText("Invalid Login. Please try again");
+//            }
+//        } else {
+//            LoginMessageLabel.setText("Please enter email and password");
+//        }
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/UI/CalendarUI.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            System.err.println(String.format("Error: %s", e.getMessage()));
         }
     }
+
+
 
 
     public void cancelButtonOnAction(ActionEvent event) {

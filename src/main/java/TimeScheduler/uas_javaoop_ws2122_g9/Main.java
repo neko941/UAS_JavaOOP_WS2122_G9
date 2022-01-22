@@ -10,20 +10,20 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-//public class Main extends Application {
-//   @Override
-//   public void start(Stage stage) throws IOException {
-//       Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
-//       stage.setScene(new Scene(parent));
-//       stage.show();
-//   }
-//
-//   public static void main(String[] args) {
-//       MultiThreading EmailThread = new MultiThreading("Send Email Thread");
-//       EmailThread.start();
-//       launch();
-//   }
-//}
+public class Main extends Application {
+   @Override
+   public void start(Stage stage) throws IOException {
+       Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+       stage.setScene(new Scene(parent));
+       stage.show();
+   }
+
+   public static void main(String[] args) {
+       MultiThreading EmailThread = new MultiThreading("Send Email Thread");
+       EmailThread.start();
+       launch();
+   }
+}
 
 // public class Main {
 //     public static void main(String[] args) {
@@ -31,11 +31,11 @@ import java.io.IOException;
 //     }
 // }
 
-public class Main {
-    public static void main(String[] args) {
-        String a = "a";
-        System.out.println(a.equals("a"));
-    }
-}
+//public class Main {
+//    public static void main(String[] args) {
+//        String a = "a";
+//        System.out.println(a.equals("a"));
+//    }
+//}
 
 
