@@ -81,18 +81,21 @@ import java.time.LocalTime;
          * Opens a connection to the database if no connection is existing.
          *      If a connection is existing, this connection is closed
          */
-        private static void connectToDatabase() {
-            try {
-                disconnectFromDatabase();
-
-                connection = DriverManager.getConnection(DBUrl, DBUsername, DBPassword);
-                System.out.println("Connected to database...");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                System.out.println("Error Code opening: " +e.getErrorCode());
-                System.out.println("Error message closing: " +e.getMessage());
-            }
+        DBUtilities(){
+            connection = DBConn.getConnection();
         }
+        
+        // private static void connectToDatabase() {
+        //     try {
+        //     
+        //         connection = DriverManager.getConnection(DBUrl, DBUsername, DBPassword);
+        //         System.out.println("Connected to database...");
+        //     } catch (SQLException e) {
+        //         e.printStackTrace();
+        //         System.out.println("Error Code opening: " +e.getErrorCode());
+        //         System.out.println("Error message closing: " +e.getMessage());
+        //     }
+        // }
 
 //        public static void connectToDatabase()
 //        {
@@ -114,18 +117,18 @@ import java.time.LocalTime;
          * This function is used everytime a connection to the database is created to
          * avoid performance issues by the garbage collector
          */
-        private static void disconnectFromDatabase() {
-            if (connection != null) {
-                try {
-                    connection.close();
-                    if (connection.isClosed())
-                        System.out.println("Disconnected from database...");
-                    connection = null;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        // private static void disconnectFromDatabase() {
+        //     if (connection != null) {
+        //         try {
+        //             connection.close();
+        //             if (connection.isClosed())
+        //                 System.out.println("Disconnected from database...");
+        //             connection = null;
+        //         } catch (SQLException e) {
+        //             e.printStackTrace();
+        //         }
+        //     }
+        // }
 
         /**
          * This function closes an opened preparedStatement
@@ -170,7 +173,7 @@ import java.time.LocalTime;
             // password encryption
             String encryptedPassword = Security.sha512(user.getPassword());
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(INSERT_NEW_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, user.getFirstname());
@@ -193,7 +196,7 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
+
 
             return key;
         }
@@ -207,7 +210,7 @@ import java.time.LocalTime;
         public static int insertNewEvent(Event event) {
             int key = -1;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(INSERT_NEW_EVENT_QUERY, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, event.getEventName());
@@ -233,8 +236,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return key;
         }
 
@@ -245,10 +246,10 @@ import java.time.LocalTime;
          * @param: location - the location which should be saved in the database
          * @return: -1 on unsuccessful insertion
          */
-        private static int insertNewLocation (Location location) {
+        public static int insertNewLocation (Location location) {
             int key = -1;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, location.getStreet());
@@ -273,8 +274,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return key;
         }
 
@@ -290,7 +289,7 @@ import java.time.LocalTime;
             FileInputStream fileInputStream = null;
             int key = -1;
 
-            connectToDatabase();
+            
             try {
                 fileInputStream = new FileInputStream(file);
 
@@ -320,8 +319,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return key;
         }
 
@@ -336,7 +333,7 @@ import java.time.LocalTime;
         public static boolean createUser_EventBridge(final int userID, final int eventID) {
             boolean created = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(MAKE_USER_EVENT_TABLE_QUERY);
                 preparedStatement.setInt(1, userID);
@@ -349,8 +346,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return created;
         }
 
@@ -365,7 +360,7 @@ import java.time.LocalTime;
         public static boolean editUser (User user){
             boolean edited = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(EDIT_USER_QUERY);
                 preparedStatement.setString(1, user.getFirstname());
@@ -381,8 +376,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return edited;
         }
 
@@ -395,7 +388,7 @@ import java.time.LocalTime;
         public static boolean editEvent(Event event) {
             boolean edited = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(EDIT_EVENT_QUERY);
                 preparedStatement.setString(1, event.getEventName());
@@ -414,8 +407,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return edited;
         }
 
@@ -428,7 +419,7 @@ import java.time.LocalTime;
         public static boolean editLocation(Location location) {
             boolean edited = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
                 preparedStatement.setString(1, location.getStreet());
@@ -447,8 +438,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return edited;
         }
 
@@ -467,7 +456,7 @@ import java.time.LocalTime;
             // password encryption
             String encryptedPassword = Security.sha512(password);
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY);
                 preparedStatement.setString(1, username);
@@ -486,8 +475,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return verified;
         }
 
@@ -501,7 +488,7 @@ import java.time.LocalTime;
         public static boolean isAvailable(User user) {
             boolean available = true;
 
-            connectToDatabase();
+            
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
                 preparedStatement.setString(1, user.getUsername());
@@ -520,8 +507,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return available;
         }
 
@@ -536,7 +521,7 @@ import java.time.LocalTime;
         public static boolean deleteEvent(final int eventID) {
             boolean deleted = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(DELETE_EVENT_QUERY);
                 preparedStatement.setInt(1, eventID);
@@ -548,8 +533,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return deleted;
         }
 
@@ -563,7 +546,7 @@ import java.time.LocalTime;
         public static boolean deleteAttachment(final int eventID) {
             boolean deleted = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
                 preparedStatement.setInt(1, eventID);
@@ -575,8 +558,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return deleted;
         }
 
@@ -590,7 +571,7 @@ import java.time.LocalTime;
         public static boolean deleteUser_EventBridge(final int userID, final int eventID) {
             boolean deleted = false;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(DELETE_USER_EVENT_BRIDGE_QUERY);
                 preparedStatement.setInt(1, userID);
@@ -603,8 +584,6 @@ import java.time.LocalTime;
             } finally {
                 closePreparedStatement();
             }
-            disconnectFromDatabase();
-
             return deleted;
         }
 
@@ -619,7 +598,7 @@ import java.time.LocalTime;
         public static ArrayList<Event> fetchAllEventsFromUser (final User user) {
             ArrayList<Event> events = new ArrayList<>();
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
                 preparedStatement.setInt(1, user.getId());
@@ -648,8 +627,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return events;
         }
 
@@ -660,7 +637,7 @@ import java.time.LocalTime;
          * @return: location - returns the location corresponding to the given eventID
          */
         public static Location fetchLocationFromEvent (final int locationID) {
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
                 preparedStatement.setInt(1, locationID);
@@ -682,8 +659,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return null;
         }
 
@@ -697,7 +672,7 @@ import java.time.LocalTime;
         public static ArrayList<User> fetchParticipants (final int eventID) {
             ArrayList<User> participants = new ArrayList<>();
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(GET_PARTICIPANTS_FROM_EVENT_QUERY);
                 preparedStatement.setInt(1, eventID);
@@ -715,8 +690,6 @@ import java.time.LocalTime;
                 closePreparedStatement();
                 closeResultSet();
             }
-            disconnectFromDatabase();
-
             return participants;
         }
 
@@ -732,7 +705,7 @@ import java.time.LocalTime;
             InputStream inputStream = null;
             File file;
 
-            connectToDatabase();
+            
             try {
                 preparedStatement = connection.prepareStatement(GET_ATTACHMENTS_FROM_EVENT_QUERY);
                 preparedStatement.setInt(1, eventID);
@@ -760,8 +733,6 @@ import java.time.LocalTime;
                     e.printStackTrace();
                 }
             }
-            disconnectFromDatabase();
-
             return attachments;
         }
 
