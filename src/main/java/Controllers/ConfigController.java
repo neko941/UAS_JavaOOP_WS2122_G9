@@ -12,8 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class ConfigController {
-
-    public static String getDataFromConfig(String text)
+    public static String getDataFromConfig(String string, String text)
     {
         JSONParser parser = new JSONParser();
 
@@ -23,7 +22,9 @@ public class ConfigController {
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-
-        return (String) jsonObject.get(text);
+        JSONObject jsonObject1 = (JSONObject) jsonObject.get(string);
+        return (String) jsonObject1.get(text);
     }
 }
+
+

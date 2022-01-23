@@ -1,6 +1,12 @@
 {
-    "systemEmail" : "UAS.JavaOOP.WS2122.G9@gmail.com",
-    "systemEmailPassword" : "-KFyAH8cp99JYJr",
+    
+    "systemEmail":
+    {
+        "email" : "UAS.JavaOOP.WS2122.G9@gmail.com",
+        "password" : "-KFyAH8cp99JYJr"
+    },
+    
+    
 
     "errorColor" : "red",
     "validColor" : "green",
