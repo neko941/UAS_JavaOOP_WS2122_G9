@@ -17,7 +17,7 @@
         <PasswordField fx:id="confirmPasswordTextField" layoutX="73.0" layoutY="557.0" prefHeight="35.0" prefWidth="344.0" promptText="Confirm password" />
         <Button fx:id="registerButton" layoutX="75.0" layoutY="628.0" mnemonicParsing="false" onAction="#registerUserOnAction" prefHeight="35.0" prefWidth="344.0" style="-fx-background-color: #0ea488;" text="Register" textFill="WHITE" />
         <Button fx:id="closeButton" layoutX="75.0" layoutY="683.0" mnemonicParsing="false" onAction="#CloseButtonOnAction" prefHeight="35.0" prefWidth="344.0" text="Close" />
-        <Button layoutX="209.0" layoutY="52.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Sign in" textFill="#0ea488" />
+        <Button layoutX="209.0" layoutY="52.0" mnemonicParsing="false" onAction="#SignInButtonOnAction" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Sign in" textFill="#0ea488" />
         <Label fx:id="passwordLengthConstraint" layoutX="77.0" layoutY="457.0" prefHeight="18.0" prefWidth="146.0" text="+ 6-20 character long" />
         <Label fx:id="passwordUpperCaseConstraint" layoutX="75.0" layoutY="493.0" prefHeight="18.0" prefWidth="150.0" text="+ at least 1 uppercase letter" />
         <Label fx:id="passwordLowerCaseConstraint" layoutX="75.0" layoutY="511.0" prefHeight="18.0" prefWidth="146.0" text="+ at least 1 lowercase letter" />
