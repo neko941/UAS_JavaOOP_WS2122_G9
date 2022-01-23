@@ -10,9 +10,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,7 +31,8 @@ public class ForgetPasswordController {
     @FXML private Label passwordLowerCaseConstraint;
     @FXML private Label passwordSpecialCharacterConstraint;
     @FXML private Label passwordDigitConstraint;
-
+    @FXML private Button SignUpButton;
+    @FXML private Button sendEmailButton;
     @FXML private TextField emailTextField;
     @FXML private TextField otpTextField;
 
@@ -80,6 +83,8 @@ public class ForgetPasswordController {
         if (checkAllTextFieldForgotPasswordUI()) {
             verification = Security.generateRandomString(); /*generate random string*/
             verificationEmail(emailTextField.getText(), verification);
+            sendEmailButton.setText("Resend Email");
+
         }
     }
 
@@ -105,4 +110,19 @@ public class ForgetPasswordController {
             // change password in database
         }
     }
+
+    public void SignUpButtonOnAction(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/UI/RegistrationUI.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            System.err.println(String.format("Error: %s", e.getMessage()));
+        }
+    }
+
+
 }
