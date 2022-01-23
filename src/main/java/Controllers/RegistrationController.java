@@ -25,6 +25,7 @@ import javafx.scene.Scene;
 
 import static Controllers.EmailUtils.verificationEmail;
 import static Controllers.ColorController.changeTextFieldColor;
+import static ExternalConnections.DBUtilities.insertNewUser;
 
 public class RegistrationController {
     @FXML private Button closeButton;
@@ -119,10 +120,15 @@ public class RegistrationController {
 
     }
 
-    public void ContinueButtonOnAction(ActionEvent event) {
+    public void ContinueButtonOnAction(ActionEvent event) throws IOException {
         if (((String)confirmCodeTextField.getText()).equals(verification))
         {
 //            insertNewUser(user);
+
+            Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(parent));
+            stage.show();
         }
     }
     public void CloseButtonOnAction(ActionEvent event) {
