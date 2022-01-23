@@ -9,9 +9,9 @@ import javafx.scene.control.Label;
 import static Controllers.ConfigController.getDataFromConfig;
 
 public class ColorController {
-    static String errorColor = getDataFromConfig("errorColor");
-    static String validColor = getDataFromConfig("validColor");
-    static String defaultColor = getDataFromConfig("defaultColor");
+    static String errorColor = getDataFromConfig("color", "errorColor");
+    static String validColor = getDataFromConfig("color", "validColor");
+    static String defaultColor = getDataFromConfig("color", "defaultColor");
 
     public static boolean changeTextFieldColor(boolean check, boolean empty, Label label)
     {
