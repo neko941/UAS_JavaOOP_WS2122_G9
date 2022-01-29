@@ -2,6 +2,8 @@ package Controllers;
 
 import ExternalConnections.DBUtilities;
 
+import Models.User;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,9 +25,9 @@ public class LoginController {
     @FXML private Button SignUpButton;
     @FXML private Button ForgotButton;
 
-//    public static void main(String[] args) {
-//        Application.launch(CalendarController.class, args);
-//    }
+    public static void main(String[] args) {
+        Application.launch(CalendarController.class, args);
+    }
 
 //    private static volatile boolean javaFxLaunched = false;
 //
@@ -50,10 +52,15 @@ public class LoginController {
     public void loginButtonOnAction(ActionEvent event) {
         if (EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false) {
             if (DBUtilities.verifyUser(EmailLogin.getText(), PasswordLogin.getText())) {
+                User currentUser = DBUtilities.fetchUser(EmailLogin.getText());
                 LoginMessageLabel.setText("Congratulations!");
 
                 try {
-                    Parent root = FXMLLoader.load(getClass().getResource("/UI/CalendarUI.fxml"));
+                    FXMLLoader loader = FXMLLoader.load(getClass().getClassLoader(). getResource("/UI/CalendarUI.fxml"));
+                    CalendarController calController = new CalendarController();
+                    calController.setCurrentUser(currentUser);
+                    loader.setController(calController);
+                    Parent root = loader.load();
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     Scene scene = new Scene(root);
                     stage.setScene(scene);
@@ -103,5 +110,6 @@ public class LoginController {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
     }
+
 }
 

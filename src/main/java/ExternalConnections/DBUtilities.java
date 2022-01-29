@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static ExternalConnections.DBConn.getConnection;
+import static ExternalConnections.DBConn.setConnection;
+
 public class DBUtilities {
 
     // For connection to the database
@@ -62,7 +65,9 @@ public class DBUtilities {
     private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
 
-    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+    private static final String GET_USER_PROFILE_QUERY = "SELECT * FROM User WHERE email = ?";
+    // private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event";
     private static final String GET_LOCATION_FROM_EVENT_QUERY = "SELECT * FROM Location WHERE locationID = ?";
     private static final String GET_ATTACHMENTS_FROM_EVENT_QUERY = "SELECT * FROM Attachments WHERE";
     private static final String GET_PARTICIPANTS_FROM_EVENT_QUERY = "SELECT * FROM Participants WHERE Participants.eventID = ?";
@@ -75,7 +80,7 @@ public class DBUtilities {
      * Opens a connection to the database if no connection is existing.
      *      If a connection is existing, this connection is closed
      */
-    DBUtilities(){
+    public static void DBUtilities(){
             connection = DBConn.getConnection();
         }
         
@@ -203,12 +208,12 @@ public class DBUtilities {
         int key = -1;
 
         try {
+            int locationID = insertNewLocation(event.getLocation());
             preparedStatement = connection.prepareStatement(INSERT_NEW_EVENT_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, event.getEventName());
             preparedStatement.setDate(2, Date.valueOf(event.getDate()));
             preparedStatement.setTime(3, Time.valueOf(event.getTime()));
             preparedStatement.setInt(4, event.getDuration());
-            int locationID = insertNewLocation(event.getLocation());
             preparedStatement.setInt(5, locationID);
             preparedStatement.setString(6, event.getReminder().name());
             preparedStatement.setString(7, event.getPriority().name());
@@ -242,12 +247,12 @@ public class DBUtilities {
         try {
             preparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, location.getStreet());
-            preparedStatement.setString(2, location.getStreetNumber());
+            preparedStatement.setInt(2, location.getStreetNumber());
             preparedStatement.setString(3, location.getZip());
             preparedStatement.setString(4, location.getCity());
             preparedStatement.setString(5, location.getCountry());
-            preparedStatement.setString(6, location.getBuilding());
-            preparedStatement.setString(7, location.getRoom());
+            preparedStatement.setInt(6, location.getBuilding());
+            preparedStatement.setInt(7, location.getRoom());
             preparedStatement.executeUpdate();
 
             // get the ID of the location from the database
@@ -407,12 +412,12 @@ public class DBUtilities {
         try {
             preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
             preparedStatement.setString(1, location.getStreet());
-            preparedStatement.setString(2, location.getStreetNumber());
+            preparedStatement.setInt(2, location.getStreetNumber());
             preparedStatement.setString(3, location.getZip());
             preparedStatement.setString(4, location.getCity());
             preparedStatement.setString(5, location.getCountry());
-            preparedStatement.setString(6, location.getBuilding());
-            preparedStatement.setString(7, location.getRoom());
+            preparedStatement.setInt(6, location.getBuilding());
+            preparedStatement.setInt(7, location.getRoom());
             preparedStatement.setInt(8, location.getLocationID());
             preparedStatement.executeUpdate();
 
@@ -574,28 +579,33 @@ public class DBUtilities {
      * @param: user - the user, from which we want all the events
      * @return: arraylist with all events a user is participating
      */
-    public static ArrayList<Event> fetchAllEventsFromUser (final User user) {
+    public static ArrayList<Event> fetchAllEventsFromUser(final User user) {
         ArrayList<Event> events = new ArrayList<>();
             
         try {
             preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
-            preparedStatement.setInt(1, user.getId());
+            // preparedStatement.setInt(1, user.getId());
             resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 // primary key of the entity "event"
                 int eventID = resultSet.getInt("eventID");
                 String eventName = resultSet.getString("eventName");
                 LocalDate eventDate = resultSet.getDate("eventDate").toLocalDate();
                 LocalTime eventTime = resultSet.getTime("eventTime").toLocalTime();
+                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
                 int duration = resultSet.getInt("duration");
                 // argument - foreign key of the location table
                 Location location = fetchLocationFromEvent(resultSet.getInt("location"));
                 // argument - primary key of the event
-                ArrayList<User> participants = fetchParticipants(eventID);
+                //TODO: uncomment this
+                // ArrayList<User> participants = fetchParticipants(eventID);
                 // argument - primary key of the event
-                ArrayList<File> attachments = fetchAttachments(eventID);
-                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
-                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
+                //TODO: uncomment this
+                // ArrayList<File> attachments = fetchAttachments(eventID);
+                ArrayList<User> participants = null;
+                ArrayList<File> attachments = null;
+
 
                 events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, attachments, reminder, priority));
             }
@@ -606,6 +616,32 @@ public class DBUtilities {
             closeResultSet();
         }
         return events;
+    }
+
+    public static User fetchUser(final String email){
+        User result = null;
+        try {
+
+            preparedStatement = connection.prepareStatement(GET_USER_PROFILE_QUERY);
+
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                result = new User(
+                        resultSet.getString(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5)
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+            return null;
     }
 
     /**
@@ -622,12 +658,12 @@ public class DBUtilities {
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String street = resultSet.getString(2);
-                String houseNumber = resultSet.getString(3);
+                int houseNumber = resultSet.getInt(3);
                 String zip = resultSet.getString(4);
                 String city = resultSet.getString(5);
                 String country = resultSet.getString(6);
-                String building = resultSet.getString(7);
-                String room = resultSet.getString(8);
+                int building = resultSet.getInt(7);
+                int room = resultSet.getInt(8);
 
                 return new Location(street, houseNumber, zip, city, country, building, room);
             }

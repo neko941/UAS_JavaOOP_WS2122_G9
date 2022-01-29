@@ -15,7 +15,7 @@ public class Location {
     // street of a location
     private String street;
     // house Number of a location
-    private String streetNumber;
+    private int streetNumber;
     // zip of a location
     private String zip;
     // city of a location
@@ -23,9 +23,9 @@ public class Location {
     // country of a location
     private String country;
     // if there are multiple building with different letters e.g. building b (Gebäude b)
-    private String building;
+    private int building;
     // room of the building
-    private String room;
+    private int room;
 
     /**
      * Constructor for creating a location.
@@ -38,7 +38,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(String street, String streetNumber, String zip, String city, String country, String building, String room) {
+    public Location(String street, int streetNumber, String zip, String city, String country, int building, int room) {
         this.street = street;
         this.streetNumber = streetNumber;
         this.zip = zip;
@@ -60,7 +60,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(int locationID, String street, String streetNumber, String zip, String city, String country, String building, String room) {
+    public Location(int locationID, String street, int streetNumber, String zip, String city, String country, int building, int room) {
         this.locationID = locationID;
         this.street = street;
         this.streetNumber = streetNumber;
@@ -83,7 +83,7 @@ public class Location {
         this.street = street;
     }
 
-    public void setStreetNumber(String streetNumber) {
+    public void setStreetNumber(int streetNumber) {
         this.streetNumber = streetNumber;
     }
 
@@ -99,11 +99,11 @@ public class Location {
         this.country = country;
     }
 
-    public void setBuilding(String building) {
+    public void setBuilding(int building) {
         this.building = building;
     }
 
-    public void setRoom(String room) {
+    public void setRoom(int room) {
         this.room = room;
     }
 
@@ -119,7 +119,7 @@ public class Location {
         return street;
     }
 
-    public String getStreetNumber() {
+    public int getStreetNumber() {
         return streetNumber;
     }
 
@@ -135,11 +135,11 @@ public class Location {
         return country;
     }
 
-    public String getBuilding() {
+    public int getBuilding() {
         return building;
     }
 
-    public String getRoom() {
+    public int getRoom() {
         return room;
     }
 }
