@@ -57,6 +57,8 @@ public class DBUtilities {
 
     private static final String VERIFY_USER_QUERY = "SELECT * FROM User WHERE username = ? AND password = ?";
     private static final String USER_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ? OR email = ?";
+    private static final String EMAIL_AVAILABLE_QUERY = "SELECT * FROM User WHERE email = ?";
+    private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
 
     private static final String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE eventID = ?";
     private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
@@ -496,7 +498,7 @@ public class DBUtilities {
         boolean available = true;
 
         try {
-            preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
+            preparedStatement = connection.prepareStatement(EMAIL_AVAILABLE_QUERY);
             preparedStatement.setString(1, email);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -519,7 +521,7 @@ public class DBUtilities {
         boolean available = true;
 
         try {
-            preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
+            preparedStatement = connection.prepareStatement(USERNAME_AVAILABLE_QUERY);
             preparedStatement.setString(1, username);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
