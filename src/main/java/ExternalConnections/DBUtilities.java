@@ -77,9 +77,9 @@ public class DBUtilities {
      * Opens a connection to the database if no connection is existing.
      *      If a connection is existing, this connection is closed
      */
-    DBUtilities(){
-            connection = DBConn.getConnection();
-        }
+    public static void DBUtilities(){
+        connection = DBConn.getConnection();
+    }
         
         // private static void connectToDatabase() {
         //     try {
