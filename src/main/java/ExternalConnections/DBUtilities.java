@@ -492,6 +492,51 @@ public class DBUtilities {
         return available;
     }
 
+    public static boolean isEmailAvailable(String email) {
+        boolean available = true;
+
+        try {
+            preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getString("email").equals(email)) {
+                    available = false;
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            available = false;
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+        return available;
+    }
+
+    public static boolean isUsernameAvailable(String username) {
+        boolean available = true;
+
+        try {
+            preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getString("username").equals(username)) {
+                    available = false;
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            available = false;
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+        return available;
+    }
     //##########################################################################################
 
     /**
