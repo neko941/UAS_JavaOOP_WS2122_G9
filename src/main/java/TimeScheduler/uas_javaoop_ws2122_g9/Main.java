@@ -33,6 +33,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static Controllers.ConfigController.getDataFromConfig;
+import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBConn.getConnection;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
 import static ExternalConnections.DBUtilities.isEmailAvailable;
@@ -55,6 +56,12 @@ public class Main extends Application {
 // public class Main {
 //     public static void main(String[] args) {
 //         Application.launch(CalendarController.class,args);
+//     }
+// }
+
+// public class Main {
+//     public static void main(String[] args) {
+//         verificationEmail("nguyenkhoa090401@gmail.com", "sdjajs");
 //     }
 // }
 

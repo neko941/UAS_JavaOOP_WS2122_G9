@@ -20,7 +20,7 @@ import static Controllers.ConfigController.getDataFromConfig;
 public class EmailUtils
 {
     static String systemEmail = getDataFromConfig("systemEmail", "email");
-    static String systemEmailPassword = getDataFromConfig("systemEmail", "systemEmailPassword");
+    static String systemEmailPassword = getDataFromConfig("systemEmail", "password");
     static Session session;
 
     public static void getSession()
