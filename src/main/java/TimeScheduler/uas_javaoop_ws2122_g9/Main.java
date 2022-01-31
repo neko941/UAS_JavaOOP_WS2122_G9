@@ -47,6 +47,7 @@ public class Main extends Application {
    }
 
    public static void main(String[] args) {
+       DBUtilities.DBUtilities();
        MultiThreading EmailThread = new MultiThreading("Send Email Thread");
        EmailThread.start();
        launch();
@@ -71,7 +72,7 @@ public class Main extends Application {
 ////        ArrayList<Event> events = fetchAllEventsFromUser(user);
 ////        System.out.println(events);
 //        DBUtilities.DBUtilities();
-//        System.out.println(isEmailAvailable("john_jack4321234@gmai"));
+//        getConnection();
 //    }
 //}
 

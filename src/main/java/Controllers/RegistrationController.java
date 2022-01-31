@@ -5,7 +5,6 @@
 
 package Controllers;
 
-import ExternalConnections.DBUtilities;
 import Models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,12 +51,12 @@ public class RegistrationController {
     @FXML private Label emailAvailableWarning;
     @FXML private Label usernameAvailableWarning;
 
-    String verification;
-    User user;
+    public static String verification;
+    public static User user;
+    public static String tempEmail;
 
     public boolean checkAllTextField()
     {
-        DBUtilities.DBUtilities();
         return Arrays   .asList(
                         // check username
                         changeTextFieldColor(
@@ -116,10 +115,12 @@ public class RegistrationController {
     }
 
     public void registerUserOnAction(ActionEvent event) throws IOException {
+        tempEmail = emailTextField.getText();
         if (checkAllTextField())
         {
             // create verification code
             verification = Security.generateRandomNumber();
+            System.out.println(verification);
             // send code to user's email
             verificationEmail(emailTextField.getText(), verification);
             // save user info
@@ -142,15 +143,21 @@ public class RegistrationController {
 
     }
 
-    public void ContinueButtonOnAction(ActionEvent event) throws IOException {
-        if (((String)confirmCodeTextField.getText()).equals(verification))
+    public void continueButtonOnAction(ActionEvent event) throws IOException {
+        if (verification.equals(confirmCodeTextField.getText()))
         {
-//            insertNewUser(user);
+            System.out.println("Create account successfully");
+            insertNewUser(user);
 
-            Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(parent));
+            Parent root = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
             stage.show();
+        }
+        else
+        {
+            System.out.println("Wrong confirmation code");
         }
     }
     public void CloseButtonOnAction(ActionEvent event) {
@@ -159,7 +166,6 @@ public class RegistrationController {
     }
 
     public void SignInButtonOnAction(ActionEvent event) {
-
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -169,5 +175,14 @@ public class RegistrationController {
         } catch (IOException e) {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
+    }
+
+    public void resendEmailButtonOnAction(ActionEvent event)
+    {
+        // create verification code
+        verification = Security.generateRandomNumber();
+        System.out.println(verification);
+        // send code to user's email
+        verificationEmail(tempEmail, verification);
     }
 }

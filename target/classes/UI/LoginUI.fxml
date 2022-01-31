@@ -9,7 +9,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="550.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
     <children>
-        <Label layoutX="102.0" layoutY="149.0" text="Username" textFill="GREY">
+        <Label layoutX="102.0" layoutY="149.0" text="Email" textFill="GREY">
             <font>
                 <Font size="18.0" />
             </font>
