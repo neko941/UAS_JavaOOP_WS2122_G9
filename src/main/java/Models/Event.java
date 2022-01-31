@@ -37,14 +37,13 @@ public class Event {
 
     /**
      * Constructor for creating an event
-     *
-     * @param eventName - name of the event
+     *  @param eventName - name of the event
      * @param date - date of the event
      * @param time - starting time of the event
      * @param duration - duration of the event in minutes
+     * @param location - location of the event
      * @param participants - list of participants
      * @param attachments - list of attachments
-     * @param location - location of the event
      * @param reminder - selected reminder for the event
      * @param priority - selected priority for the event
      */
