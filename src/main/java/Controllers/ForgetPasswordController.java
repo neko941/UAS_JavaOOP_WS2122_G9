@@ -18,9 +18,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static Controllers.ColorController.changeLabelColor;
+import static Controllers.ColorController.changeLabelText;
 import static Controllers.EmailUtils.verificationEmail;
+import static ExternalConnections.DBUtilities.isEmailAvailable;
+import static ExternalConnections.DBUtilities.isUsernameAvailable;
 
 public class ForgetPasswordController {
     @FXML private Label emailWarning;
@@ -30,6 +35,7 @@ public class ForgetPasswordController {
     @FXML private Label passwordLowerCaseConstraint;
     @FXML private Label passwordSpecialCharacterConstraint;
     @FXML private Label passwordDigitConstraint;
+    @FXML private Label emailInDatabaseWarning;
     @FXML private Button sendEmailButton;
     @FXML private TextField emailTextField;
     @FXML private TextField otpTextField;
@@ -41,18 +47,22 @@ public class ForgetPasswordController {
 
     public boolean checkAllTextFieldForgotPasswordUI()
     {
-        return Arrays.asList(
+        return Stream.of(
                         // check email
                         changeLabelColor(   Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
-                                emailWarning))
-                .stream()
-                .allMatch(val -> val == true);
+                                emailWarning),
+                        changeLabelText(
+                                !isEmailAvailable(emailTextField.getText()),
+                                emailTextField.getText().isBlank(),
+                                emailInDatabaseWarning,
+                                "Email does not exist in the database"))
+                .allMatch(val -> val);
     }
 
     public boolean checkAllTextFieldResetPasswordUI()
     {
-        return Arrays.asList(
+        return Stream.of(
                         // check password
                         changeLabelColor(
                                 Validation.checkLength(newPasswordTextField.getText(), 6, 20),
@@ -79,8 +89,7 @@ public class ForgetPasswordController {
                                 newPasswordTextField.getText().equals(confirmNewPassWordTextField.getText()),
                                 confirmNewPassWordTextField.getText().isBlank(),
                                 confirmNewPasswordWarning))
-                .stream()
-                .allMatch(val -> val == true);
+                .allMatch(val -> val);
     }
 
     public void sendEmailButtonOnAction(ActionEvent event) {
@@ -97,13 +106,13 @@ public class ForgetPasswordController {
         {
             // confirm code
             try {
-                Parent root = FXMLLoader.load(getClass().getResource("/UI/ResetPasswordUI.fxml"));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/ResetPasswordUI.fxml")));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException e) {
-                System.err.println(String.format("Error: %s", e.getMessage()));
+                System.out.format("Error: %s\n", e.getMessage());
             }
         }
     }
@@ -114,13 +123,13 @@ public class ForgetPasswordController {
             // change password in database
 
             try {
-                Parent root = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException e) {
-                System.err.println(String.format("Error: %s", e.getMessage()));
+                System.out.format("Error: %s\n", e.getMessage());
             }
         }
     }
@@ -128,13 +137,13 @@ public class ForgetPasswordController {
     public void SignUpButtonOnAction(ActionEvent event) {
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/UI/RegistrationUI.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/RegistrationUI.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            System.err.println(String.format("Error: %s", e.getMessage()));
+            System.out.format("Error: %s\n", e.getMessage());
         }
     }
 }

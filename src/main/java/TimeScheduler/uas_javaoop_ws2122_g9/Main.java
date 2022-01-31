@@ -31,17 +31,18 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static Controllers.ConfigController.getDataFromConfig;
+import static Controllers.Debugging.printUserInfo;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBConn.getConnection;
-import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
-import static ExternalConnections.DBUtilities.isEmailAvailable;
+import static ExternalConnections.DBUtilities.*;
 
 public class Main extends Application {
    @Override
    public void start(Stage stage) throws IOException {
-       Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+       Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
        stage.setScene(new Scene(parent));
        stage.show();
    }
@@ -68,11 +69,9 @@ public class Main extends Application {
 
 //public class Main {
 //    public static void main(String[] args) {
-////        User user = new User("john", "jackson","johnjack155", "mypassword", "john_jack4321234@gmail");
-////        ArrayList<Event> events = fetchAllEventsFromUser(user);
-////        System.out.println(events);
 //        DBUtilities.DBUtilities();
-//        getConnection();
+//        User user = new User("john", "jackson","johnjack155", "mypassword", "john_jack4321234@gmail");
+//        printUserInfo(user);
 //    }
 //}
 

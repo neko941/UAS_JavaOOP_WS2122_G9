@@ -51,7 +51,8 @@ public class DBUtilities {
     private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? WHERE eventID = ?";
     private static final String EDIT_LOCATION_QUERY = "UPDATE Location SET street = ?, houseNumber = ?, zip = ?, city = ?, country = ?, building = ?, room = ? WHERE locationID = ?";
 
-    private static final String VERIFY_USER_QUERY = "SELECT * FROM User WHERE username = ? AND password = ?";
+    private static final String VERIFY_USER_QUERY_username = "SELECT * FROM User WHERE username = ? AND password = ?";
+    private static final String VERIFY_USER_QUERY_email = "SELECT * FROM User WHERE email = ? AND password = ?";
     private static final String USER_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ? OR email = ?";
     private static final String EMAIL_AVAILABLE_QUERY = "SELECT * FROM User WHERE email = ?";
     private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
@@ -432,22 +433,22 @@ public class DBUtilities {
      * @param: password - password of the user
      * @return: true on successful verification
      */
-    public static boolean verifyUser (final String username, final String password) {
+    public static boolean verifyUser (final String usernameOrEmail, final String password) {
         boolean verified = false;
 
         // password encryption
         String encryptedPassword = Security.sha512(password);
             
         try {
-            preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY);
-            preparedStatement.setString(1, username);
+            preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY_username);
+            preparedStatement.setString(1, usernameOrEmail);
             preparedStatement.setString(2, encryptedPassword);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                if (resultSet.getString("username").equals(username) && resultSet.getString("password").equals(encryptedPassword)) {
+                if (resultSet.getString("username").equals(usernameOrEmail) && resultSet.getString("password").equals(encryptedPassword)) {
                     verified = true;
                 } else {
-                    System.out.println("user not found");
+                    System.out.println("Username not found");
                 }
             }
         } catch (SQLException e) {
@@ -456,6 +457,29 @@ public class DBUtilities {
             closePreparedStatement();
             closeResultSet();
         }
+
+        if(!verified)
+        {
+            try {
+                preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY_email);
+                preparedStatement.setString(1, usernameOrEmail);
+                preparedStatement.setString(2, encryptedPassword);
+                resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    if (resultSet.getString("email").equals(usernameOrEmail) && resultSet.getString("password").equals(encryptedPassword)) {
+                        verified = true;
+                    } else {
+                        System.out.println("Email not found");
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closePreparedStatement();
+                closeResultSet();
+            }
+        }
+
         return verified;
     }
 

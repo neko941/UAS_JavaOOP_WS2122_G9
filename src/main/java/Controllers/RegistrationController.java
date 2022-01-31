@@ -19,6 +19,8 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,6 +29,7 @@ import static Controllers.ColorController.changeLabelText;
 import static Controllers.EmailUtils.verificationEmail;
 import static Controllers.ColorController.changeLabelColor;
 import static ExternalConnections.DBUtilities.*;
+import static Controllers.Debugging.printUserInfo;
 
 public class RegistrationController {
     @FXML private Button closeButton;
@@ -58,7 +61,7 @@ public class RegistrationController {
 
     public boolean checkAllTextField()
     {
-        return Arrays.asList(
+        return Stream.of(
                         // check username
                         changeLabelColor(
                                 Validation.checkLength(usernameTextField.getText(), 6, 20),
@@ -113,8 +116,7 @@ public class RegistrationController {
                                 passwordTextField.getText().equals(confirmPasswordTextField.getText()),
                                 confirmPasswordTextField.getText().isBlank(),
                                 confirmPasswordWarning))
-                .stream()
-                .allMatch(val -> val == true);
+                .allMatch(val -> val);
     }
 
     public void registerUserOnAction(ActionEvent event) throws IOException {
@@ -127,20 +129,22 @@ public class RegistrationController {
             // send code to user's email
             verificationEmail(emailTextField.getText(), verification);
             // save user info
-            user = new User( emailTextField.getText(),
+            user = new User(
+                    firstNameTextField.getText(),
+                    lastNameTextField.getText(),
                     usernameTextField.getText(),
                     passwordTextField.getText(),
-                    firstNameTextField.getText(),
-                    lastNameTextField.getText());
+                    emailTextField.getText()
+                    );
             // confirm code
             try {
-                Parent root = FXMLLoader.load(getClass().getResource("/UI/RegistrationEmailConfirmUI.fxml"));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/RegistrationEmailConfirmUI.fxml")));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException e) {
-                System.err.println(String.format("Error: %s", e.getMessage()));
+                System.out.format("Error: %s\n", e.getMessage());
             }
         };
 
@@ -152,7 +156,7 @@ public class RegistrationController {
             System.out.println("Create account successfully");
             insertNewUser(user);
 
-            Parent root = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -170,7 +174,7 @@ public class RegistrationController {
 
     public void SignInButtonOnAction(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

@@ -31,17 +31,10 @@ public class DBConn {
             e.printStackTrace();
         } finally {
             if (connection == null) {
-                System.out.println("Connection failed");
+                System.out.println("Cannot connect database");
             } else {
-                System.out.println("Connection successful");
+                System.out.println("Connect database successfully");
             }
         }
-
-        if (connection == null) {
-            System.out.println("Cannot connect database");
-        } else {
-            System.out.println("Connect database successfully");
-        }
-
     }
 }
