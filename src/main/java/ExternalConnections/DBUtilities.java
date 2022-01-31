@@ -14,6 +14,7 @@ import Models.Priority;
 import Models.Reminder;
 import Models.User;
 
+import javax.xml.transform.Result;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,11 +34,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class DBUtilities {
-
-    // For connection to the database
-    private static final String DBUrl = "jdbc:mysql://bkyhmn5ukri7jfw1kpjs-mysql.services.clever-cloud.com:3306/bkyhmn5ukri7jfw1kpjs";
-    private static final String DBUsername = "upqkamkqerixvpbb";
-    private static final String DBPassword = "dNJnm1pH1qC7uSU2IgrJ";
 
     // Connection to the database
     private static Connection connection = null;
@@ -615,27 +611,34 @@ public class DBUtilities {
      * @return: location - returns the location corresponding to the given eventID
      */
     public static Location fetchLocationFromEvent (final int locationID) {
-            
+        PreparedStatement fetchLocationStatement = null;
+        ResultSet fetchLocationResultSet = null;
+
         try {
-            preparedStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
-            preparedStatement.setInt(1, locationID);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                String street = resultSet.getString(2);
-                String houseNumber = resultSet.getString(3);
-                String zip = resultSet.getString(4);
-                String city = resultSet.getString(5);
-                String country = resultSet.getString(6);
-                String building = resultSet.getString(7);
-                String room = resultSet.getString(8);
+            fetchLocationStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
+            fetchLocationStatement.setInt(1, locationID);
+            fetchLocationResultSet = fetchLocationStatement.executeQuery();
+            if (fetchLocationResultSet.next()) {
+                String street = fetchLocationResultSet.getString(2);
+                String houseNumber = fetchLocationResultSet.getString(3);
+                String zip = fetchLocationResultSet.getString(4);
+                String city = fetchLocationResultSet.getString(5);
+                String country = fetchLocationResultSet.getString(6);
+                String building = fetchLocationResultSet.getString(7);
+                String room = fetchLocationResultSet.getString(8);
 
                 return new Location(street, houseNumber, zip, city, country, building, room);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closePreparedStatement();
-            closeResultSet();
+            try {
+                if (!fetchLocationStatement.isClosed()) {
+                    fetchLocationStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -648,24 +651,32 @@ public class DBUtilities {
      *      given eventID
      */
     public static ArrayList<User> fetchParticipants (final int eventID) {
+        PreparedStatement fetchParticipantsPreparedStatement = null;
+        ResultSet fetchParticipantsResultSet = null;
         ArrayList<User> participants = new ArrayList<>();
 
         try {
-            preparedStatement = connection.prepareStatement(GET_PARTICIPANTS_FROM_EVENT_QUERY);
-            preparedStatement.setInt(1, eventID);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String username = resultSet.getString("username");
-                String email = resultSet.getString("email");
-                int userID = resultSet.getInt("userID");
+            fetchParticipantsPreparedStatement = connection.prepareStatement(GET_PARTICIPANTS_FROM_EVENT_QUERY);
+            fetchParticipantsPreparedStatement.setInt(1, eventID);
+            fetchParticipantsResultSet = fetchParticipantsPreparedStatement.executeQuery();
+            while (fetchParticipantsResultSet.next()) {
+                String username = fetchParticipantsResultSet.getString("username");
+                String email = fetchParticipantsResultSet.getString("email");
+                int userID = fetchParticipantsResultSet.getInt("userID");
 
                 participants.add(new User(username, email, userID));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closePreparedStatement();
-            closeResultSet();
+            try {
+                assert fetchParticipantsPreparedStatement != null;
+                if (!fetchParticipantsPreparedStatement.isClosed()) {
+                    fetchParticipantsPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return participants;
     }
@@ -677,19 +688,21 @@ public class DBUtilities {
      * @return attachments - returns a list with all the files which are attached to an event
      */
     public static ArrayList<File> fetchAttachments (final int eventID) {
+        PreparedStatement fetchAttachmentPreparedStatement = null;
+        ResultSet fetchAttachmentResultSet = null;
         ArrayList<File> attachments = new ArrayList<>();
         FileOutputStream outputStream = null;
         InputStream inputStream = null;
         File file;
 
         try {
-            preparedStatement = connection.prepareStatement(GET_ATTACHMENTS_FROM_EVENT_QUERY);
-            preparedStatement.setInt(1, eventID);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                file = new File(resultSet.getString("fileName"));
+            fetchAttachmentPreparedStatement = connection.prepareStatement(GET_ATTACHMENTS_FROM_EVENT_QUERY);
+            fetchAttachmentPreparedStatement.setInt(1, eventID);
+            fetchAttachmentResultSet = fetchAttachmentPreparedStatement.executeQuery();
+            while (fetchAttachmentResultSet.next()) {
+                file = new File(fetchAttachmentResultSet.getString("fileName"));
                 outputStream = new FileOutputStream(file);
-                inputStream = resultSet.getBinaryStream("file");
+                inputStream = fetchAttachmentResultSet.getBinaryStream("file");
                 byte[] buffer = new byte[1024];
                 while (inputStream.read(buffer) > 0) {
                     outputStream.write(buffer);
@@ -699,13 +712,19 @@ public class DBUtilities {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
-            closePreparedStatement();
-            closeResultSet();
             // closing input and output streams
             try {
-                if (outputStream != null) outputStream.close();
-                if (inputStream != null) inputStream.close();
-            } catch (IOException e) {
+                if (outputStream != null)
+                    outputStream.close();
+
+                if (inputStream != null)
+                    inputStream.close();
+
+                assert fetchAttachmentPreparedStatement != null;
+                if (!fetchAttachmentPreparedStatement.isClosed())
+                    fetchAttachmentPreparedStatement.close();
+
+            } catch (IOException | SQLException e) {
                 e.printStackTrace();
             }
         }

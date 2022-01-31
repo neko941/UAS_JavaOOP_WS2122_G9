@@ -27,12 +27,12 @@ public class DBConn {
             connection = DriverManager.getConnection(jdbcURL, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-        }
-
-        if (connection == null) {
-            System.out.println("Connection failed");
-        } else {
-            System.out.println("Connection successful");
+        } finally {
+            if (connection == null) {
+                System.out.println("Connection failed");
+            } else {
+                System.out.println("Connection successful");
+            }
         }
 
     }
