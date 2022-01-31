@@ -4,17 +4,18 @@ If you want to start the LoginUI please use
 
 ```
 public class Main extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
-        Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
-        stage.setScene(new Scene(parent));
-        stage.show();
-    }
+   @Override
+   public void start(Stage stage) throws IOException {
+       Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
+       stage.setScene(new Scene(parent));
+       stage.show();
+   }
 
-    public static void main(String[] args) {
-        MultiThreading EmailThread = new MultiThreading("Send Email Thread");
-        EmailThread.start();
-        launch();
-    }
+   public static void main(String[] args) {
+       DBUtilities.DBUtilities();
+       MultiThreading EmailThread = new MultiThreading("Send Email Thread");
+       EmailThread.start();
+       launch();
+   }
 }
 ```
