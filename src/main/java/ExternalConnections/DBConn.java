@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static Controllers.ConfigController.getDataFromConfig;
+
 public class DBConn {
     private static Connection connection = null;
 
@@ -16,9 +18,9 @@ public class DBConn {
     }
 
     public static void setConnection() {
-        String jdbcURL = "jdbc:mysql://bkyhmn5ukri7jfw1kpjs-mysql.services.clever-cloud.com:3306/bkyhmn5ukri7jfw1kpjs";
-        String username = "upqkamkqerixvpbb";
-        String password = "dNJnm1pH1qC7uSU2IgrJ";
+        String jdbcURL = getDataFromConfig("database", "url");
+        String username = getDataFromConfig("database", "username");
+        String password = getDataFromConfig("database", "password");
 
         // need jav driver mysql connector
         // https://dev.mysql.com/downloads/connector/j/
@@ -33,6 +35,12 @@ public class DBConn {
             } else {
                 System.out.println("Connection successful");
             }
+        }
+
+        if (connection == null) {
+            System.out.println("Cannot connect database");
+        } else {
+            System.out.println("Connect database successfully");
         }
 
     }

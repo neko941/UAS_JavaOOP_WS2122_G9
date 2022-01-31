@@ -39,7 +39,7 @@ public class ForgetPasswordController {
     @FXML private PasswordField newPasswordTextField;
     @FXML private PasswordField confirmNewPassWordTextField;
 
-    String verification;
+    public static String verification;
 
     public boolean checkAllTextFieldForgotPasswordUI()
     {

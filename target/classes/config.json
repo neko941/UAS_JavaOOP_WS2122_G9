@@ -1,14 +1,21 @@
 {
-    
     "systemEmail":
     {
         "email" : "UAS.JavaOOP.WS2122.G9@gmail.com",
         "password" : "-KFyAH8cp99JYJr"
     },
-    
-    
 
-    "errorColor" : "red",
-    "validColor" : "green",
-    "defaultColor" : "black"
+    "color":
+    {
+        "errorColor" : "red",
+        "validColor" : "green",
+        "defaultColor" : "black"
+    },
+
+    "database":
+    {
+        "url" : "jdbc:mysql://bkyhmn5ukri7jfw1kpjs-mysql.services.clever-cloud.com:3306/bkyhmn5ukri7jfw1kpjs",
+        "username" : "upqkamkqerixvpbb",
+        "password" : "dNJnm1pH1qC7uSU2IgrJ"
+    }
 }
