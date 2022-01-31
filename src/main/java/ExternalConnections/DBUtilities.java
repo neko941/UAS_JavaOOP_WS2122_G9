@@ -61,6 +61,7 @@ public class DBUtilities {
     private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
 
+    private static final String GET_USER_QUERY = "SELECT * FROM User WHERE email = ?";
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
     private static final String GET_LOCATION_FROM_EVENT_QUERY = "SELECT * FROM Location WHERE locationID = ?";
     private static final String GET_ATTACHMENTS_FROM_EVENT_QUERY = "SELECT * FROM Attachments WHERE";
@@ -634,6 +635,41 @@ public class DBUtilities {
     }
 
     //##########################################################################################
+
+    /**
+     * This function is for fetching a user.
+     *
+     * @param: email - email of the user which should be fetched
+     * @return: user with the given email
+     */
+    public static User fetchUser(String email) {
+        User user = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(GET_USER_QUERY);
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getString("email").equals(email)) {
+                    int userID = resultSet.getInt("userID");
+                    String firstname = resultSet.getString("userName");
+                    String lastname = resultSet.getString("lastName");
+                    String username = resultSet.getString("userName");
+
+                    user = new User(userID, firstname, lastname, username, email);
+
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+
+        return user;
+    }
 
     /**
      * Fetches all events from a given user.

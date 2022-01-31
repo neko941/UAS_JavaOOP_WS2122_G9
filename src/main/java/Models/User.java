@@ -21,18 +21,23 @@ public class User
     private int userID;
     private String firstName;
     private String lastName;
-    private String username;
+    private String userName;
     private String password;
     private String email;
 
-    // constructor
-    public User(String email, String username, String password, String firstName, String lastName, int userID)
-    {
+    /**
+     * Constructor for fetching a user from the database
+     * @param userID - ID of user
+     * @param firstName - firstname of user
+     * @param lastName - lastname of user
+     * @param userName - username of user
+     * @param email - email of user
+     */
+    public User (int userID, String firstName, String lastName, String userName, String email) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
-        this.password = password;
+        this.userName = userName;
         this.email = email;
     }
 
@@ -41,14 +46,14 @@ public class User
      *
      * @param firstName - firstname of user
      * @param lastName - lastname of user
-     * @param username - username of user
+     * @param userName - username of user
      * @param password - password of user
      * @param email - email of user
      */
-    public User (String firstName, String lastName, String username, String password, String email) {
+    public User (String firstName, String lastName, String userName, String password, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
+        this.userName = userName;
         this.password = password;
         this.email = email;
     }
@@ -56,19 +61,19 @@ public class User
     /**
      * Constructor for fetching a user as a participant from database and adding it to the participants list
      *
-     * @param username - username of the user
+     * @param userName - username of the user
      * @param email - email of the user
      * @param userID - userID of the user
      */
-    public User (String username, String email, int userID) {
-        this.username = username;
+    public User (String userName, String email, int userID) {
+        this.userName = userName;
         this.email = email;
         this.userID = userID;
     }
 
     // getters and setters
-    public String getUsername() {return username;}
-    public void setUsername(String username) {this.username = username;}
+    public String getUsername() {return userName;}
+    public void setUsername(String userName) {this.userName = userName;}
 
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email;}
