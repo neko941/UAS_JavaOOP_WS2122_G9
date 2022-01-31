@@ -14,13 +14,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import static Controllers.ColorController.changeTextFieldColor;
+import static Controllers.ColorController.changeLabelColor;
 import static Controllers.EmailUtils.verificationEmail;
 
 public class ForgetPasswordController {
@@ -31,7 +30,6 @@ public class ForgetPasswordController {
     @FXML private Label passwordLowerCaseConstraint;
     @FXML private Label passwordSpecialCharacterConstraint;
     @FXML private Label passwordDigitConstraint;
-    @FXML private Button SignUpButton;
     @FXML private Button sendEmailButton;
     @FXML private TextField emailTextField;
     @FXML private TextField otpTextField;
@@ -45,7 +43,7 @@ public class ForgetPasswordController {
     {
         return Arrays.asList(
                         // check email
-                        changeTextFieldColor(   Validation.checkInputEmail(emailTextField.getText()),
+                        changeLabelColor(   Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailWarning))
                 .stream()
@@ -56,23 +54,29 @@ public class ForgetPasswordController {
     {
         return Arrays.asList(
                         // check password
-                        changeTextFieldColor(   Validation.checkLength(newPasswordTextField.getText(), 6, 20),
+                        changeLabelColor(
+                                Validation.checkLength(newPasswordTextField.getText(), 6, 20),
                                 newPasswordTextField.getText().isBlank(),
                                 passwordLengthConstraint),
-                        changeTextFieldColor(   Validation.checkUpper(newPasswordTextField.getText()),
+                        changeLabelColor(
+                                Validation.checkUpper(newPasswordTextField.getText()),
                                 newPasswordTextField.getText().isBlank(),
                                 passwordUpperCaseConstraint),
-                        changeTextFieldColor(   Validation.checkLower(newPasswordTextField.getText()),
+                        changeLabelColor(
+                                Validation.checkLower(newPasswordTextField.getText()),
                                 newPasswordTextField.getText().isBlank(),
                                 passwordLowerCaseConstraint),
-                        changeTextFieldColor(   Validation.checkPunctuation(newPasswordTextField.getText()),
+                        changeLabelColor(
+                                Validation.checkPunctuation(newPasswordTextField.getText()),
                                 newPasswordTextField.getText().isBlank(),
                                 passwordSpecialCharacterConstraint),
-                        changeTextFieldColor(   Validation.checkDigit(newPasswordTextField.getText()),
+                        changeLabelColor(
+                                Validation.checkDigit(newPasswordTextField.getText()),
                                 newPasswordTextField.getText().isBlank(),
                                 passwordDigitConstraint),
                         // check confirm password
-                        changeTextFieldColor(   newPasswordTextField.getText().equals(confirmNewPassWordTextField.getText()),
+                        changeLabelColor(
+                                newPasswordTextField.getText().equals(confirmNewPassWordTextField.getText()),
                                 confirmNewPassWordTextField.getText().isBlank(),
                                 confirmNewPasswordWarning))
                 .stream()
@@ -133,6 +137,4 @@ public class ForgetPasswordController {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
     }
-
-
 }

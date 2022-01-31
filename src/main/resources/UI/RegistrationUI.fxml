@@ -34,7 +34,7 @@
             </font>
         </Label>
         <Label layoutX="75.0" layoutY="56.0" text="Already have an account?" textFill="#b4b4b4" />
-      <Label fx:id="emailAvailableWarning" layoutX="73.0" layoutY="267.0" text="+ email available" />
-      <Label fx:id="usernameAvailableWarning" layoutX="236.0" layoutY="345.0" text="+ username available" />
+      <Label fx:id="emailAvailableWarning" layoutX="73.0" layoutY="267.0" />
+      <Label fx:id="usernameAvailableWarning" layoutX="236.0" layoutY="345.0" />
     </children>
 </AnchorPane>

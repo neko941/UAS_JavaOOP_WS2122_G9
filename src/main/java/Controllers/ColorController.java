@@ -13,7 +13,7 @@ public class ColorController {
     static String validColor = getDataFromConfig("color", "validColor");
     static String defaultColor = getDataFromConfig("color", "defaultColor");
 
-    public static boolean changeTextFieldColor(boolean check, boolean empty, Label label)
+    public static boolean changeLabelColor(boolean check, boolean empty, Label label)
     {
         if(empty)
         {
@@ -26,6 +26,23 @@ public class ColorController {
             }
             else
             {
+                label.setStyle("-fx-text-fill:" + errorColor);
+            }
+        }
+        return check;
+    }
+
+    public static boolean changeLabelText(boolean check, boolean empty, Label label, String string)
+    {
+        if(empty)
+        {
+            label.setText("");
+        }
+        else
+        {
+            if (!check)
+            {
+                label.setText(string);
                 label.setStyle("-fx-text-fill:" + errorColor);
             }
         }

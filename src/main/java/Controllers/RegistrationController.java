@@ -23,8 +23,9 @@ import java.util.Arrays;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import static Controllers.ColorController.changeLabelText;
 import static Controllers.EmailUtils.verificationEmail;
-import static Controllers.ColorController.changeTextFieldColor;
+import static Controllers.ColorController.changeLabelColor;
 import static ExternalConnections.DBUtilities.*;
 
 public class RegistrationController {
@@ -57,56 +58,58 @@ public class RegistrationController {
 
     public boolean checkAllTextField()
     {
-        return Arrays   .asList(
+        return Arrays.asList(
                         // check username
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkLength(usernameTextField.getText(), 6, 20),
                                 usernameTextField.getText().isBlank(),
                                 usernameLengthConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkNoSpace(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameSpaceConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkNoSpecialCharacter(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameSpecialCharacterConstraint),
-                        changeTextFieldColor(
+                        changeLabelText(
                                 isUsernameAvailable(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
-                                usernameAvailableWarning),
+                                usernameAvailableWarning,
+                                "Username already exists"),
                         // check email
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailWarning),
-                        changeTextFieldColor(
+                        changeLabelText(
                                 isEmailAvailable(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
-                                emailAvailableWarning),
+                                emailAvailableWarning,
+                                "Email already exists"),
                         // check password
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkLength(passwordTextField.getText(), 6, 20),
                                 passwordTextField.getText().isBlank(),
                                 passwordLengthConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkUpper(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordUpperCaseConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkLower(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordLowerCaseConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkPunctuation(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordSpecialCharacterConstraint),
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 Validation.checkDigit(passwordTextField.getText()),
                                 passwordTextField.getText().isBlank(),
                                 passwordDigitConstraint),
                         // check confirm password
-                        changeTextFieldColor(
+                        changeLabelColor(
                                 passwordTextField.getText().equals(confirmPasswordTextField.getText()),
                                 confirmPasswordTextField.getText().isBlank(),
                                 confirmPasswordWarning))
