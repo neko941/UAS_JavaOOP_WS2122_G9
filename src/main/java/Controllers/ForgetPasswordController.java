@@ -93,7 +93,7 @@ public class ForgetPasswordController {
     }
 
     public void continueButtonOnAction(ActionEvent event) {
-        if (((String)otpTextField.getText()).equals(verification))
+        if (verification.equals(otpTextField.getText()))
         {
             // confirm code
             try {
