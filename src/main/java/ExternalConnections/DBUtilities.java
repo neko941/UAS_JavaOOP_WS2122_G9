@@ -45,7 +45,7 @@ public class DBUtilities {
     private static final String INSERT_NEW_EVENT_QUERY = "INSERT INTO Event (eventName, eventDate, eventTime, duration, location, reminder, priority) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_LOCATION_QUERY = "INSERT INTO Location (street, houseNumber, zip, city, country, building, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_ATTACHMENT_QUERY = "INSERT INTO Attachment (fileName, file, fk_eventID) VALUES (?, ?, ?)";
-    private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (userID, eventID) VALUES (?, ?)";
+    private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (eventID, userID) VALUES (?, ?)";
 
     private static final String EDIT_USER_QUERY = "UPDATE User SET firstname = ?, lastname = ?, username = ?, email = ? WHERE userID = ?";
     private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? WHERE eventID = ?";
@@ -218,7 +218,7 @@ public class DBUtilities {
             if (resultSet.next()) {
                 key = resultSet.getInt(1);
             } else {
-                throw new SQLException("Could not get key");
+                throw new SQLException("No eventID received");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -226,6 +226,7 @@ public class DBUtilities {
             closePreparedStatement();
             closeResultSet();
         }
+
         return key;
     }
 
@@ -236,22 +237,23 @@ public class DBUtilities {
      * @param: location - the location which should be saved in the database
      * @return: -1 on unsuccessful insertion
      */
-    public static int insertNewLocation (Location location) {
+    private static int insertNewLocation (Location location) {
+        PreparedStatement insertLocationPreparedStatement = null;
         int key = -1;
             
         try {
-            preparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, location.getStreet());
-            preparedStatement.setString(2, location.getStreetNumber());
-            preparedStatement.setString(3, location.getZip());
-            preparedStatement.setString(4, location.getCity());
-            preparedStatement.setString(5, location.getCountry());
-            preparedStatement.setString(6, location.getBuilding());
-            preparedStatement.setString(7, location.getRoom());
-            preparedStatement.executeUpdate();
+            insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
+            insertLocationPreparedStatement.setString(1, location.getStreet());
+            insertLocationPreparedStatement.setString(2, location.getStreetNumber());
+            insertLocationPreparedStatement.setString(3, location.getZip());
+            insertLocationPreparedStatement.setString(4, location.getCity());
+            insertLocationPreparedStatement.setString(5, location.getCountry());
+            insertLocationPreparedStatement.setString(6, location.getBuilding());
+            insertLocationPreparedStatement.setString(7, location.getRoom());
+            insertLocationPreparedStatement.executeUpdate();
 
             // get the ID of the location from the database
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = insertLocationPreparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
                 key = resultSet.getInt(1);
             } else {
@@ -259,10 +261,8 @@ public class DBUtilities {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
         }
+
         return key;
     }
 
@@ -323,8 +323,8 @@ public class DBUtilities {
             
         try {
             preparedStatement = connection.prepareStatement(MAKE_USER_EVENT_TABLE_QUERY);
-            preparedStatement.setInt(1, userID);
-            preparedStatement.setInt(2, eventID);
+            preparedStatement.setInt(1, eventID);
+            preparedStatement.setInt(2, userID);
             preparedStatement.executeUpdate();
 
             created = true;

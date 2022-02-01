@@ -15,7 +15,7 @@ public class Location {
     // street of a location
     private String street;
     // house Number of a location
-    private String streetNumber;
+    private String houseNumber;
     // zip of a location
     private String zip;
     // city of a location
@@ -31,16 +31,16 @@ public class Location {
      * Constructor for creating a location.
      *
      * @param street - street of a location
-     * @param streetNumber - house Number of a location
+     * @param houseNumber - house Number of a location
      * @param zip - zip of a location
      * @param city - city of a location
      * @param country - country of a location
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(String street, String streetNumber, String zip, String city, String country, String building, String room) {
+    public Location(String street, String houseNumber, String zip, String city, String country, String building, String room) {
         this.street = street;
-        this.streetNumber = streetNumber;
+        this.houseNumber = houseNumber;
         this.zip = zip;
         this.city = city;
         this.country = country;
@@ -53,17 +53,17 @@ public class Location {
      *
      * @param locationID - ID of the location
      * @param street - street of a location
-     * @param streetNumber - house Number of a location
+     * @param houseNumber - house Number of a location
      * @param zip - zip of a location
      * @param city - city of a location
      * @param country - country of a location
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(int locationID, String street, String streetNumber, String zip, String city, String country, String building, String room) {
+    public Location(int locationID, String street, String houseNumber, String zip, String city, String country, String building, String room) {
         this.locationID = locationID;
         this.street = street;
-        this.streetNumber = streetNumber;
+        this.houseNumber = houseNumber;
         this.zip = zip;
         this.city = city;
         this.country = country;
@@ -83,8 +83,8 @@ public class Location {
         this.street = street;
     }
 
-    public void setStreetNumber(String streetNumber) {
-        this.streetNumber = streetNumber;
+    public void setStreetNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
     }
 
     public void setZip(String zip) {
@@ -120,7 +120,7 @@ public class Location {
     }
 
     public String getStreetNumber() {
-        return streetNumber;
+        return houseNumber;
     }
 
     public String getZip() {
