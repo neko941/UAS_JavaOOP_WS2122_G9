@@ -259,9 +259,6 @@ public class DBUtilities {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
         }
         return key;
     }
