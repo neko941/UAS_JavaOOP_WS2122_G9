@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<?import javafx.collections.FXCollections?>
+
+
 <?import com.calendarfx.view.CalendarView?>
-
-
-<CalendarView xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController" />
+<?import javafx.scene.text.Font?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+            prefWidth="550.0" style="-fx-background-color: #f2f2f2;"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            >
+    <Label layoutX="630.0" layoutY="13.0" text="User: " textFill="GREY">
+        <font>
+            <Font size="15.0" />
+        </font>
+    </Label>
+    <Label fx:id="userlable" layoutX="665.0" layoutY="13.0" text="User: " textFill="GREY">
+        <font>
+            <Font size="15.0" />
+        </font>
+    </Label>
+    <CalendarView fx:id="calendarView" prefHeight="550.0" prefWidth="984.0"  />
+    <Button fx:id="createButton" layoutX="40.0" layoutY="575.0" onAction="#CreateButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Create New Event" textFill="#FFFFFF">
+    <font>
+        <Font size="16.0" />
+    </font>
+    </Button>
+    <Button fx:id="editButton" layoutX="310.0" layoutY="575.0" onAction="#EditButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="View Event" textFill="#FFFFFF">
+    <font>
+        <Font size="16.0" />
+    </font>
+    </Button>
+    <Button fx:id="exportButton" layoutX="580.0" layoutY="575.0" onAction="#ExportButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Export" textFill="#FFFFFF">
+        <font>
+            <Font size="16.0" />
+        </font>
+    </Button>
+    <Button fx:id="logoutButton" layoutX="850.0" layoutY="575.0" onAction="#LogoutButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Logout" textFill="#FFFFFF">
+        <font>
+            <Font size="16.0" />
+        </font>
+    </Button>
+</AnchorPane>

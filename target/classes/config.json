@@ -7,8 +7,10 @@
     },
     
     
-
-    "errorColor" : "red",
-    "validColor" : "green",
-    "defaultColor" : "black"
+    "color":
+    {
+        "errorColor" : "red",
+        "validColor" : "green",
+        "defaultColor" : "black"
+    }
 }

@@ -17,23 +17,28 @@ import static ExternalConnections.DBUtilities.*;
 
 
 public class EventController {
-    public static Event CreateEvent(Event myEvent){
-        int eventId = insertNewEvent(myEvent);
-        myEvent.setEventID(eventId);
-        for (int i = 0; i < myEvent.getParticipants().size(); i++){
-            createUser_EventBridge(myEvent.getParticipants().get(i).getId(), myEvent.getEventID());
+    public static Event CreateEvent(Event selectedEvent){
+        int eventId = insertNewEvent(selectedEvent);
+        selectedEvent.setEventID(eventId);
+        ArrayList<User> participants = selectedEvent.getParticipants();
+        System.out.println(participants.toString());
+        System.out.println(participants.get(0).getUsername());
+        System.out.println(participants.get(1).getUsername());
+        for (int i = 0; i < participants.size(); i++){
+            createUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
         }
-        System.out.println("Event " + myEvent.getEventName() + " created.");
-        return myEvent;
+        System.out.println("Event " + selectedEvent.getEventName() + " created.");
+        return selectedEvent;
     }
-    public static Event ChangeEvent(Event selectedEvent,
+    public static Event EditEvent(Event selectedEvent,
                              String eventName,
                              LocalDate date,
                              LocalTime time,
                              int duration,
-                             ArrayList<User> participants,
-                             ArrayList<File> attachments,
                              Location location,
+                             ArrayList<User> participants,
+                             String[] emails,
+                             ArrayList<File> attachments,
                              Reminder reminder,
                              Priority priority) {
 
@@ -45,6 +50,8 @@ public class EventController {
         selectedEvent.setAttachments(attachments);
         selectedEvent.setLocation(location);
         selectedEvent.setReminder(reminder);
+        //TODO: remove this
+        selectedEvent.setEmails(emails);
         selectedEvent.setPriority(priority);
 
 
@@ -62,59 +69,4 @@ public class EventController {
         return 0;
     }
 
-    public static boolean CheckForChange(String oldString, String newString){
-        if (oldString != newString){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(int oldInt, int newInt){
-        if (oldInt != newInt){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(LocalDate oldDate, LocalDate newDate){
-        if (oldDate != newDate){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(LocalTime oldTime, LocalTime newTime){
-        if (oldTime != newTime){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(ArrayList<?> oldArray, ArrayList<?> newArray){
-        if (oldArray != newArray){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(Location oldLocation, Location newLocation){
-        if (oldLocation != newLocation){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(Reminder oldReminder, Reminder newReminder){
-        if (oldReminder != newReminder){
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean CheckForChange(Priority oldPriority, Priority newPriority){
-        if (oldPriority != newPriority){
-            return true;
-        }
-        return false;
-    }
 }

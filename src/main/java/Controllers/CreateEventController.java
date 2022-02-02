@@ -11,11 +11,13 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static Controllers.EventController.CreateEvent;
+import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchUser;
 import static java.lang.Integer.parseInt;
 
@@ -27,20 +29,23 @@ public class CreateEventController extends Application {
     @FXML private TextField eventDuration;
     @FXML private TextField eventLocation;
     @FXML private TextField participants;
-    @FXML private ChoiceBox priority = new ChoiceBox<>();
-    @FXML private ChoiceBox reminder = new ChoiceBox<>();
+    @FXML private ChoiceBox priority;
+    @FXML private ChoiceBox reminder;
     @FXML private Button createButton;
     @FXML private Button cancelButton;
+    @FXML private Label userlable;
     private User currentUser;
-    //TODO: remove this
-    Location myLocation = new Location("street", 25, "zip", "city", "country", 3, 405);
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        DBUtilities();
         URL resourceUrl = getClass().getResource("/UI/CreateEventUI.fxml");
-        Parent parent = FXMLLoader.load(resourceUrl);
+        FXMLLoader loader = new FXMLLoader(resourceUrl);
+        loader.setController(this);
+        Parent root = loader.load();
         Stage stage = new Stage();
-        stage.setScene(new Scene(parent));
+        stage.setScene(new Scene(root));
+        userlable.setText(currentUser.getUsername());
         stage.show();
     }
 
@@ -57,39 +62,40 @@ public class CreateEventController extends Application {
         LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
             parseInt(eventTime.getText().split(":")[1]));
         parseInt(eventDuration.getText());
-
+        //TODO: add field validation
         if (true) {
-//            try {
-                ArrayList<User> participants = new ArrayList<User>();
-                participants.add(currentUser);
+            ArrayList<User> mappedParticipants = new ArrayList<User>();
+            mappedParticipants.add(currentUser);
                 for (int i = 0; i < emails.length; i++){
                     User myUser = fetchUser(emails[i]);
-                    participants.add(myUser);
+                    mappedParticipants.add(myUser);
                 }
-
+                String[] locationData = eventLocation.getText().split(",");
                 Event myEvent = new Event(eventName.getText(),
                         eventDate.getValue(),
                         LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
                                 parseInt(eventTime.getText().split(":")[1])),
                         parseInt(eventDuration.getText()),
-                        myLocation,
-                        participants,
+                        new Location(locationData[0].replaceAll("\\s",""),
+                                parseInt(locationData[1].replaceAll("\\s","")),
+                                locationData[2].replaceAll("\\s",""),
+                                locationData[3].replaceAll("\\s",""),
+                                locationData[4].replaceAll("\\s",""),
+                                0,
+                                0),
+                        mappedParticipants,
                         emails,
                         null,
                         selectedReminder,
                         selectedPriority);
                 CreateEvent(myEvent);
-                Stage stage = (Stage) cancelButton.getScene().getWindow();
+                Stage stage = (Stage) createButton.getScene().getWindow();
                 stage.close();
 
-//            }
-//            catch (IOException e) {
-//                System.err.println(String.format("Error: %s", e.getMessage()));
-//            }
         };
     }
 
-    private Priority mapPriority(String selection) {
+    public Priority mapPriority(String selection) {
         switch(priority.getValue().toString()){
             case "LOW":
                 return Priority.LOW;
@@ -101,7 +107,7 @@ public class CreateEventController extends Application {
         return Priority.HIGH;
     }
 
-    private Reminder mapReminder(String selection) {
+    public Reminder mapReminder(String selection) {
         switch(priority.getValue().toString()){
             case "1 week":
                 return Reminder.ONE_WEEK;

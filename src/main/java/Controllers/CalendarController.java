@@ -17,10 +17,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,9 +38,10 @@ import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
 
 public class CalendarController extends Application {
-    public DetailedWeekView timetable_week  = new DetailedWeekView();
-    public Button createButton = new Button("New Appointment");
-    public Button editButton = new Button("Edit Appointment");
+    @FXML private Button createButton;
+    @FXML private Button editButton;
+    @FXML private CalendarView calendarView;
+    @FXML private Label userlable;
     private User currentUser;
 
     public void setCurrentUser(User currentUser){
@@ -47,14 +50,10 @@ public class CalendarController extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        timetable_week.setStartTime(LocalTime.of(9,0));
-        timetable_week.setEndTime(LocalTime.of(17,0));
-        VBox root = new VBox(5);
-        root.setPadding(new Insets(10));
-        root.setAlignment(Pos.CENTER);
-
-        CalendarView calendarView = new CalendarView();
+        URL resourceUrl = getClass().getResource("/UI/CalendarUI.fxml");
+        FXMLLoader loader = new FXMLLoader(resourceUrl);
+        loader.setController(this);
+        Parent root = loader.load();
 
         CalendarSource myCalendarSource = new CalendarSource("Priority:");
 
@@ -100,27 +99,11 @@ public class CalendarController extends Application {
             }
         };
 
-        createButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                EntryEventHandler(e);
-            }
-        });
-
-        editButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                EditEventHandler(e);
-            }
-        });
-
-        root.getChildren().add(calendarView);
-        root.getChildren().add(createButton);
-        root.getChildren().add(editButton);
-
         updateTimeThread.setPriority(Thread.MIN_PRIORITY);
         updateTimeThread.setDaemon(true);
         updateTimeThread.start();
-
         Scene scene = new Scene(root);
+        userlable.setText(currentUser.getUsername());
         primaryStage.setTitle("Calendar");
         primaryStage.setScene(scene);
         primaryStage.setWidth(1000);
@@ -155,23 +138,45 @@ public class CalendarController extends Application {
         }
     }
 
-    private void EntryEventHandler(ActionEvent event) {
+    @FXML
+    private void CreateButtonOnAction(ActionEvent event) {
         try {
-//            CreateEventController createController = new CreateEventController();
-//            createController.setCurrentUser(currentUser);
+            CreateEventController createController = new CreateEventController();
+            createController.setCurrentUser(currentUser);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            createController.start(stage);
+            createController.start(stage);
         } catch (Exception e) {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
     }
 
-    private void EditEventHandler(ActionEvent event) {
+    @FXML
+    private void EditButtonOnAction(ActionEvent event) {
         try {
             EditDeleteEventController editController = new EditDeleteEventController();
             editController.setCurrentUser(currentUser);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             editController.start(stage);
+        } catch (Exception e) {
+            System.err.println(String.format("Error: %s", e.getMessage()));
+        }
+    }
+
+    @FXML
+    private void ExportButtonOnAction(ActionEvent event) {
+    //TODO: add export function here.
+    }
+
+    @FXML
+    private void LogoutButtonOnAction(ActionEvent event) {
+        try {
+            currentUser = null;
+            Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(parent));
+            stage.setWidth(550);
+            stage.setHeight(580);
+            stage.show();
         } catch (Exception e) {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }

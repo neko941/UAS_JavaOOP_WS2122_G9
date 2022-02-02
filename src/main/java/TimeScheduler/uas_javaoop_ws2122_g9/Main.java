@@ -44,9 +44,7 @@ import static ExternalConnections.DBUtilities.*;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        User me = new User("matheus","mapa", "matheus_mapa","pass", "matheus_mapa");
         DBUtilities();
-        insertNewUser(me);
         Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
         stage.setScene(new Scene(parent));
         stage.show();

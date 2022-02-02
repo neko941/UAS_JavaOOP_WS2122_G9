@@ -53,13 +53,13 @@ public class LoginController {
         if (EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false) {
             if (DBUtilities.verifyUser(EmailLogin.getText(), PasswordLogin.getText())) {
                 User currentUser = DBUtilities.fetchUser(EmailLogin.getText());
-
+                System.out.println("Logged in as " + currentUser.getUsername());
                 LoginMessageLabel.setText("Congratulations!");
                 try {
-                    CalendarController calController = new CalendarController();
-                    calController.setCurrentUser(currentUser);
+                    CalendarController editController = new CalendarController();
+                    editController.setCurrentUser(currentUser);
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    calController.start(stage);
+                    editController.start(stage);
                 } catch (IOException e) {
                     System.err.println(String.format("Error: %s", e.getMessage()));
                 } catch (Exception e) {
