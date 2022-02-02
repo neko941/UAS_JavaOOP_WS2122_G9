@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.calendarfx.view.CalendarView?>
+<?import com.calendarfx.view.DetailedWeekView?>
 
 
-<CalendarView xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController" />
+<DetailedWeekView id="timetable_week" adjustToFirstDayOfWeek="false" hourHeight="100.0" hourHeightCompressed="100.0" numberOfDays="5" prefHeight="474.0" prefWidth="810.0" showAllDayView="false" visibleHours="4" />

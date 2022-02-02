@@ -37,62 +37,17 @@ public class EventController {
                              Reminder reminder,
                              Priority priority) {
 
-        ArrayList<String> changedParams = new ArrayList<>();
+        selectedEvent.setEventName(eventName);
+        selectedEvent.setDate(date);
+        selectedEvent.setTime(time);
+        selectedEvent.setDuration(duration);
+        selectedEvent.setParticipants(participants);
+        selectedEvent.setAttachments(attachments);
+        selectedEvent.setLocation(location);
+        selectedEvent.setReminder(reminder);
+        selectedEvent.setPriority(priority);
 
-        if (CheckForChange(selectedEvent.getEventName(), eventName)) {
-            selectedEvent.setEventName(eventName);
-            changedParams.add("Event Name");
-        }
 
-        if (CheckForChange(selectedEvent.getDate(), date)) {
-            selectedEvent.setDate(date);
-            changedParams.add("Date");
-        }
-
-        if (CheckForChange(selectedEvent.getTime(), time)) {
-            selectedEvent.setTime(time);
-            changedParams.add("Time");
-        }
-
-        if (CheckForChange(selectedEvent.getDuration(), duration)) {
-            selectedEvent.setDuration(duration);
-            changedParams.add("Duration");
-        }
-
-        if (CheckForChange(selectedEvent.getParticipants(), participants)) {
-            selectedEvent.setParticipants(participants);
-            changedParams.add("Participants");
-        }
-
-        if (CheckForChange(selectedEvent.getAttachments(), attachments)) {
-            selectedEvent.setAttachments(attachments);
-            changedParams.add("Attachments");
-        }
-
-        if (CheckForChange(selectedEvent.getLocation(), location)) {
-            selectedEvent.setLocation(location);
-            changedParams.add("Location");
-        }
-
-        if (CheckForChange(selectedEvent.getReminder(), reminder)) {
-            selectedEvent.setReminder(reminder);
-            changedParams.add("Reminder");
-        }
-
-        if (CheckForChange(selectedEvent.getPriority(), priority)) {
-            selectedEvent.setPriority(priority);
-            changedParams.add("Priority");
-        }
-
-        if (changedParams.isEmpty()){
-            System.out.println("No changes detected.");
-        }
-        else{
-            System.out.println("The following parameters of event " + selectedEvent.getEventID() + "were changed: ");
-            for (int i = 0; i<= changedParams.size() - 1; i++){
-                System.out.println(changedParams.get(i) + "\n");
-            }
-        }
         editEvent(selectedEvent);
         return selectedEvent;
     }

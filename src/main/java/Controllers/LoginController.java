@@ -53,20 +53,17 @@ public class LoginController {
         if (EmailLogin.getText().isBlank() == false && PasswordLogin.getText().isBlank() == false) {
             if (DBUtilities.verifyUser(EmailLogin.getText(), PasswordLogin.getText())) {
                 User currentUser = DBUtilities.fetchUser(EmailLogin.getText());
-                LoginMessageLabel.setText("Congratulations!");
 
+                LoginMessageLabel.setText("Congratulations!");
                 try {
-                    FXMLLoader loader = FXMLLoader.load(getClass().getClassLoader(). getResource("/UI/CalendarUI.fxml"));
                     CalendarController calController = new CalendarController();
                     calController.setCurrentUser(currentUser);
-                    loader.setController(calController);
-                    Parent root = loader.load();
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    Scene scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.show();
+                    calController.start(stage);
                 } catch (IOException e) {
                     System.err.println(String.format("Error: %s", e.getMessage()));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 LoginMessageLabel.setText("Invalid Login. Please try again");
