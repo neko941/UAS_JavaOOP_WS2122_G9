@@ -17,13 +17,13 @@ public class Event {
     // ID of the event
     private int eventID;
     // name of the event
-    private String eventName = "";
+    private String eventName;
     // date of the event
-    private LocalDate date = LocalDate.parse("");
+    private LocalDate date;
     // starting time of the event
-    private LocalTime time = LocalTime.parse("");
+    private LocalTime time;
     // duration of the event
-    private int duration = -1;
+    private int duration;
     // participants participating
     private ArrayList<User> participants;
     // attachments needed for the event
@@ -31,7 +31,7 @@ public class Event {
     // location of the event
     private Location location;
     // reminder for the event
-    private Reminder e_reminder = Reminder.valueOf("");
+    private Reminder e_reminder;
     // the priority of the event
     private Priority e_priority;
 
@@ -87,14 +87,14 @@ public class Event {
         this.e_priority = priority;
     }
 
-    public void printInfo()
-    {
-        System.out.format("Event Name: %s\n", this.getEventName());
-        System.out.format("Date: %s\n", this.getDate());
-        System.out.format("Time: %s\n", this.getTime());
-        System.out.format("Duration: %d\n", this.getDuration());
-        System.out.format("Reminder: %s\n\n", this.getReminder());
-    }
+//    public void printInfo()
+//    {
+//        System.out.format("Event Name: %s\n", this.getEventName());
+//        System.out.format("Date: %s\n", this.getDate());
+//        System.out.format("Time: %s\n", this.getTime());
+//        System.out.format("Duration: %d\n", this.getDuration());
+//        System.out.format("Reminder: %s\n\n", this.getReminder());
+//    }
 
     public void setEventID(int eventID) {
         this.eventID = eventID;
