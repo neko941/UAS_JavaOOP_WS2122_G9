@@ -89,7 +89,7 @@ public class EmailUtils
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        printNotificationInConsole(String.format("Verification code has sent to email \"%s\"", email));
+        printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
    public static void reminderEmail(Event event)
