@@ -64,18 +64,6 @@ public class EditDeleteEventController extends Application {
     }
 
     @FXML
-    public void LoadEventsOnAction(ActionEvent event) {
-        ArrayList<Event> myEvents = fetchAllEventsFromUser(currentUser);
-        for (int i = 0; i < myEvents.size(); i++) {
-            Event thisEvent = myEvents.get(i);
-            String id = String.valueOf(thisEvent.getEventID());
-            String title = thisEvent.getEventName();
-            String dateTime = LocalDateTime.of(thisEvent.getDate(), thisEvent.getTime()).toString();
-            eventChoice.getItems().add(id + ": " + title + " " + dateTime);
-        }
-    }
-
-    @FXML
     public void selectEventOnAction(ActionEvent event) {
         int eventId = parseInt(eventChoice.getValue().toString().split(":")[0]);
         Event selectedEvent = fetchEventsFromID(eventId);
