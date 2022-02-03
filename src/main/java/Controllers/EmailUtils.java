@@ -10,7 +10,6 @@ package Controllers;
 import Models.Event;
 
 import javax.mail.*;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
@@ -23,12 +22,13 @@ public class EmailUtils
 {
     static String systemEmail = getDataFromConfig("systemEmail", "email");
     static String systemEmailPassword = getDataFromConfig("systemEmail", "password");
-    static Session session;
+    static Session session = getSession();
 
     /**
      * Get the working session of the mail API
+     * @return session
      */
-    public static void getSession()
+    public static Session getSession()
     {
         // your host email smtp server details
         Properties pr = new Properties();
@@ -49,21 +49,18 @@ public class EmailUtils
                     }
                 }
         );
+        return session;
     }
 
     /**
      *
      * @param email program will send verification code to this email
      * @param code the verification code
-     * @exception MessagingException This exception is thrown when the connect method on a Store or Transport object fails due to an authentication failure
      */
     public static void verificationEmail(String email, String code)
     {
         try
         {
-            // get session
-            getSession();
-
             //set email message details
             Message mess = new MimeMessage(session);
 

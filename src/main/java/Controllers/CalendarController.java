@@ -1,3 +1,6 @@
+/**
+ * @author neko941
+ */
 package Controllers;
 
 import com.calendarfx.model.CalendarSource;
@@ -11,6 +14,7 @@ import java.time.LocalTime;
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
 
+@SuppressWarnings("ALL")
 public class CalendarController extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
