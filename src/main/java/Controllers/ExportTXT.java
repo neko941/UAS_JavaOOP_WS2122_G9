@@ -14,14 +14,19 @@ import java.io.*;
 // import java.time.LocalDate;
 
 /**
- * An advanced Java program that exports data from any table to CSV file.
+ * @author Trung
  *
+ * An advanced Java program that exports data from any table to CSV file.
  */
 public class ExportTXT {
-    Connection dbconn = DBConn.getConnection();
+    Connection connection = DBConn.getConnection();
 
     private BufferedWriter fileWriter;
 
+    /**
+     *
+     * @param table
+     */
     public void export(String table) {
 
         String csvFileName = getFileName(table.concat("_Export"));
@@ -29,7 +34,7 @@ public class ExportTXT {
         try {
             String sql = "SELECT * FROM ".concat(table);
 
-            Statement statement = dbconn.createStatement();
+            Statement statement = connection.createStatement();
 
             ResultSet result = statement.executeQuery(sql);
 
@@ -66,7 +71,7 @@ public class ExportTXT {
             fileWriter.close();
 
         } catch (SQLException e) {
-            System.out.println("Datababse error:");
+            System.out.println("Database error:");
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("File IO error:");

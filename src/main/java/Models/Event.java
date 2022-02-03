@@ -1,5 +1,5 @@
 /**
- * Author: neko941, jatenderjossan
+ * @author neko941, jatenderjossan
  * Created on: Dec. 28, 2021
  *
  * This class provides model for an event
@@ -17,13 +17,13 @@ public class Event {
     // ID of the event
     private int eventID;
     // name of the event
-    private String eventName;
+    private String eventName = "";
     // date of the event
-    private LocalDate date;
+    private LocalDate date = LocalDate.parse("");
     // starting time of the event
-    private LocalTime time;
+    private LocalTime time = LocalTime.parse("");
     // duration of the event
-    private int duration;
+    private int duration = -1;
     // participants participating
     private ArrayList<User> participants;
     // attachments needed for the event
@@ -31,13 +31,13 @@ public class Event {
     // location of the event
     private Location location;
     // reminder for the event
-    private Reminder e_reminder;
+    private Reminder e_reminder = Reminder.valueOf("");
     // the priority of the event
     private Priority e_priority;
 
     /**
      * Constructor for creating an event
-     *  @param eventName - name of the event
+     * @param eventName - name of the event
      * @param date - date of the event
      * @param time - starting time of the event
      * @param duration - duration of the event in minutes
@@ -85,6 +85,15 @@ public class Event {
         this.location = location;
         this.e_reminder = reminder;
         this.e_priority = priority;
+    }
+
+    public void printInfo()
+    {
+        System.out.format("Event Name: %s\n", this.getEventName());
+        System.out.format("Date: %s\n", this.getDate());
+        System.out.format("Time: %s\n", this.getTime());
+        System.out.format("Duration: %d\n", this.getDuration());
+        System.out.format("Reminder: %s\n\n", this.getReminder());
     }
 
     public void setEventID(int eventID) {

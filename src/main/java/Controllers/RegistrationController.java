@@ -26,10 +26,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import static Controllers.ColorController.changeLabelText;
+import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.verificationEmail;
 import static Controllers.ColorController.changeLabelColor;
 import static ExternalConnections.DBUtilities.*;
-import static Controllers.Debugging.printUserInfo;
 
 public class RegistrationController {
     @FXML private Button closeButton;
@@ -79,6 +79,7 @@ public class RegistrationController {
                                 isUsernameAvailable(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameAvailableWarning,
+                                "",
                                 "Username already exists"),
                         // check email
                         changeLabelColor(
@@ -89,6 +90,7 @@ public class RegistrationController {
                                 isEmailAvailable(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailAvailableWarning,
+                                "",
                                 "Email already exists"),
                         // check password
                         changeLabelColor(
@@ -125,7 +127,7 @@ public class RegistrationController {
         {
             // create verification code
             verification = Security.generateRandomNumber();
-            System.out.println(verification);
+            printNotificationInConsole(String.format("Verification code generated \t%s", verification));
             // send code to user's email
             verificationEmail(emailTextField.getText(), verification);
             // save user info

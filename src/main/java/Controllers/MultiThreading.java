@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * @author  neko941
  * Created on: 2021-12-27
  *
  * This class is used to send event reminder on background
@@ -8,17 +8,20 @@
 
 package Controllers;
 
+import static Controllers.Debugging.printNotificationInConsole;
+
+@SuppressWarnings("ALL")
 public class MultiThreading implements Runnable{
     private Thread t;
-    private String threadName;
+    private final String threadName;
 
     public MultiThreading(String name) {
         threadName = name;
-        System.out.println("Creating " +  threadName );
+        printNotificationInConsole(String.format("Creating new thred \"%s\"", threadName));
     }
 
     public void run() {
-        System.out.println("Running " +  threadName );
+        printNotificationInConsole(String.format("Running thread \"%s\"", threadName));
 
         try {
             while(true) {
@@ -28,15 +31,14 @@ public class MultiThreading implements Runnable{
 
                 // Let the thread sleep for 30 seconds
                 Thread.sleep(1000 * 30);
-
             }
         } catch (InterruptedException e) {
-            System.out.println("Thread " +  threadName + " interrupted.");
+            printNotificationInConsole(String.format("Thread \"%s\" interrupted", threadName));
         }
     }
 
     public void start () {
-        System.out.println("Starting " +  threadName );
+        printNotificationInConsole(String.format("Starting thread \"%s\"", threadName));
         if (t == null) {
             t = new Thread (this, threadName);
             t.start ();

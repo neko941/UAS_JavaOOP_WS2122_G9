@@ -1,7 +1,6 @@
 /**
- * Author: neko941, jatenderjossan
+ * @author neko941, jatenderjossan
  * Created on: 2021-12-13
- *
  * This class provides model for a user
  */
 
@@ -9,15 +8,6 @@ package Models;
 
 public class User
 {
-    /**
-     * @param email: unique
-     * @param username: unique
-     * @param password
-     * @param firstName
-     * @param lastName
-     * @param userID: unique
-     * @param antiPhishing: a string that user set
-     */
     private int userID;
     private String firstName;
     private String lastName;
@@ -27,6 +17,7 @@ public class User
 
     /**
      * Constructor for fetching a user from the database
+     * 
      * @param userID - ID of user
      * @param firstName - firstname of user
      * @param lastName - lastname of user

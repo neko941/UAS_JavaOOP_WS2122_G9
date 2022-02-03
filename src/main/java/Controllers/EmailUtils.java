@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * @author neko941
  * Created on: 2021-12-13
  *
  * This class provides function to send an email
@@ -10,12 +10,14 @@ package Controllers;
 import Models.Event;
 
 import javax.mail.*;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.Properties;
 
 import static Controllers.ConfigController.getDataFromConfig;
+import static Controllers.Debugging.printNotificationInConsole;
 
 public class EmailUtils
 {
@@ -23,6 +25,9 @@ public class EmailUtils
     static String systemEmailPassword = getDataFromConfig("systemEmail", "password");
     static Session session;
 
+    /**
+     * Get the working session of the mail API
+     */
     public static void getSession()
     {
         // your host email smtp server details
@@ -45,7 +50,13 @@ public class EmailUtils
                 }
         );
     }
-    //send email to the user email
+
+    /**
+     *
+     * @param email program will send verification code to this email
+     * @param code the verification code
+     * @exception MessagingException This exception is thrown when the connect method on a Store or Transport object fails due to an authentication failure
+     */
     public static void verificationEmail(String email, String code)
     {
         try
@@ -78,11 +89,10 @@ public class EmailUtils
 
             //send the message
             Transport.send(mess);
-        }
-        catch (Exception e)
-        {
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
+        printNotificationInConsole(String.format("Verification code has sent to email \"%s\"", email));
     }
 
    public static void reminderEmail(Event event)

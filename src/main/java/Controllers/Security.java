@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * @author neko941
  * Created on: 2021-12-13
  *
  * This class provides methods to hash and generate random string
@@ -13,6 +13,10 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 
 public class Security {
+    /**
+     *
+     * @return a random string
+     */
     public static String generateRandomString()
     {
         return RandomStringUtils.random(
@@ -26,12 +30,21 @@ public class Security {
         );
     }
 
+    /**
+     *
+     * @return return a random string but in digits
+     */
     public static String generateRandomNumber()
     {
         java.util.Random rng = new java.util.Random();
         return String.format("%06d-%06d", rng.nextInt(999999), rng.nextInt(999999));
     }
 
+    /**
+     *
+     * @param password encode this password
+     * @return encoded password
+     */
     public static String sha512(String password) {
         try {
             // Static getInstance method is called with hashing SHA

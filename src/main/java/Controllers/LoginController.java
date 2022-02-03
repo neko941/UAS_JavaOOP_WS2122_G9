@@ -1,3 +1,7 @@
+/**
+ * @author neko941
+ * Created on: 2022-01-21
+ */
 package Controllers;
 
 import ExternalConnections.DBUtilities;
@@ -20,6 +24,11 @@ public class LoginController {
     @FXML private TextField usernameLogin;
     @FXML private PasswordField PasswordLogin;
 
+    /**
+     * Log in button
+     *
+     * @param event when user clicks on "Log-in" button
+     */
     public void loginButtonOnAction(ActionEvent event) {
         if (!usernameLogin.getText().isBlank() && !PasswordLogin.getText().isBlank()) {
             if (DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText())) {
@@ -42,6 +51,11 @@ public class LoginController {
         }
     }
 
+    /**
+     * Sign-up button
+     *
+     * @param event when user clicks on "Sign-up" button
+     */
     @FXML
     public void SignUpButtonOnAction(ActionEvent event) {
         try {
@@ -55,7 +69,11 @@ public class LoginController {
         }
     }
 
-
+    /**
+     * Used when a user wants to reset their password
+     *
+     * @param event when user clicks on "Forgot Password" button
+     */
     @FXML
     public void ForgotButtonOnAction(ActionEvent event) {
         try {

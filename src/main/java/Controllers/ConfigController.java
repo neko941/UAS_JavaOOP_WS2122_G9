@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * @author neko941
  * Created on: 2022-01-21
  */
 package Controllers;
@@ -12,7 +12,13 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class ConfigController {
-    public static String getDataFromConfig(String string, String text)
+    /**
+     *
+     * @param key key of the dictionary in the config.txt
+     * @param item item of the key of the dictionary in the config.txt
+     * @return data in the config.txt file
+     */
+    public static String getDataFromConfig(String key, String item)
     {
         JSONParser parser = new JSONParser();
 
@@ -22,8 +28,9 @@ public class ConfigController {
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        JSONObject jsonObject1 = (JSONObject) jsonObject.get(string);
-        return (String) jsonObject1.get(text);
+        assert jsonObject != null;
+        JSONObject jsonObject1 = (JSONObject) jsonObject.get(key);
+        return (String) jsonObject1.get(item);
     }
 }
 

@@ -1,5 +1,5 @@
 /**
- * Author: neko941
+ * @author neko941
  * Created on: 2022-01-21
  */
 package Controllers;
@@ -17,15 +17,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static Controllers.ColorController.changeLabelColor;
 import static Controllers.ColorController.changeLabelText;
+import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBUtilities.isEmailAvailable;
-import static ExternalConnections.DBUtilities.isUsernameAvailable;
 
 public class ForgetPasswordController {
     @FXML private Label emailWarning;
@@ -45,21 +44,31 @@ public class ForgetPasswordController {
 
     public static String verification;
 
+    /**
+     *
+     * @return true if all text fields in ForgotPasswordUI are in correct format
+     */
     public boolean checkAllTextFieldForgotPasswordUI()
     {
         return Stream.of(
                         // check email
-                        changeLabelColor(   Validation.checkInputEmail(emailTextField.getText()),
+                        changeLabelColor(
+                                Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailWarning),
                         changeLabelText(
                                 !isEmailAvailable(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailInDatabaseWarning,
+                                "Please check your email",
                                 "Email does not exist in the database"))
                 .allMatch(val -> val);
     }
 
+    /**
+     *
+     * @return true if all text fields in ResetPasswordUI are in correct format
+     */
     public boolean checkAllTextFieldResetPasswordUI()
     {
         return Stream.of(
@@ -92,15 +101,25 @@ public class ForgetPasswordController {
                 .allMatch(val -> val);
     }
 
+    /**
+     * Send email when user clicks on "Send Email" button
+     *
+     * @param event when user clicks on "Send Email" button
+     */
     public void sendEmailButtonOnAction(ActionEvent event) {
         if (checkAllTextFieldForgotPasswordUI()) {
-            verification = Security.generateRandomString(); /*generate random string*/
+            verification = Security.generateRandomString();
+            printNotificationInConsole(String.format("Verification code generated \t%s", verification));
             verificationEmail(emailTextField.getText(), verification);
             sendEmailButton.setText("Resend Email");
-
         }
     }
 
+    /**
+     * Check verification code when user clicks on "Continue" button. If true, open "ResetPasswordUI"
+     *
+     * @param event when user clicks on "Continue" button
+     */
     public void continueButtonOnAction(ActionEvent event) {
         if (verification.equals(otpTextField.getText()))
         {
@@ -117,10 +136,15 @@ public class ForgetPasswordController {
         }
     }
 
+    /**
+     * Used when a user wants to reset their password
+     *
+     * @param event when user clicks on "Reset Password" button
+     */
     public void resetPasswordOnAction(ActionEvent event) {
         if (checkAllTextFieldResetPasswordUI())
         {
-            // change password in database
+            //TODO: change password in database
 
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
@@ -134,8 +158,12 @@ public class ForgetPasswordController {
         }
     }
 
+    /**
+     * Used when a user wants to go back to the registration tab
+     *
+     * @param event when user clicks on "Reset Password" button
+     */
     public void SignUpButtonOnAction(ActionEvent event) {
-
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/RegistrationUI.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

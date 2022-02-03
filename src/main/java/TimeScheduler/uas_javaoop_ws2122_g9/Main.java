@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static Controllers.ConfigController.getDataFromConfig;
@@ -35,21 +36,22 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static Controllers.ConfigController.getDataFromConfig;
-import static Controllers.Debugging.printEventInfo;
-import static Controllers.Debugging.printUserInfo;
+import static Controllers.Debugging.*;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBConn.getConnection;
 import static ExternalConnections.DBUtilities.*;
 
 public class Main extends Application {
    @Override
-   public void start(Stage stage) throws IOException {
+   public void start(Stage stage) throws IOException
+   {
        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
        stage.setScene(new Scene(parent));
        stage.show();
    }
 
-   public static void main(String[] args) {
+   public static void main(String[] args)
+   {
        DBUtilities.DBUtilities();
        MultiThreading EmailThread = new MultiThreading("Send Email Thread");
        EmailThread.start();
@@ -65,9 +67,17 @@ public class Main extends Application {
 
 // public class Main {
 //     public static void main(String[] args) {
-//         verificationEmail("nguyenkhoa090401@gmail.com", "sdjajs");
+////         verificationEmail("nguyenkhoa090401@gmail.com", "1234567");
+////         System.out.println(Reminder.defaultOr(Reminder.TEN_MINUTES));
 //     }
 // }
+
+//public class Main {
+//    public static void main(String[] args) {
+////        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        printNotificationInConsole("ok");
+//    }
+//}
 
 //public class Main {
 //    public static void main(String[] args) {
