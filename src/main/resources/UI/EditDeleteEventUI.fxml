@@ -13,14 +13,9 @@
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             >
     <children>
-        <ChoiceBox fx:id="eventChoice" layoutX="100.0" layoutY="30.0" prefHeight="26.0" onAction="#selectEventOnAction" prefWidth="354.0">
+        <ChoiceBox fx:id="eventChoice" layoutX="100.0" layoutY="30.0" prefHeight="26.0" onAction="#selectEventOnAction" value="Select event" prefWidth="354.0">
 
         </ChoiceBox>
-        <Button fx:id="loadButton" layoutX="10.0" layoutY="25.0" onAction="#LoadEventsOnAction"  mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="Load" textFill="#13a98e">
-            <font>
-                <Font size="16.0" />
-            </font>
-        </Button>
         <Label layoutX="100.0" layoutY="60.0" text="Event Name" textFill="GREY">
             <font>
                 <Font size="15.0" />
@@ -124,12 +119,17 @@
 <!--        </Label>-->
 
 
-        <Button fx:id="cancelButton" layoutX="100.0" layoutY="700.0" onAction="#cancelButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Cancel" textFill="#ffffff">
+        <Button fx:id="cancelButton" layoutX="100.0" layoutY="700.0" onAction="#cancelButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Cancel" textFill="#ffffff">
             <font>
                 <Font size="16.0" />
             </font>
         </Button>
-        <Button fx:id="createButton" layoutX="350.0" layoutY="700.0" onAction="#EditEventOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Create" textFill="#ffffff">
+        <Button fx:id="createButton" layoutX="350.0" layoutY="700.0" onAction="#EditEventOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Delete" textFill="#ffffff">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Button>
+        <Button fx:id="deleteButton" layoutX="225.0" layoutY="700.0" onAction="#DeleteButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #af353f; -fx-cursor: hand;" text="Save" textFill="#ffffff">
             <font>
                 <Font size="16.0" />
             </font>

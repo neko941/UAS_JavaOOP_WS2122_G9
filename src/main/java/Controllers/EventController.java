@@ -21,9 +21,6 @@ public class EventController {
         int eventId = insertNewEvent(selectedEvent);
         selectedEvent.setEventID(eventId);
         ArrayList<User> participants = selectedEvent.getParticipants();
-        System.out.println(participants.toString());
-        System.out.println(participants.get(0).getUsername());
-        System.out.println(participants.get(1).getUsername());
         for (int i = 0; i < participants.size(); i++){
             createUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
         }
@@ -61,6 +58,11 @@ public class EventController {
 
     public static int DeleteEvent(Event selectedEvent){
         int id = selectedEvent.getEventID();
+
+        ArrayList<User> participants = selectedEvent.getParticipants();
+        for (int i = 0; i < participants.size(); i++){
+            deleteUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
+        }
         deleteEvent(id);
         selectedEvent = null;
         System.gc();

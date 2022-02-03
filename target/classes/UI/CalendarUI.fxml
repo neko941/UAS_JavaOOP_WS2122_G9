@@ -29,22 +29,22 @@
         </font>
     </Label>
     <CalendarView fx:id="calendarView" prefHeight="550.0" prefWidth="984.0"  />
-    <Button fx:id="createButton" layoutX="40.0" layoutY="575.0" onAction="#CreateButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Create New Event" textFill="#FFFFFF">
+    <Button fx:id="createButton" layoutX="40.0" layoutY="575.0" onAction="#CreateButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Create New Event" textFill="#FFFFFF">
     <font>
         <Font size="16.0" />
     </font>
     </Button>
-    <Button fx:id="editButton" layoutX="310.0" layoutY="575.0" onAction="#EditButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="View Event" textFill="#FFFFFF">
+    <Button fx:id="editButton" layoutX="310.0" layoutY="575.0" onAction="#EditButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="View Event" textFill="#FFFFFF">
     <font>
         <Font size="16.0" />
     </font>
     </Button>
-    <Button fx:id="exportButton" layoutX="580.0" layoutY="575.0" onAction="#ExportButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Export" textFill="#FFFFFF">
+    <Button fx:id="exportButton" layoutX="580.0" layoutY="575.0" onAction="#ExportButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Export" textFill="#FFFFFF">
         <font>
             <Font size="16.0" />
         </font>
     </Button>
-    <Button fx:id="logoutButton" layoutX="850.0" layoutY="575.0" onAction="#LogoutButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: grey; -fx-cursor: hand;" text="Logout" textFill="#FFFFFF">
+    <Button fx:id="logoutButton" layoutX="850.0" layoutY="575.0" onAction="#LogoutButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Logout" textFill="#FFFFFF">
         <font>
             <Font size="16.0" />
         </font>

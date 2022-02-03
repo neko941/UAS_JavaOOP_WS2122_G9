@@ -27,8 +27,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
@@ -67,10 +69,11 @@ public class CalendarController extends Application {
 
         calendarView.getCalendarSources().addAll(myCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
-        calendarView.showWeek(Year.of(2022),4);
+        calendarView.setToday(LocalDate.now());
+        calendarView.setTime(LocalTime.now());
+        calendarView.showWeek(Year.of(LocalDate.now().getYear()), LocalDate.now().get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
         calendarView.setShowAddCalendarButton(false);
-        calendarView.setShowDeveloperConsole(true);
-        calendarView.setShowDeveloperConsole(true);
+
 
         myCalendarSource.getCalendars().setAll(highPrio, medPrio, lowPrio);
 

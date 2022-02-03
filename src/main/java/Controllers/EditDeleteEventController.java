@@ -21,8 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import static Controllers.EventController.CreateEvent;
-import static Controllers.EventController.EditEvent;
+import static Controllers.EventController.*;
 import static ExternalConnections.DBUtilities.*;
 import static java.lang.Integer.parseInt;
 
@@ -38,6 +37,7 @@ public class EditDeleteEventController extends Application {
     @FXML private ChoiceBox priority;
     @FXML private ChoiceBox reminder;
     @FXML private Button createButton;
+    @FXML private Button deleteButton;
     @FXML private Button cancelButton;
     private User currentUser;
 
@@ -140,10 +140,18 @@ public class EditDeleteEventController extends Application {
                 null,
                 selectedReminder,
                 selectedPriority);
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
+        Stage stage = (Stage) createButton.getScene().getWindow();
         stage.close();
 
 
+    }
+
+    @FXML
+    public void DeleteButtonOnAction(ActionEvent event) {
+        Event myEvent = fetchEventsFromID(selectedId);
+        DeleteEvent(myEvent);
+        Stage stage = (Stage) deleteButton.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
