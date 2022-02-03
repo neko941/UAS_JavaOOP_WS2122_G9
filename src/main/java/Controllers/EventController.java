@@ -25,6 +25,7 @@ public class EventController {
             createUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
         }
         System.out.println("Event " + selectedEvent.getEventName() + " created.");
+        //TODO: Add Email function
         return selectedEvent;
     }
     public static Event EditEvent(Event selectedEvent,
@@ -51,6 +52,7 @@ public class EventController {
         selectedEvent.setEmails(emails);
         selectedEvent.setPriority(priority);
 
+        //TODO: Add Email function
 
         editEvent(selectedEvent);
         return selectedEvent;
@@ -65,6 +67,7 @@ public class EventController {
         }
         deleteEvent(id);
         selectedEvent = null;
+        //TODO: Add Email function
         System.gc();
         System.out.println("Event number " + id + " successfully deleted.");
 

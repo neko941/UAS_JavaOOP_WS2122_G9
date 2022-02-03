@@ -27,7 +27,11 @@ public class CreateEventController extends Application {
     @FXML private DatePicker eventDate;
     @FXML private TextField eventTime;
     @FXML private TextField eventDuration;
-    @FXML private TextField eventLocation;
+    @FXML private TextField eventStreet;
+    @FXML private TextField eventHouseNr;
+    @FXML private TextField eventZipCode;
+    @FXML private TextField eventCity;
+    @FXML private TextField eventCountry;
     @FXML private TextField participants;
     @FXML private ChoiceBox priority;
     @FXML private ChoiceBox reminder;
@@ -70,17 +74,17 @@ public class CreateEventController extends Application {
                     User myUser = fetchUser(emails[i]);
                     mappedParticipants.add(myUser);
                 }
-                String[] locationData = eventLocation.getText().split(",");
+
                 Event myEvent = new Event(eventName.getText(),
                         eventDate.getValue(),
                         LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
                                 parseInt(eventTime.getText().split(":")[1])),
                         parseInt(eventDuration.getText()),
-                        new Location(locationData[0].replaceAll("\\s",""),
-                                parseInt(locationData[1].replaceAll("\\s","")),
-                                locationData[2].replaceAll("\\s",""),
-                                locationData[3].replaceAll("\\s",""),
-                                locationData[4].replaceAll("\\s",""),
+                        new Location(eventStreet.getText().replaceAll("\\s",""),
+                                parseInt(eventHouseNr.getText().replaceAll("\\s","")),
+                                eventZipCode.getText().replaceAll("\\s",""),
+                                eventCity.getText().replaceAll("\\s",""),
+                                eventCountry.getText().replaceAll("\\s",""),
                                 0,
                                 0),
                         mappedParticipants,
