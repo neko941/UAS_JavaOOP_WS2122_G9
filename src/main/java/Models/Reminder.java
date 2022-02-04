@@ -1,12 +1,11 @@
 /**
- * Author: jatenderjossan
+ * @author jatenderjossan, neko941
  * Created on: Dec. 25, 2021
  */
 
 package Models;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public enum Reminder {
     ONE_WEEK(10080),
