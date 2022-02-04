@@ -1,5 +1,5 @@
 /**
- * Author: jatenderjossan
+ * @author jatenderjossan, neko941
  * Created on: Dec. 23, 2021
  *
  * This class provides everything SQL related and manages for example fetching and adding data from and to the database
@@ -15,7 +15,6 @@ import Models.Reminder;
 import Models.User;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.transform.Result;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,19 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.stream.Collectors;
-
-import static ExternalConnections.DBConn.getConnection;
-import static ExternalConnections.DBConn.setConnection;
+import java.util.Collections;
 
 public class DBUtilities {
 
@@ -763,6 +759,56 @@ public class DBUtilities {
             closePreparedStatement();
             closeResultSet();
         }
+        return events;
+    }
+
+    /**
+     *
+     * @param user: user - the user, from which we want all the events
+     * @return arraylist with all events which is sorted by date time
+     *                                         has reminder
+     *                                         the user is participating
+     */
+    public static ArrayList<Event> fetchAllEventsWithReminderFromUser(final User user) {
+        ArrayList<Event> events = new ArrayList<>();
+
+        try {
+            preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
+            preparedStatement.setInt(1, user.getId());
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                // primary key of the entity "event"
+                if (resultSet.getString("reminder") != null)
+                {
+                    int eventID = resultSet.getInt("eventID");
+                    String eventName = resultSet.getString("eventName");
+                    LocalDate eventDate = resultSet.getDate("eventDate").toLocalDate();
+                    LocalTime eventTime = resultSet.getTime("eventTime").toLocalTime();
+                    Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                    Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
+                    //TODO: remove this
+                    String[] emails = resultSet.getString("emails").split(",");
+                    int duration = resultSet.getInt("duration");
+                    // argument - foreign key of the location table
+                    Location location = fetchLocationFromEvent(resultSet.getInt("location"));
+                    // argument - primary key of the event
+                    ArrayList<User> participants = fetchParticipants(eventID);
+                    // argument - primary key of the event
+                    ArrayList<File> attachments = fetchAttachments(eventID);
+
+                    LocalDateTime reminderTime = reminder.getReminderTime(LocalDateTime.of(eventDate, eventTime));
+                    events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority, reminderTime));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+
+        Collections.sort(events);
         return events;
     }
 
