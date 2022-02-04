@@ -8,7 +8,13 @@
 
 package Controllers;
 
+import Models.Event;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 import static Controllers.Debugging.printNotificationInConsole;
+import static Controllers.EmailUtils.eventEmail;
 
 @SuppressWarnings("ALL")
 public class MultiThreading implements Runnable{
@@ -26,9 +32,19 @@ public class MultiThreading implements Runnable{
         try {
             while(true) {
                 // sort the database
-
+//                ArrayList<Event> events = fetchAllEventsWithReminderFromUser();
                 // Send email
-
+//                for(Event event : events)
+//                {
+//                    if(event.getReminderTime().isBefore(LocalDateTime.now()))
+//                    {
+//                        for (String email: event.getEmails())
+//                        {
+//                            eventEmail(0, email, event);
+//                        }
+//
+//                    }
+//                }
                 // Let the thread sleep for 30 seconds
                 Thread.sleep(1000 * 30);
             }

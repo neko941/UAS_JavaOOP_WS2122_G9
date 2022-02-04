@@ -36,8 +36,7 @@ import java.util.Objects;
 
 import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.Debugging.*;
-import static Controllers.EmailUtils.reminderEmail;
-import static Controllers.EmailUtils.verificationEmail;
+import static Controllers.EmailUtils.*;
 import static ExternalConnections.DBConn.getConnection;
 import static ExternalConnections.DBUtilities.*;
 
@@ -121,8 +120,8 @@ public class Main extends Application {
 //                Reminder.TEN_MINUTES,
 //                Priority.HIGH);
 //
-//        reminderEmail(2,"nguyenkhoa090401@gmail.com", event0);
-
+//        eventEmail(2,"nguyenkhoa090401@gmail.com", event0);
+//
 //        int eventId = insertNewEvent(event0);
 //        event0.setEventID(eventId);
 //        createUser_EventBridge(user.getId(), event0.getEventID());
@@ -138,5 +137,5 @@ public class Main extends Application {
 //        }
 //    }
 //}
-//
+
 
