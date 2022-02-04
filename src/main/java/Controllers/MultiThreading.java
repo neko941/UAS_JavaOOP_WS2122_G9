@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static Controllers.Debugging.printNotificationInConsole;
-import static Controllers.EmailUtils.eventEmail;
 import static ExternalConnections.DBUtilities.editEvent;
-import static ExternalConnections.DBUtilities.fetchAllEventsWithReminderFromUser;
 
 @SuppressWarnings("ALL")
 public class MultiThreading implements Runnable{

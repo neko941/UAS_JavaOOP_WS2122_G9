@@ -13,6 +13,7 @@ import java.time.*;
 import java.io.File;
 import java.util.ArrayList;
 
+import static Controllers.EmailUtils.eventEmail;
 import static ExternalConnections.DBUtilities.*;
 
 
@@ -26,6 +27,10 @@ public class EventController {
         }
         System.out.println("Event " + selectedEvent.getEventName() + " created.");
         //TODO: Add Email function
+        for(String email : selectedEvent.getEmails())
+        {
+            eventEmail(1, email, selectedEvent);
+        }
         return selectedEvent;
     }
     public static Event EditEvent(Event selectedEvent,
@@ -53,7 +58,10 @@ public class EventController {
         selectedEvent.setPriority(priority);
 
         //TODO: Add Email function
-
+        for(String email : selectedEvent.getEmails())
+        {
+            eventEmail(2, email, selectedEvent);
+        }
         editEvent(selectedEvent);
         return selectedEvent;
     }
@@ -61,13 +69,19 @@ public class EventController {
     public static int DeleteEvent(Event selectedEvent){
         int id = selectedEvent.getEventID();
 
+        //TODO: Add Email function
+        for(String email : selectedEvent.getEmails())
+        {
+            eventEmail(3, email, selectedEvent);
+        }
+
         ArrayList<User> participants = selectedEvent.getParticipants();
         for (int i = 0; i < participants.size(); i++){
             deleteUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
         }
         deleteEvent(id);
         selectedEvent = null;
-        //TODO: Add Email function
+
         System.gc();
         System.out.println("Event number " + id + " successfully deleted.");
 
