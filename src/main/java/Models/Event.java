@@ -9,10 +9,11 @@ package Models;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Event {
+public class Event implements Comparable<Event>{
 
     // ID of the event
     private int eventID;
@@ -36,6 +37,8 @@ public class Event {
     private Reminder e_reminder;
     // the priority of the event
     private Priority e_priority;
+
+    private LocalDateTime reminderTime;
 
     /**
      * Constructor for creating an event
@@ -91,14 +94,44 @@ public class Event {
         this.e_priority = priority;
     }
 
-//    public void printInfo()
-//    {
-//        System.out.format("Event Name: %s\n", this.getEventName());
-//        System.out.format("Date: %s\n", this.getDate());
-//        System.out.format("Time: %s\n", this.getTime());
-//        System.out.format("Duration: %d\n", this.getDuration());
-//        System.out.format("Reminder: %s\n\n", this.getReminder());
-//    }
+    @Override
+    public int compareTo(Event e) {
+        if(e.getReminder() != null)
+        {
+            return this.getReminder().getReminderTime(LocalDateTime.of(this.getDate(), this.getTime()))
+                    .compareTo(e.getReminder().getReminderTime(LocalDateTime.of(e.getDate(), e.getTime())));
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public Event(int eventID,
+                 String eventName,
+                 LocalDate date,
+                 LocalTime time,
+                 int duration,
+                 Location location,
+                 ArrayList<User> participants,
+                 String[] emails,
+                 ArrayList<File> attachments,
+                 Reminder reminder,
+                 Priority priority,
+                 LocalDateTime reminderTime) {
+        this.eventID = eventID;
+        this.eventName = eventName;
+        this.date = date;
+        this.time = time;
+        this.duration = duration;
+        this.participants = participants;
+        this.emails = emails;
+        this.attachments = attachments;
+        this.location = location;
+        this.e_reminder = reminder;
+        this.e_priority = priority;
+        this.reminderTime = reminderTime;
+    }
 
     public void setEventID(int eventID) {
         this.eventID = eventID;

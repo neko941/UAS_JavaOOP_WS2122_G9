@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static Controllers.ConfigController.getDataFromConfig;
+import static Controllers.Debugging.printNotificationInConsole;
 
 public class DBConn {
     private static Connection connection = null;
@@ -31,9 +32,9 @@ public class DBConn {
             e.printStackTrace();
         } finally {
             if (connection == null) {
-                System.out.println("Cannot connect database");
+                printNotificationInConsole("Cannot connect database");
             } else {
-                System.out.println("Connect database successfully");
+                printNotificationInConsole("Connect database successfully");
             }
         }
     }
