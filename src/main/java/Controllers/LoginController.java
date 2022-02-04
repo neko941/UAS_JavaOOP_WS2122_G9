@@ -73,14 +73,6 @@ public class LoginController {
         }
     }
 
-
-
-
-    public void cancelButtonOnAction(ActionEvent event) {
-        Stage stage = (Stage) CancelButton.getScene().getWindow();
-        stage.close();
-    }
-
     @FXML
     public void SignUpButtonOnAction(ActionEvent event) {
         try {

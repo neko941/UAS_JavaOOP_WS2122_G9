@@ -23,9 +23,11 @@ import java.util.Arrays;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import static Controllers.ColorController.changeLabelText;
 import static Controllers.EmailUtils.verificationEmail;
-import static Controllers.ColorController.changeTextFieldColor;
-import static ExternalConnections.DBUtilities.insertNewUser;
+import static Controllers.ColorController.changeLabelColor;
+import static ExternalConnections.DBUtilities.*;
+import static Controllers.Debugging.printUserInfo;
 
 public class RegistrationController {
     @FXML private Button closeButton;
@@ -65,10 +67,20 @@ public class RegistrationController {
                         changeTextFieldColor(   Validation.checkNoSpecialCharacter(usernameTextField.getText()),
                                 usernameTextField.getText().isBlank(),
                                 usernameSpecialCharacterConstraint),
+                        changeLabelText(
+                                isUsernameAvailable(usernameTextField.getText()),
+                                usernameTextField.getText().isBlank(),
+                                usernameAvailableWarning,
+                                "Username already exists"),
                         // check email
                         changeTextFieldColor(   Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
                                 emailWarning),
+                        changeLabelText(
+                                isEmailAvailable(emailTextField.getText()),
+                                emailTextField.getText().isBlank(),
+                                emailAvailableWarning,
+                                "Email already exists"),
                         // check password
                         changeTextFieldColor(   Validation.checkLength(passwordTextField.getText(), 6, 20),
                                 passwordTextField.getText().isBlank(),
@@ -98,6 +110,7 @@ public class RegistrationController {
         {
             // create verification code
             verification = Security.generateRandomNumber();
+            System.out.println(verification);
             // send code to user's email
             verificationEmail(emailTextField.getText(), verification);
             // save user info

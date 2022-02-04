@@ -19,9 +19,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-import static Controllers.ColorController.changeTextFieldColor;
+import static Controllers.ColorController.changeLabelColor;
+import static Controllers.ColorController.changeLabelText;
 import static Controllers.EmailUtils.verificationEmail;
+import static ExternalConnections.DBUtilities.isEmailAvailable;
+import static ExternalConnections.DBUtilities.isUsernameAvailable;
 
 public class ForgetPasswordController {
     @FXML private Label emailWarning;
@@ -45,11 +50,15 @@ public class ForgetPasswordController {
     {
         return Arrays.asList(
                         // check email
-                        changeTextFieldColor(   Validation.checkInputEmail(emailTextField.getText()),
+                        changeLabelColor(   Validation.checkInputEmail(emailTextField.getText()),
                                 emailTextField.getText().isBlank(),
-                                emailWarning))
-                .stream()
-                .allMatch(val -> val == true);
+                                emailWarning),
+                        changeLabelText(
+                                !isEmailAvailable(emailTextField.getText()),
+                                emailTextField.getText().isBlank(),
+                                emailInDatabaseWarning,
+                                "Email does not exist in the database"))
+                .allMatch(val -> val);
     }
 
     public boolean checkAllTextFieldResetPasswordUI()

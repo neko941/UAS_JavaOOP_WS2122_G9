@@ -39,8 +39,7 @@ public class Event {
 
     /**
      * Constructor for creating an event
-     *
-     * @param eventName - name of the event
+     *  @param eventName - name of the event
      * @param date - date of the event
      * @param time - starting time of the event
      * @param duration - duration of the event in minutes

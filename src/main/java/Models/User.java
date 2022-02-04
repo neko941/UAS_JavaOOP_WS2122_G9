@@ -25,9 +25,15 @@ public class User
     private String password;
     private String email;
 
-    // constructor
-    public User(String email, String username, String password, String firstName, String lastName, int userID)
-    {
+    /**
+     * Constructor for fetching a user from the database
+     * @param userID - ID of user
+     * @param firstName - firstname of user
+     * @param lastName - lastname of user
+     * @param userName - username of user
+     * @param email - email of user
+     */
+    public User (int userID, String firstName, String lastName, String userName, String email) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
