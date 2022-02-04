@@ -17,6 +17,12 @@ import static ExternalConnections.DBUtilities.*;
 
 
 public class EventController {
+    /**
+     * Takes an event Object and invokes the DB utilities for creating the necessary objects in the Database.
+     *
+     * @param selectedEvent: the event object to be created in the DB
+     * @return Event: the event object appended with the ID which is the primary key in the Database.
+     */
     public static Event CreateEvent(Event selectedEvent){
         int eventId = insertNewEvent(selectedEvent);
         selectedEvent.setEventID(eventId);
@@ -33,6 +39,23 @@ public class EventController {
         //TODO: Add Email function
         return selectedEvent;
     }
+
+    /**
+     * Takes an event Object and attributes and invokes the DB utilities functions for creating/updating the necessary objects in the Database.
+     *
+     * @param selectedEvent: the current event object in the Database
+     * @param eventName: value to be updated in the Database
+     * @param date: value to be updated in the Database
+     * @param time: value to be updated in the Database
+     * @param duration: value to be updated in the Database
+     * @param location: value to be updated in the Database
+     * @param participants: value to be updated in the Database
+     * @param emails: value to be updated in the Database
+     * @param attachments: value to be updated in the Database
+     * @param reminder: value to be updated in the Database
+     * @param priority: value to be updated in the Database
+     * @return Event: the event object updated with the changes
+     */
     public static Event EditEvent(Event selectedEvent,
                              String eventName,
                              LocalDate date,
@@ -65,7 +88,12 @@ public class EventController {
         editEvent(selectedEvent);
         return selectedEvent;
     }
-
+    /**
+     * Deletes an event object from the Database.
+     *
+     * @param selectedEvent: the event object to be deleted in the DB
+     * @return int: 0 if the deletion was successful.
+     */
     public static int DeleteEvent(Event selectedEvent){
         int id = selectedEvent.getEventID();
 
@@ -78,7 +106,6 @@ public class EventController {
         //TODO: Add Email function
         System.gc();
         System.out.println("Event number " + id + " successfully deleted.");
-
         return 0;
     }
 

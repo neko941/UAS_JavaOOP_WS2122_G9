@@ -58,8 +58,21 @@ public class EditDeleteEventController extends Application {
     FileChooser fileChooser = new FileChooser();
     ArrayList<File> attachment = new ArrayList<File>();
 
+    /**
+     * Sets the current logged-in user which will be used to fetch and create events.
+     *
+     * @param: currentUser: object of type User
+     *
+     * @return: void
+     */
     public void setCurrentUser(User currentUser){ this.currentUser = currentUser; }
 
+    /**
+     * Loads the View/Edit event UI,initial events and loads events on the dropdown list for selection.
+     *
+     * @param: primaryStage - Stage on which the page will be rendered
+     * @return: void
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         DBUtilities();
@@ -84,8 +97,13 @@ public class EditDeleteEventController extends Application {
         stage.show();
     }
 
+    /**
+     * Loads the data from a selected event into fields for viewing/editing.
+     *
+     * @return: void
+     */
     @FXML
-    public void selectEventOnAction(ActionEvent event) {
+    public void selectEventOnAction() {
         int eventId = parseInt(eventChoice.getValue().toString().split(":")[0]);
         Event selectedEvent = fetchEventsFromID(eventId);
         eventName.setText(selectedEvent.getEventName());
@@ -122,8 +140,13 @@ public class EditDeleteEventController extends Application {
         }
     }
 
+    /**
+     * Saves the updated Event information by creating an event object and calling the function from the EventController.
+     *
+     * @return: void
+     */
     @FXML
-    public void EditEventOnAction(ActionEvent event) {
+    public void EditEventOnAction() {
         Priority selectedPriority = mapPriority(priority.getValue().toString());
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
@@ -160,35 +183,62 @@ public class EditDeleteEventController extends Application {
 
 
     }
+
+    /**
+     * Adds a new attachment to class attachments array, to be passed down to the controller and subsequently to the DB upon saving the changes.
+     *
+     * @return: void
+     */
     @FXML
-    public void attachmentButtonOnAction(ActionEvent event) {
+    public void attachmentButtonOnAction() {
         Stage stage = new Stage();
         File file = fileChooser.showOpenDialog(stage);
         this.attachment.add(file);
     }
+
+    /**
+     * Opens up the attachments from the currently selected event.
+     *
+     * @return: void
+     */
     @FXML
-    public void openButtonOnAction(ActionEvent event) throws IOException {
+    public void openButtonOnAction() throws IOException {
         Desktop myDesktop = Desktop.getDesktop();
         for(int i = 0; i < attachment.size(); i++){
             myDesktop.open(attachment.get(i));
         }
     }
 
+    /**
+     * Deletes the currently selected event.
+     *
+     * @return: void
+     */
     @FXML
-    public void DeleteButtonOnAction(ActionEvent event) {
+    public void DeleteButtonOnAction() {
         Event myEvent = fetchEventsFromID(selectedId);
         DeleteEvent(myEvent);
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Closes the current page.
+     *
+     * @return: void
+     */
     @FXML
-    public void cancelButtonOnAction(ActionEvent event) {
+    public void cancelButtonOnAction() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
-
+    /**
+     * maps the selection to a Priority object.
+     *
+     * @param: the string currently selected on the ChoiceBox
+     * @return: the equivalent Priority object of the selection string
+     */
     public Priority mapPriority(String selection) {
         switch(priority.getValue().toString()){
             case "LOW":
@@ -201,6 +251,12 @@ public class EditDeleteEventController extends Application {
         return Priority.HIGH;
     }
 
+    /**
+     * maps the selection to a Reminder object.
+     *
+     * @param: the string currently selected on the ChoiceBox
+     * @return: the equivalent Reminder object of the selection string
+     */
     public Reminder mapReminder(String selection) {
         switch(priority.getValue().toString()){
             case "1 week":
