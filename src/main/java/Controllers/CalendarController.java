@@ -39,7 +39,7 @@ public class CalendarController extends Application {
     @FXML private Button editButton;
     @FXML private CalendarView calendarView;
     @FXML private Label userlable;
-    private User currentUser;
+    public User currentUser;
 
     public void setCurrentUser(User currentUser){
         this.currentUser = currentUser;
@@ -85,6 +85,7 @@ public class CalendarController extends Application {
                         highPrio.clear();
                         medPrio.clear();
                         lowPrio.clear();
+                        System.out.println("fetching events from: " + currentUser.getEmail());
                         showEvents(fetchAllEventsFromUser(currentUser),lowPrio, medPrio, highPrio);
                     });
                     try {
