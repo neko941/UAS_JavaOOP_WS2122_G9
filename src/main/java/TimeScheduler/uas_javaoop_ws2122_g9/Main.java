@@ -36,27 +36,28 @@ import java.util.Objects;
 
 import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.Debugging.*;
+import static Controllers.EmailUtils.reminderEmail;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBConn.getConnection;
 import static ExternalConnections.DBUtilities.*;
 
-public class Main extends Application {
-   @Override
-   public void start(Stage stage) throws IOException
-   {
-       Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
-       stage.setScene(new Scene(parent));
-       stage.show();
-   }
-
-   public static void main(String[] args)
-   {
-       DBUtilities.DBUtilities();
-       MultiThreading EmailThread = new MultiThreading("Send Email Thread");
-       EmailThread.start();
-       launch();
-   }
-}
+//public class Main extends Application {
+//   @Override
+//   public void start(Stage stage) throws IOException
+//   {
+//       Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
+//       stage.setScene(new Scene(parent));
+//       stage.show();
+//   }
+//
+//   public static void main(String[] args)
+//   {
+//       DBUtilities.DBUtilities();
+//       MultiThreading EmailThread = new MultiThreading("Send Email Thread");
+//       EmailThread.start();
+//       launch();
+//   }
+//}
 
 // public class Main {
 //     public static void main(String[] args) {
@@ -89,37 +90,39 @@ public class Main extends Application {
 //    }
 //}
 
-//@SuppressWarnings("ALL")
-//public class Main {
-//    public static void main(String[] args)
-//    {
-//        DBUtilities();
-//        User user = fetchUser("neko941");
-//
-//        Event event0 = new Event(
-//                "event0",
-//                LocalDate.parse("2022-02-01"),
-//                LocalTime.parse("19:00"),
-//                15,
-//                new Location("1", -1, "", "", "", -1, -1),
-//                null,
-//                null,
-//                null,
-//                null,
-//                Priority.HIGH);
-//
-//        Event event1 = new Event(
-//                "event1",
-//                LocalDate.parse("2022-02-02"),
-//                LocalTime.parse("19:00"),
-//                15,
-//                new Location("1", -1, "", "", "", -1, -1),
-//                null,
-//                null,
-//                null,
-//                Reminder.TEN_MINUTES,
-//                Priority.HIGH);
-//
+@SuppressWarnings("ALL")
+public class Main {
+    public static void main(String[] args)
+    {
+        DBUtilities();
+        User user = fetchUser("neko941");
+
+        Event event0 = new Event(
+                "event0",
+                LocalDate.parse("2022-02-01"),
+                LocalTime.parse("19:00"),
+                15,
+                new Location("1", -1, "", "", "", -1, -1),
+                null,
+                null,
+                null,
+                Reminder.TEN_MINUTES,
+                Priority.HIGH);
+
+        Event event1 = new Event(
+                "event1",
+                LocalDate.parse("2022-02-02"),
+                LocalTime.parse("19:00"),
+                15,
+                new Location("1", -1, "", "", "", -1, -1),
+                null,
+                null,
+                null,
+                Reminder.TEN_MINUTES,
+                Priority.HIGH);
+
+        reminderEmail(2,"nguyenkhoa090401@gmail.com", event0);
+
 //        int eventId = insertNewEvent(event0);
 //        event0.setEventID(eventId);
 //        createUser_EventBridge(user.getId(), event0.getEventID());
@@ -133,7 +136,7 @@ public class Main extends Application {
 //        {
 //            System.out.println(event.getEventName());
 //        }
-//    }
-//}
+    }
+}
 
 

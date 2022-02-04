@@ -12,24 +12,25 @@ import Models.Event;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
 
 import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.Debugging.printNotificationInConsole;
 
-public class EmailUtils
-{
+public class EmailUtils {
     static String systemEmail = getDataFromConfig("systemEmail", "email");
     static String systemEmailPassword = getDataFromConfig("systemEmail", "password");
     static Session session = getSession();
 
     /**
      * Get the working session of the mail API
+     *
      * @return session
      */
-    public static Session getSession()
-    {
+    public static Session getSession() {
         // your host email smtp server details
         Properties pr = new Properties();
         pr.setProperty("mail.smtp.host", "smtp.gmail.com");
@@ -40,11 +41,9 @@ public class EmailUtils
         pr.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
         //get session to authenticate the host email address and password
-        session = Session.getInstance(pr, new Authenticator()
-                {
+        session = Session.getInstance(pr, new Authenticator() {
                     @Override
-                    protected PasswordAuthentication getPasswordAuthentication()
-                    {
+                    protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(systemEmail, systemEmailPassword);
                     }
                 }
@@ -53,14 +52,11 @@ public class EmailUtils
     }
 
     /**
-     *
      * @param email program will send verification code to this email
-     * @param code the verification code
+     * @param code  the verification code
      */
-    public static void verificationEmail(String email, String code)
-    {
-        try
-        {
+    public static void verificationEmail(String email, String code) {
+        try {
             //set email message details
             Message mess = new MimeMessage(session);
 
@@ -75,7 +71,7 @@ public class EmailUtils
 
             //set email content
             String mailText = "<h3><strong> Your Code: </strong></h3>";
-            String codeBold = "<h1><strong>" + code +  "</strong></h1>";
+            String codeBold = "<h1><strong>" + code + "</strong></h1>";
             mess.setContent(mailText + codeBold, "text/html; charset=utf-8");
 
             // set send day
@@ -92,115 +88,42 @@ public class EmailUtils
         printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
-   public static void reminderEmail(Event event)
-   {
-       try
-       {
-           // get session
-           getSession();
+    public static void reminderEmail(int option, String email, Event event) {
+        try {
+            //set email message details
+            Message mess = new MimeMessage(session);
 
-           //set email message details
-           Message mess = new MimeMessage(session);
+            //set from email address
+            mess.setFrom(new InternetAddress(systemEmail));
 
-           //set from email address
-           mess.setFrom(new InternetAddress(systemEmail));
+            //set to email address or destination email address
+            mess.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
-           //set to email address or destination email address
-//           mess.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            //set email subject
+            switch (option) {
+                case 0 -> mess.setSubject("EVENT REMINDER");
+                case 1 -> mess.setSubject("EVENT UPDATED");
+                case 2 -> mess.setSubject("EVENT DELETED");
+            }
 
-           //set email subject
-           mess.setSubject("SCHEDULER REMINDER");
 
-           //set email content
-//           String mailText = "<h3><strong> Your Code: </strong></h3>";
-//           String codeBold = "<h1><strong>" + code +  "</strong></h1>";
-//           mess.setContent(mailText + codeBold, "text/html; charset=utf-8");
+            //set email content
+            String eventName = "<br><strong> Event: </strong>" + event.getEventName() + "</br>";
+            String eventStartTime = "<br><strong> Event starts: </strong>%s</br>".formatted(LocalDateTime.of(event.getDate(), event.getTime()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            String eventEndTime = "<br><strong> Event ends:  </strong>%s</br>".formatted(event.getReminder().getReminderTime(LocalDateTime.of(event.getDate(), event.getTime())).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            mess.setContent(eventName + eventStartTime + eventEndTime, "text/html; charset=utf-8");
 
-           // set send day
-           mess.setSentDate(new Date());
+            // set send day
+            mess.setSentDate(new Date());
 
-           //set message text
-           mess.saveChanges();
+            //set message text
+            mess.saveChanges();
 
-           //send the message
-           Transport.send(mess);
-       }
-       catch (Exception e)
-       {
-           e.printStackTrace();
-       }
-   }
-
-//    public static void sendEmail(User user, Event event)
-//    {
-//        JSONParser parser = new JSONParser();
-//
-//        JSONObject jsonObject = null;
-//        try {
-//            jsonObject = (JSONObject) parser.parse(new FileReader("src/Backend/config.json"));
-//        } catch (IOException | ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println();
-//
-//        String systemEmail = (String) jsonObject.get("systemEmail");
-//        String systemEmailPassword = (String) jsonObject.get("systemEmailPassword");
-//
-//        try
-//        {
-//            // your host email smtp server details
-//            Properties pr = new Properties();
-//            pr.setProperty("mail.smtp.host", "smtp.gmail.com");
-//            pr.setProperty("mail.smtp.port", "587");
-//            pr.setProperty("mail.smtp.auth", "true");
-//            pr.setProperty("mail.smtp.starttls.enable", "true");
-//            pr.put("mail.smtp.socketFactory.port", "587");
-//            pr.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//
-//            //get session to authenticate the host email address and password
-//            Session session = Session.getInstance(pr, new Authenticator()
-//                    {
-//                        @Override
-//                        protected PasswordAuthentication getPasswordAuthentication()
-//                        {
-//                            return new PasswordAuthentication(systemEmail, systemEmailPassword);
-//                        }
-//                    }
-//            );
-//
-//            //set email message details
-//            Message mess = new MimeMessage(session);
-//
-//            //set from email address
-//            mess.setFrom(new InternetAddress(systemEmail));
-//            //set to email address or destination email address
-//            mess.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
-//
-//            //set email subject
-//            String mailSubject = "THE UPCOMING EVENT";
-//            String mailAntiPhishing = "<br><strong> Anti-Phishing: </font>" + "<strong>" + user.getAntiPhishing() + "</strong></br>";
-//            String eventName = "<br><strong> Event: </strong>" + event.getName() + "</br>";
-//            String eventStartTime = "<br><strong> Event starts: </strong>" + event.getEventStartTime() + "</br>";
-//            String location = "<br><strong> Location: </strong>>" + event.getLocation() + "</br>";
-//
-//            mess.setSubject(mailSubject);
-//            mess.setContent(mailAntiPhishing + eventName + eventStartTime + location, "text/html; charset=utf-8");
-//
-//            // set send day
-//            mess.setSentDate(new Date());
-//
-//            //set message text
-//            mess.saveChanges();
-//
-//            //send the message
-//            Transport.send(mess);
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println("EMAIL VERIFICATION IS SENT TO " + user.getUsername());
-//    }
+            //send the message
+            Transport.send(mess);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        printNotificationInConsole(String.format("Reminder of event \"%s\" \"%s\"",event.getEventName(), email));
+    }
 }
