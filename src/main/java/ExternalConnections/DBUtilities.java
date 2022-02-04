@@ -393,7 +393,8 @@ public class DBUtilities {
             preparedStatement.setInt(5, locationID);
             preparedStatement.setString(6, event.getPriority().name());
             preparedStatement.setString(7, event.getReminder().name());
-            preparedStatement.setString(8, event.getEmails().toString());
+            String result = StringUtils.join(event.getEmails(), ",");
+            preparedStatement.setString(8, result);
             preparedStatement.setInt(9, event.getEventID());
             preparedStatement.executeUpdate();
 
@@ -717,8 +718,11 @@ public class DBUtilities {
         ArrayList<Event> events = new ArrayList<>();
             
         try {
+            //TODO: remove this after the bridge works
             preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
-            preparedStatement.setInt(1, user.getId());
+            preparedStatement.setString(1, "%" + user.getEmail() + "%");
+//            preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
+//            preparedStatement.setInt(1, user.getId());
             resultSet = preparedStatement.executeQuery();
 
 //            int size = 0;

@@ -75,7 +75,8 @@ public class EditDeleteEventController extends Application {
         System.out.println(selectedEvent.getLocation());
         eventName.setText(selectedEvent.getEventName());
         eventDate.setValue(selectedEvent.getDate());
-        eventTime.setText(selectedEvent.getTime().toString());
+        eventTime.setText(selectedEvent.getTime().toString().split(":")[0]);
+        eventMinutes.setText(selectedEvent.getTime().toString().split(":")[1]);
         eventDuration.setText(Integer.toString(selectedEvent.getDuration()));
         priority.setValue(selectedEvent.getPriority());
         reminder.setValue(selectedEvent.getReminder());
@@ -104,9 +105,7 @@ public class EditDeleteEventController extends Application {
     public void EditEventOnAction(ActionEvent event) {
         Priority selectedPriority = mapPriority(priority.getValue().toString());
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
-        String[] emails = participants.getText().split(",");
-        LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
-                parseInt(eventTime.getText().split(":")[1]));
+        String[] emails = participants.getText().replaceAll("\\s","").split(",");
         parseInt(eventDuration.getText());
         ArrayList<User> mappedParticipants = new ArrayList<User>();
         mappedParticipants.add(currentUser);

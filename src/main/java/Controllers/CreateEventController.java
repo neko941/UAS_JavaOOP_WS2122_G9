@@ -66,7 +66,7 @@ public class CreateEventController extends Application {
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
 
-        parseInt(eventDuration.getText());
+
         //TODO: add field validation
         if (true) {
             ArrayList<User> mappedParticipants = new ArrayList<User>();
