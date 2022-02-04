@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.eventEmail;
+import static ExternalConnections.DBUtilities.editEvent;
+import static ExternalConnections.DBUtilities.fetchAllEventsWithReminderFromUser;
 
 @SuppressWarnings("ALL")
 public class MultiThreading implements Runnable{
@@ -42,7 +44,12 @@ public class MultiThreading implements Runnable{
 //                        {
 //                            eventEmail(0, email, event);
 //                        }
-//
+//                        event.setReminder(null);
+//                        editEvent(event);
+//                    }
+//                    else
+//                    {
+//                        break;
 //                    }
 //                }
                 // Let the thread sleep for 30 seconds
