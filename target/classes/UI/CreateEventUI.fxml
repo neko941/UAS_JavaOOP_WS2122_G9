@@ -168,11 +168,17 @@
                 <Font size="15.0" />
             </font>
         </Label>
-        <Button fx:id="attachmentsButton" layoutX="200.0" layoutY="620.0" onAction="#attachmentButtonOnAction" mnemonicParsing="false" prefHeight="20" prefWidth="30.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="+" textFill="#ffffff">
+        <TextField fx:id="attachments" layoutX="100.0" layoutY="650.0" prefHeight="26.0" prefWidth="354.0">
             <font>
                 <Font size="14.0" />
             </font>
-        </Button>
+        </TextField>
+<!--        <Label layoutX="100.0" layoutY="480.0" text="attachments" textFill="GREY">-->
+<!--            <font>-->
+<!--                <Font size="15.0" />-->
+<!--            </font>-->
+<!--        </Label>-->
+
 
         <Button fx:id="cancelButton" layoutX="100.0" layoutY="700.0" onAction="#cancelButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Cancel" textFill="#ffffff">
             <font>

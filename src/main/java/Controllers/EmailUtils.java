@@ -88,7 +88,7 @@ public class EmailUtils {
         printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
-    public static void eventEmail(int option, String email, Event event) {
+    public static void reminderEmail(int option, String email, Event event) {
         try {
             //set email message details
             Message mess = new MimeMessage(session);
@@ -102,16 +102,15 @@ public class EmailUtils {
             //set email subject
             switch (option) {
                 case 0 -> mess.setSubject("EVENT REMINDER");
-                case 1 -> mess.setSubject("EVENT CREATED");
-                case 2 -> mess.setSubject("EVENT UPDATED");
-                case 3 -> mess.setSubject("EVENT DELETED");
+                case 1 -> mess.setSubject("EVENT UPDATED");
+                case 2 -> mess.setSubject("EVENT DELETED");
             }
 
 
             //set email content
-            String eventName = "<br><strong> Event name  : </strong>" + event.getEventName() + "</br>";
+            String eventName = "<br><strong> Event: </strong>" + event.getEventName() + "</br>";
             String eventStartTime = "<br><strong> Event starts: </strong>%s</br>".formatted(LocalDateTime.of(event.getDate(), event.getTime()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String eventEndTime = "<br><strong> Event ends  : </strong>%s</br>".formatted(LocalDateTime.of(event.getDate(), event.getTime()).plusMinutes(event.getDuration()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            String eventEndTime = "<br><strong> Event ends:  </strong>%s</br>".formatted(event.getReminder().getReminderTime(LocalDateTime.of(event.getDate(), event.getTime())).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             mess.setContent(eventName + eventStartTime + eventEndTime, "text/html; charset=utf-8");
 
             // set send day

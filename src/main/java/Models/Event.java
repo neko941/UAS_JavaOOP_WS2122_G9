@@ -226,8 +226,4 @@ public class Event implements Comparable<Event>{
     public Priority getPriority() {
         return e_priority;
     }
-
-    public LocalDateTime getReminderTime() {
-        return reminderTime;
-    }
 }
