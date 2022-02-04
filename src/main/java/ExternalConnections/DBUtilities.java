@@ -52,9 +52,7 @@ public class DBUtilities {
     private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? , emails = ? WHERE eventID = ?";
     private static final String EDIT_LOCATION_QUERY = "UPDATE Location SET street = ?, houseNumber = ?, zip = ?, city = ?, country = ?, building = ?, room = ? WHERE locationID = ?";
 
-    private static final String VERIFY_USER_QUERY_username = "SELECT * FROM User WHERE username = ? AND password = ?";
-    private static final String VERIFY_USER_QUERY_email = "SELECT * FROM User WHERE email = ? AND password = ?";
-    private static final String USER_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ? OR email = ?";
+    private static String VERIFY_USER_QUERY;
     private static final String EMAIL_AVAILABLE_QUERY = "SELECT * FROM User WHERE email = ?";
     private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
 
@@ -446,87 +444,52 @@ public class DBUtilities {
      * @param: password - password of the user
      * @return: true on successful verification
      */
-    public static boolean verifyUser (final String usernameOrEmail, final String password) {
+    public static boolean verifyUser (final String credential, final String password) {
         boolean verified = false;
+
+        // first we check if the given credential is a username or an email of the user
+        // and we prepare the query according to that
+        boolean containsAt = credential.contains("@");
+        if (containsAt) {
+            VERIFY_USER_QUERY = "SELECT * FROM User WHERE email = ? AND password = ?";
+            System.out.println("was email");
+        } else {
+            VERIFY_USER_QUERY = "SELECT * FROM User WHERE username = ? AND password = ?";
+            System.out.println("was username");
+        }
 
         // password encryption
         String encryptedPassword = Security.sha512(password);
-            
+
         try {
-            preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY_username);
-            preparedStatement.setString(1, usernameOrEmail);
+            // then we prepare the preparedStatement according to that
+            preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY);
+            preparedStatement.setString(1, credential);
             preparedStatement.setString(2, encryptedPassword);
             resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                if (resultSet.getString("username").equals(usernameOrEmail) && resultSet.getString("password").equals(encryptedPassword)) {
-                    verified = true;
-                } else {
-                    System.out.println("Username not found");
-                }
+
+            if (containsAt) {
+
+                verified = verify(resultSet, "email", credential, encryptedPassword);
+            } else {
+                verified = verify(resultSet, "username", credential, encryptedPassword);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
         }
-
-        if(!verified)
-        {
-            try {
-                preparedStatement = connection.prepareStatement(VERIFY_USER_QUERY_email);
-                preparedStatement.setString(1, usernameOrEmail);
-                preparedStatement.setString(2, encryptedPassword);
-                resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    if (resultSet.getString("email").equals(usernameOrEmail) && resultSet.getString("password").equals(encryptedPassword)) {
-                        verified = true;
-                    } else {
-                        System.out.println("Email not found");
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closePreparedStatement();
-                closeResultSet();
-            }
+        finally {
+            closePreparedStatement();
         }
 
         return verified;
     }
 
     /**
-     * Checks if a users username or email is available, since the username of all users should be unique
-     *      Should be used before a new user is stored into the database.
+     * Checks if a given email is available or not
      *
-     * @param: user - user that should be checked for availability
-     * @return: true if user is available
+     * @param: email - email of the user
+     * @return: true if email is available
      */
-    public static boolean isAvailable(User user) {
-        boolean available = true;
-
-        try {
-            preparedStatement = connection.prepareStatement(USER_AVAILABLE_QUERY);
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getEmail());
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                if (resultSet.getString("username").equals(user.getUsername()) || resultSet.getString("email").equals(user.getEmail())) {
-                    available = false;
-                    break;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            available = false;
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
-        }
-        return available;
-    }
-
     public static boolean isEmailAvailable(String email) {
         boolean available = true;
 
@@ -550,6 +513,12 @@ public class DBUtilities {
         return available;
     }
 
+    /**
+     * Checks if a given username is available
+     *
+     * @param: username - username of the user
+     * @return: true if the username is available
+     */
     public static boolean isUsernameAvailable(String username) {
         boolean available = true;
 
@@ -769,7 +738,7 @@ public class DBUtilities {
      *                                         has reminder
      *                                         the user is participating
      */
-    public static ArrayList<Event> fetchAllEventsWithReminderFromUser(final User user) {
+    public static ArrayList<Event> fetchAllEventsWithReminderFromDatabase(final User user) {
         ArrayList<Event> events = new ArrayList<>();
 
         try {
@@ -856,6 +825,10 @@ public class DBUtilities {
         }
         return null;
     }
+
+    //#####################################################################################
+    //                                  Subroutines
+    //#####################################################################################
 
     /**
      * This method fetches the location where the event is going to take place.
@@ -986,4 +959,39 @@ public class DBUtilities {
         return attachments;
     }
 
+    /**
+     * This method is only used for looping through the table of user and verifying a given user
+     *
+     * @param: resultSet - the resultSet with the execution of the preparedStatement
+     * @param: searchFor - defines if we are using the email or the username for searching of the user
+     * @param: credential - email or username of the user
+     * @param: password - the password of the user
+     * @return: true if the user is in the table
+     * @throws: SQLException - if something went wrong with the resultSet
+     */
+    private static boolean verify (ResultSet resultSet, String searchFor, String credential, String password) throws SQLException {
+        boolean verified = false;
+
+        // looping through the table and looking for a suiting user
+        while (resultSet.next()) {
+            if (resultSet.getString(searchFor).equals(credential)
+                    && resultSet.getString("password").equals(password))
+            {
+                verified = true;
+                break;
+            }
+        }
+
+        return verified;
+    }
+
+    public static void main(String[] args) {
+        DBUtilities();
+        // insertNewUser(new User("jatender", "jossan", "jatenderjosan", "test", "jatender@oiutlook.de"));
+        if (verifyUser("jatenderjosan", "test")) {
+            System.out.println("verified");
+        } else {
+            System.out.println("not verified");
+        }
+    }
 }
