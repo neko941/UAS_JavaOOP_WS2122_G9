@@ -26,6 +26,8 @@ public class Event {
     private int duration;
     // participants participating
     private ArrayList<User> participants;
+    // list of emails
+    private String[] emails;
     // attachments needed for the event
     private ArrayList<File> attachments;
     // location of the event
@@ -48,12 +50,13 @@ public class Event {
      * @param priority - selected priority for the event
      */
     public Event(String eventName, LocalDate date, LocalTime time, int duration, Location location,
-                 ArrayList<User> participants, ArrayList<File> attachments, Reminder reminder, Priority priority) {
+                 ArrayList<User> participants, String[] emails, ArrayList<File> attachments, Reminder reminder, Priority priority) {
         this.eventName = eventName;
         this.date = date;
         this.time = time;
         this.duration = duration;
         this.participants = participants;
+        this.emails = emails;
         this.attachments = attachments;
         this.location = location;
         this.e_reminder = reminder;
@@ -74,13 +77,14 @@ public class Event {
      * @param priority - selected priority for the event
      */
     public Event(int eventID, String eventName, LocalDate date, LocalTime time, int duration, Location location,
-                 ArrayList<User> participants, ArrayList<File> attachments, Reminder reminder, Priority priority) {
+                 ArrayList<User> participants, String[] emails, ArrayList<File> attachments, Reminder reminder, Priority priority) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.date = date;
         this.time = time;
         this.duration = duration;
         this.participants = participants;
+        this.emails = emails;
         this.attachments = attachments;
         this.location = location;
         this.e_reminder = reminder;
@@ -121,6 +125,10 @@ public class Event {
 
     public void setParticipants(ArrayList<User> participants) {
         this.participants = participants;
+    }
+
+    public void setEmails(String[] emails) {
+        this.emails = emails;
     }
 
     public void setAttachments(ArrayList<File> attachments) {
@@ -164,6 +172,10 @@ public class Event {
 
     public ArrayList<User> getParticipants() {
         return participants;
+    }
+
+    public String[] getEmails() {
+        return emails;
     }
 
     public ArrayList<File> getAttachments() {

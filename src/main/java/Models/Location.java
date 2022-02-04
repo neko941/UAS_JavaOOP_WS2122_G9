@@ -23,9 +23,9 @@ public class Location {
     // country of a location
     private String country;
     // if there are multiple building with different letters e.g. building b (Gebäude b)
-    private String building;
+    private int building;
     // room of the building
-    private String room;
+    private int room;
 
     /**
      * Constructor for creating a location.
@@ -99,11 +99,11 @@ public class Location {
         this.country = country;
     }
 
-    public void setBuilding(String building) {
+    public void setBuilding(int building) {
         this.building = building;
     }
 
-    public void setRoom(String room) {
+    public void setRoom(int room) {
         this.room = room;
     }
 
@@ -135,11 +135,11 @@ public class Location {
         return country;
     }
 
-    public String getBuilding() {
+    public int getBuilding() {
         return building;
     }
 
-    public String getRoom() {
+    public int getRoom() {
         return room;
     }
 }

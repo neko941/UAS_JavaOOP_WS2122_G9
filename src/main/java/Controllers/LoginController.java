@@ -6,6 +6,8 @@ package Controllers;
 
 import ExternalConnections.DBUtilities;
 
+import Models.User;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -33,13 +35,10 @@ public class LoginController {
         if (!usernameLogin.getText().isBlank() && !PasswordLogin.getText().isBlank()) {
             if (DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText())) {
                 LoginMessageLabel.setText("Congratulations!");
-
                 try {
                     Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/CalendarUI.fxml")));
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    Scene scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.show();
+                    editController.start(stage);
                 } catch (IOException e) {
                     System.out.format("Error: %s\n", e.getMessage());
                 }
@@ -86,5 +85,6 @@ public class LoginController {
             System.out.format("Error: %s\n", e.getMessage());
         }
     }
+
 }
 
