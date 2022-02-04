@@ -7,7 +7,6 @@ package Controllers;
 import ExternalConnections.DBUtilities;
 
 import Models.User;
-import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,6 +19,9 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import static Controllers.ColorController.changeLabelText;
 
 public class LoginController {
     @FXML private Label LoginMessageLabel;
@@ -31,26 +33,30 @@ public class LoginController {
      *
      * @param event when user clicks on "Log-in" button
      */
-    public void loginButtonOnAction(ActionEvent event) {
-        if (!usernameLogin.getText().isBlank() && !PasswordLogin.getText().isBlank()) {
-            if (DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText())) {
+    public void loginButtonOnAction(ActionEvent event) throws InterruptedException {
+        boolean check = changeLabelText(
+                DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText()),
+                Stream.of(
+                        usernameLogin.getText().isBlank(),
+                        PasswordLogin.getText().isBlank())
+                        .allMatch(val -> val),
+                LoginMessageLabel,
+                "Congratulations!",
+                "Invalid Login. Please try again");
+
+        if (check)
+        {
+            try {
                 User currentUser = DBUtilities.fetchUser(usernameLogin.getText());
-                LoginMessageLabel.setText("Congratulations!");
-                try {
-                    CalendarController calendarController = new CalendarController();
-                    calendarController.setCurrentUser(currentUser);
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    calendarController.start(stage);
-                } catch (IOException e) {
-                    System.out.format("Error: %s\n", e.getMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                LoginMessageLabel.setText("Invalid Login. Please try again");
+                CalendarController calendarController = new CalendarController();
+                calendarController.setCurrentUser(currentUser);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                calendarController.start(stage);
+            } catch (IOException e) {
+                System.out.format("Error: %s\n", e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } else {
-            LoginMessageLabel.setText("Please enter email and password");
         }
     }
 

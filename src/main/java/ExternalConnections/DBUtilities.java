@@ -66,7 +66,8 @@ public class DBUtilities {
     private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
 
-    private static final String GET_USER_QUERY = "SELECT * FROM User WHERE email = ?";
+    private static final String GET_USER_QUERY_email = "SELECT * FROM User WHERE email = ?";
+    private static final String GET_USER_QUERY_username = "SELECT * FROM User WHERE username = ?";
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE emails LIKE ?";
     // TODO: Uncomment this when the bridge works
     // private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
@@ -656,21 +657,21 @@ public class DBUtilities {
      * @param: email - email of the user which should be fetched
      * @return: user with the given email
      */
-    public static User fetchUser(String email) {
+    public static User fetchUser(String emailOrUsername) {
         User user = null;
 
         try {
-            preparedStatement = connection.prepareStatement(GET_USER_QUERY);
-            preparedStatement.setString(1, email);
+            preparedStatement = connection.prepareStatement(GET_USER_QUERY_email);
+            preparedStatement.setString(1, emailOrUsername);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                if (resultSet.getString("email").equals(email)) {
+                if (resultSet.getString("email").equals(emailOrUsername)) {
                     int userID = resultSet.getInt("userID");
                     String firstname = resultSet.getString("userName");
                     String lastname = resultSet.getString("lastName");
                     String username = resultSet.getString("userName");
 
-                    user = new User(userID, firstname, lastname, username, email);
+                    user = new User(userID, firstname, lastname, username, emailOrUsername);
 
                     break;
                 }
@@ -682,6 +683,31 @@ public class DBUtilities {
             closeResultSet();
         }
 
+        if (user == null)
+        {
+            try {
+                preparedStatement = connection.prepareStatement(GET_USER_QUERY_username);
+                preparedStatement.setString(1, emailOrUsername);
+                resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    if (resultSet.getString("username").equals(emailOrUsername)) {
+                        int userID = resultSet.getInt("userID");
+                        String firstname = resultSet.getString("userName");
+                        String lastname = resultSet.getString("lastName");
+                        String username = resultSet.getString("userName");
+
+                        user = new User(userID, firstname, lastname, username, emailOrUsername);
+
+                        break;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closePreparedStatement();
+                closeResultSet();
+            }
+        }
         return user;
     }
 

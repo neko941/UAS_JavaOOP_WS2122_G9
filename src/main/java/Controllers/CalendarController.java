@@ -4,27 +4,20 @@
 package Controllers;
 
 import Models.*;
-import com.calendarfx.model.CalendarEvent;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
-import com.calendarfx.view.DetailedWeekView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,12 +25,10 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
 
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
-import org.w3c.dom.events.MouseEvent;
 
 import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
