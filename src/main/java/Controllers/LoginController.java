@@ -34,13 +34,17 @@ public class LoginController {
     public void loginButtonOnAction(ActionEvent event) {
         if (!usernameLogin.getText().isBlank() && !PasswordLogin.getText().isBlank()) {
             if (DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText())) {
+                User currentUser = DBUtilities.fetchUser(usernameLogin.getText());
                 LoginMessageLabel.setText("Congratulations!");
                 try {
-                    Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/CalendarUI.fxml")));
+                    CalendarController calendarController = new CalendarController();
+                    calendarController.setCurrentUser(currentUser);
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    editController.start(stage);
+                    calendarController.start(stage);
                 } catch (IOException e) {
                     System.out.format("Error: %s\n", e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 LoginMessageLabel.setText("Invalid Login. Please try again");

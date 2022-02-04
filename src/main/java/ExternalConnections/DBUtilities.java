@@ -67,7 +67,10 @@ public class DBUtilities {
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
 
     private static final String GET_USER_QUERY = "SELECT * FROM User WHERE email = ?";
-    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE emails LIKE ?";
+    // TODO: Uncomment this when the bridge works
+    // private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+    private static final String GET_EVENT_FROM_ID = "SELECT * FROM Event WHERE eventID = ?";
     private static final String GET_LOCATION_FROM_EVENT_QUERY = "SELECT * FROM Location WHERE locationID = ?";
     private static final String GET_ATTACHMENTS_FROM_EVENT_QUERY = "SELECT * FROM Attachments WHERE eventID = ?";
     private static final String GET_PARTICIPANTS_FROM_EVENT_QUERY = "SELECT * FROM Participants WHERE Participants.eventID = ?";
@@ -252,12 +255,12 @@ public class DBUtilities {
         try {
             insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
             insertLocationPreparedStatement.setString(1, location.getStreet());
-            insertLocationPreparedStatement.setString(2, location.getStreetNumber());
+            insertLocationPreparedStatement.setInt(2, location.getStreetNumber());
             insertLocationPreparedStatement.setString(3, location.getZip());
             insertLocationPreparedStatement.setString(4, location.getCity());
             insertLocationPreparedStatement.setString(5, location.getCountry());
-            insertLocationPreparedStatement.setString(6, location.getBuilding());
-            insertLocationPreparedStatement.setString(7, location.getRoom());
+            insertLocationPreparedStatement.setInt(6, location.getBuilding());
+            insertLocationPreparedStatement.setInt(7, location.getRoom());
             insertLocationPreparedStatement.executeUpdate();
 
             // get the ID of the location from the database
@@ -692,9 +695,8 @@ public class DBUtilities {
         ArrayList<Event> events = new ArrayList<>();
             
         try {
-            preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY, ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
-            // preparedStatement.setInt(1, user.getId());
+            preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_FROM_USER_QUERY);
+            preparedStatement.setInt(1, user.getId());
             resultSet = preparedStatement.executeQuery();
 
 //            int size = 0;
@@ -744,7 +746,7 @@ public class DBUtilities {
 
 
         try {
-            preparedStatement = connection.prepareStatement(FETCH_EVENT_FROM_ID, ResultSet.TYPE_SCROLL_SENSITIVE,
+            preparedStatement = connection.prepareStatement(GET_EVENT_FROM_ID, ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);
             preparedStatement.setInt(1, eventID);
             resultSet = preparedStatement.executeQuery();
@@ -779,34 +781,6 @@ public class DBUtilities {
         return null;
     }
 
-
-    public static User fetchUser(final String email){
-        User result = null;
-        try {
-
-            preparedStatement = connection.prepareStatement(GET_USER_PROFILE_QUERY);
-
-            preparedStatement.setString(1, email);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                result = new User(
-                        resultSet.getString(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getString(4),
-                        resultSet.getString(5)
-                );
-                return result;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
-        }
-            return null;
-    }
-
     /**
      * This method fetches the location where the event is going to take place.
      *
@@ -823,12 +797,12 @@ public class DBUtilities {
             fetchLocationResultSet = fetchLocationStatement.executeQuery();
             if (fetchLocationResultSet.next()) {
                 String street = fetchLocationResultSet.getString(2);
-                String houseNumber = fetchLocationResultSet.getString(3);
+                int houseNumber = fetchLocationResultSet.getInt(3);
                 String zip = fetchLocationResultSet.getString(4);
                 String city = fetchLocationResultSet.getString(5);
                 String country = fetchLocationResultSet.getString(6);
-                String building = fetchLocationResultSet.getString(7);
-                String room = fetchLocationResultSet.getString(8);
+                int building = fetchLocationResultSet.getInt(7);
+                int room = fetchLocationResultSet.getInt(8);
 
                 return new Location(street, houseNumber, zip, city, country, building, room);
             }

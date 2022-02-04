@@ -38,27 +38,82 @@
                 <Font size="15.0" />
             </font>
         </Label>
-        <TextField fx:id="eventTime" layoutX="100.0" layoutY="230.0" prefHeight="26.0" prefWidth="354.0">
+        <Label layoutX="141.0" layoutY="227.0" text=":" textFill="BLACK">
             <font>
-                <Font size="14.0" />
+                <Font size="22.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventTime" layoutX="100.0" layoutY="230.0" prefHeight="26.0" prefWidth="37.0">
+            <font>
+                <Font size="15.0" />
             </font>
         </TextField>
-        <Label layoutX="100.0" layoutY="270.0" text="Event Duration (min)" textFill="GREY">
+        <TextField fx:id="eventMinutes" layoutX="150.0" layoutY="230.0" prefHeight="26.0" prefWidth="37.0">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </TextField>
+        <Label layoutX="220.0" layoutY="200.0" text="Event Duration (min)" textFill="GREY">
             <font>
                 <Font size="15.0" />
             </font>
         </Label>
-        <TextField fx:id="eventDuration" layoutX="100.0" layoutY="300.0" prefHeight="26.0" prefWidth="354.0">
+        <TextField fx:id="eventDuration" layoutX="220.0" layoutY="230.0" prefHeight="26.0" prefWidth="50.0">
             <font>
                 <Font size="14.0" />
             </font>
         </TextField>
-        <Label layoutX="100.0" layoutY="340.0" text="Location" textFill="GREY">
+        <Label layoutX="100.0" layoutY="270.0" text="Location" textFill="GREY">
             <font>
                 <Font size="15.0" />
             </font>
         </Label>
-        <TextField fx:id="eventLocation" layoutX="100.0" layoutY="370.0" prefHeight="26.0" prefWidth="354.0">
+        <Label layoutX="100.0" layoutY="295.0" text="Street" textFill="GREY">
+            <font>
+                <Font size="11.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventStreet" layoutX="100.0" layoutY="315.0" prefHeight="26.0" prefWidth="170.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </TextField>
+        <Label layoutX="300.0" layoutY="295.0" text="Nr." textFill="GREY">
+            <font>
+                <Font size="11.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventHouseNr" layoutX="300.0" layoutY="315.0" prefHeight="26.0" prefWidth="50.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </TextField>
+        <Label layoutX="100.0" layoutY="350.0" text="ZIP" textFill="GREY">
+            <font>
+                <Font size="11.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventZipCode" layoutX="100.0" layoutY="370.0" prefHeight="26.0" prefWidth="100.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </TextField>
+        <Label layoutX="220.0" layoutY="350.0" text="City" textFill="GREY">
+            <font>
+                <Font size="11.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventCity" layoutX="220.0" layoutY="370.0" prefHeight="26.0" prefWidth="100.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </TextField>
+        <Label layoutX="340.0" layoutY="350.0" text="Country" textFill="GREY">
+            <font>
+                <Font size="11.0" />
+            </font>
+        </Label>
+        <TextField fx:id="eventCountry" layoutX="340.0" layoutY="370.0" prefHeight="26.0" prefWidth="100.0">
             <font>
                 <Font size="14.0" />
             </font>
@@ -129,7 +184,7 @@
                 <Font size="16.0" />
             </font>
         </Button>
-        <Button fx:id="deleteButton" layoutX="225.0" layoutY="700.0" onAction="#DeleteButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #af353f; -fx-cursor: hand;" text="Save" textFill="#ffffff">
+        <Button fx:id="deleteButton" layoutX="225.0" layoutY="700.0" onAction="#DeleteButtonOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #af353f; -fx-cursor: hand;" text="Delete" textFill="#ffffff">
             <font>
                 <Font size="16.0" />
             </font>

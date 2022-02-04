@@ -31,6 +31,7 @@ public class EditDeleteEventController extends Application {
     @FXML private TextField eventName;
     @FXML private DatePicker eventDate;
     @FXML private TextField eventTime;
+    @FXML private TextField eventMinutes;
     @FXML private TextField eventDuration;
     @FXML private TextField eventStreet;
     @FXML private TextField eventHouseNr;
@@ -119,8 +120,8 @@ public class EditDeleteEventController extends Application {
         EditEvent(myEvent,
                 eventName.getText(),
                 eventDate.getValue(),
-                LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
-                        parseInt(eventTime.getText().split(":")[1])),
+                LocalTime.of(parseInt(eventTime.getText()),
+                        parseInt(eventMinutes.getText())),
                 parseInt(eventDuration.getText()),
                 new Location(eventStreet.getText().replaceAll("\\s",""),
                         parseInt(eventHouseNr.getText().replaceAll("\\s","")),

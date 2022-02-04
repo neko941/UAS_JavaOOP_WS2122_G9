@@ -15,7 +15,7 @@ public class Location {
     // street of a location
     private String street;
     // house Number of a location
-    private String houseNumber;
+    private int houseNumber;
     // zip of a location
     private String zip;
     // city of a location
@@ -38,7 +38,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(String street, String houseNumber, String zip, String city, String country, String building, String room) {
+    public Location(String street, int houseNumber, String zip, String city, String country, int building, int room) {
         this.street = street;
         this.houseNumber = houseNumber;
         this.zip = zip;
@@ -60,7 +60,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(int locationID, String street, String houseNumber, String zip, String city, String country, String building, String room) {
+    public Location(int locationID, String street, int houseNumber, String zip, String city, String country, int building, int room) {
         this.locationID = locationID;
         this.street = street;
         this.houseNumber = houseNumber;
@@ -83,7 +83,7 @@ public class Location {
         this.street = street;
     }
 
-    public void setStreetNumber(String houseNumber) {
+    public void setStreetNumber(int houseNumber) {
         this.houseNumber = houseNumber;
     }
 
@@ -119,7 +119,7 @@ public class Location {
         return street;
     }
 
-    public String getStreetNumber() {
+    public int getStreetNumber() {
         return houseNumber;
     }
 

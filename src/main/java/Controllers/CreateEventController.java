@@ -26,6 +26,7 @@ public class CreateEventController extends Application {
     @FXML private TextField eventName;
     @FXML private DatePicker eventDate;
     @FXML private TextField eventTime;
+    @FXML private TextField eventMinutes;
     @FXML private TextField eventDuration;
     @FXML private TextField eventStreet;
     @FXML private TextField eventHouseNr;
@@ -50,6 +51,7 @@ public class CreateEventController extends Application {
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         userlable.setText(currentUser.getUsername());
+        participants.setText(currentUser.getEmail() + ", ");
         stage.show();
     }
 
@@ -62,9 +64,8 @@ public class CreateEventController extends Application {
     public void CreateEventOnAction(ActionEvent event) {
         Priority selectedPriority = mapPriority(priority.getValue().toString());
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
-        String[] emails = participants.getText().split(",");
-        LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
-            parseInt(eventTime.getText().split(":")[1]));
+        String[] emails = participants.getText().replaceAll("\\s","").split(",");
+
         parseInt(eventDuration.getText());
         //TODO: add field validation
         if (true) {
@@ -77,8 +78,8 @@ public class CreateEventController extends Application {
 
                 Event myEvent = new Event(eventName.getText(),
                         eventDate.getValue(),
-                        LocalTime.of(parseInt(eventTime.getText().split(":")[0]),
-                                parseInt(eventTime.getText().split(":")[1])),
+                        LocalTime.of(parseInt(eventTime.getText()),
+                                parseInt(eventMinutes.getText())),
                         parseInt(eventDuration.getText()),
                         new Location(eventStreet.getText().replaceAll("\\s",""),
                                 parseInt(eventHouseNr.getText().replaceAll("\\s","")),
