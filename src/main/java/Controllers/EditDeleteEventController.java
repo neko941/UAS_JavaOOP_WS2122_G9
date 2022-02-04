@@ -13,13 +13,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.awt.Desktop;
 
 import static Controllers.EventController.*;
 import static ExternalConnections.DBUtilities.*;
@@ -44,7 +51,12 @@ public class EditDeleteEventController extends Application {
     @FXML private Button createButton;
     @FXML private Button deleteButton;
     @FXML private Button cancelButton;
+    @FXML private Button attachmentsButton;
+    @FXML private Button openButton;
+
     private User currentUser;
+    FileChooser fileChooser = new FileChooser();
+    ArrayList<File> attachment = new ArrayList<File>();
 
     public void setCurrentUser(User currentUser){ this.currentUser = currentUser; }
 
@@ -65,6 +77,10 @@ public class EditDeleteEventController extends Application {
             String dateTime = LocalDateTime.of(thisEvent.getDate(), thisEvent.getTime()).toString();
             eventChoice.getItems().add(id + ": " + title + " " + dateTime);
         }
+        createButton.setDisable(true);
+        deleteButton.setDisable(true);
+        attachmentsButton.setDisable(true);
+        openButton.setDisable(true);
         stage.show();
     }
 
@@ -72,7 +88,6 @@ public class EditDeleteEventController extends Application {
     public void selectEventOnAction(ActionEvent event) {
         int eventId = parseInt(eventChoice.getValue().toString().split(":")[0]);
         Event selectedEvent = fetchEventsFromID(eventId);
-        System.out.println(selectedEvent.getLocation());
         eventName.setText(selectedEvent.getEventName());
         eventDate.setValue(selectedEvent.getDate());
         eventTime.setText(selectedEvent.getTime().toString().split(":")[0]);
@@ -98,7 +113,13 @@ public class EditDeleteEventController extends Application {
         eventZipCode.setText(myLocation.getZip());
         eventCity.setText(myLocation.getCity());
         eventCountry.setText(myLocation.getCountry());
-
+        attachment = selectedEvent.getAttachments();
+        createButton.setDisable(false);
+        deleteButton.setDisable(false);
+        attachmentsButton.setDisable(false);
+        if(attachment.size() != 0) {
+            openButton.setDisable(false);
+        }
     }
 
     @FXML
@@ -131,13 +152,26 @@ public class EditDeleteEventController extends Application {
                         0),
                 mappedParticipants,
                 emails,
-                null,
+                attachment,
                 selectedReminder,
                 selectedPriority);
         Stage stage = (Stage) createButton.getScene().getWindow();
         stage.close();
 
 
+    }
+    @FXML
+    public void attachmentButtonOnAction(ActionEvent event) {
+        Stage stage = new Stage();
+        File file = fileChooser.showOpenDialog(stage);
+        this.attachment.add(file);
+    }
+    @FXML
+    public void openButtonOnAction(ActionEvent event) throws IOException {
+        Desktop myDesktop = Desktop.getDesktop();
+        for(int i = 0; i < attachment.size(); i++){
+            myDesktop.open(attachment.get(i));
+        }
     }
 
     @FXML

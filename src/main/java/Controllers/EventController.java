@@ -21,9 +21,14 @@ public class EventController {
         int eventId = insertNewEvent(selectedEvent);
         selectedEvent.setEventID(eventId);
         ArrayList<User> participants = selectedEvent.getParticipants();
+        ArrayList<File> attachments = selectedEvent.getAttachments();
         for (int i = 0; i < participants.size(); i++){
             createUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
         }
+        for (int i = 0; i < attachments.size(); i++){
+            insertNewAttachment(selectedEvent, attachments.get(i));
+        }
+
         System.out.println("Event " + selectedEvent.getEventName() + " created.");
         //TODO: Add Email function
         return selectedEvent;
@@ -51,6 +56,9 @@ public class EventController {
         //TODO: remove this
         selectedEvent.setEmails(emails);
         selectedEvent.setPriority(priority);
+        for (int i = 0; i < attachments.size(); i++){
+            insertNewAttachment(selectedEvent, attachments.get(i));
+        }
 
         //TODO: Add Email function
 

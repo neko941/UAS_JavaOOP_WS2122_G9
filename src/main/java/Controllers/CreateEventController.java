@@ -8,9 +8,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
@@ -39,7 +41,9 @@ public class CreateEventController extends Application {
     @FXML private Button createButton;
     @FXML private Button cancelButton;
     @FXML private Label userlable;
+    FileChooser fileChooser = new FileChooser();
     private User currentUser;
+    ArrayList<File> attachment = new ArrayList<File>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -90,7 +94,7 @@ public class CreateEventController extends Application {
                                 0),
                         mappedParticipants,
                         emails,
-                        null,
+                        attachment,
                         selectedReminder,
                         selectedPriority);
                 CreateEvent(myEvent);
@@ -98,6 +102,13 @@ public class CreateEventController extends Application {
                 stage.close();
 
         };
+    }
+
+    @FXML
+    public void attachmentButtonOnAction(ActionEvent event) {
+        Stage stage = new Stage();
+        File file = fileChooser.showOpenDialog(stage);
+        this.attachment.add(file);
     }
 
     public Priority mapPriority(String selection) {

@@ -39,6 +39,7 @@ public class CalendarController extends Application {
     @FXML private Button editButton;
     @FXML private CalendarView calendarView;
     @FXML private Label userlable;
+    private Thread updateTimeThread;
     public User currentUser;
 
     public void setCurrentUser(User currentUser){
@@ -75,7 +76,7 @@ public class CalendarController extends Application {
         DBUtilities();
         showEvents(fetchAllEventsFromUser(currentUser),lowPrio, medPrio, highPrio);
 
-        Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
+        updateTimeThread = new Thread("Calendar: Update Time Thread") {
             @Override
             public void run() {
                 while (true) {
@@ -169,6 +170,7 @@ public class CalendarController extends Application {
     @FXML
     private void LogoutButtonOnAction(ActionEvent event) {
         try {
+            updateTimeThread.stop();
             currentUser = null;
             Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
