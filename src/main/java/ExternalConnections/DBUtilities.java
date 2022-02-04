@@ -984,14 +984,4 @@ public class DBUtilities {
 
         return verified;
     }
-
-    public static void main(String[] args) {
-        DBUtilities();
-        // insertNewUser(new User("jatender", "jossan", "jatenderjosan", "test", "jatender@oiutlook.de"));
-        if (verifyUser("jatenderjosan", "test")) {
-            System.out.println("verified");
-        } else {
-            System.out.println("not verified");
-        }
-    }
 }
