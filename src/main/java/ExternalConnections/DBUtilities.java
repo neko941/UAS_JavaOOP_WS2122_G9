@@ -60,8 +60,7 @@ public class DBUtilities {
     private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
 
-    private static final String GET_USER_QUERY_email = "SELECT * FROM User WHERE email = ?";
-    private static final String GET_USER_QUERY_username = "SELECT * FROM User WHERE username = ?";
+    private static String GET_USER_QUERY;
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE emails LIKE ?";
     // TODO: Uncomment this when the bridge works
     // private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
@@ -81,51 +80,6 @@ public class DBUtilities {
     public static void DBUtilities(){
         connection = DBConn.getConnection();
     }
-        
-        // private static void connectToDatabase() {
-        //     try {
-        //     
-        //         connection = DriverManager.getConnection(DBUrl, DBUsername, DBPassword);
-        //         System.out.println("Connected to database...");
-        //     } catch (SQLException e) {
-        //         e.printStackTrace();
-        //         System.out.println("Error Code opening: " +e.getErrorCode());
-        //         System.out.println("Error message closing: " +e.getMessage());
-        //     }
-        // }
-
-//        public static void connectToDatabase()
-//        {
-//            String databaseUser = "root";
-//            String databasePassword = "-KFyAH8cp99JYJr";
-//            String url = "jdbc:mysql://127.0.0.1:3306/quartz" ;
-//
-//            try {
-//                Class.forName("com.mysql.cj.jdbc.Driver");
-//                connection = DriverManager.getConnection(url, databaseUser, databasePassword);
-//
-//            }catch(Exception e){
-//                e.printStackTrace();
-//                e.getCause();
-//            }
-//        }
-        /**
-         * Closes an existing connection to the database.
-         * This function is used everytime a connection to the database is created to
-         * avoid performance issues by the garbage collector
-         */
-        // private static void disconnectFromDatabase() {
-        //     if (connection != null) {
-        //         try {
-        //             connection.close();
-        //             if (connection.isClosed())
-        //                 System.out.println("Disconnected from database...");
-        //             connection = null;
-        //         } catch (SQLException e) {
-        //             e.printStackTrace();
-        //         }
-        //     }
-        // }
 
     /**
      * This function closes an opened preparedStatement
@@ -452,10 +406,8 @@ public class DBUtilities {
         boolean containsAt = credential.contains("@");
         if (containsAt) {
             VERIFY_USER_QUERY = "SELECT * FROM User WHERE email = ? AND password = ?";
-            System.out.println("was email");
         } else {
             VERIFY_USER_QUERY = "SELECT * FROM User WHERE username = ? AND password = ?";
-            System.out.println("was username");
         }
 
         // password encryption
@@ -469,9 +421,10 @@ public class DBUtilities {
             resultSet = preparedStatement.executeQuery();
 
             if (containsAt) {
-
+                // if we are searching with the email of the user
                 verified = verify(resultSet, "email", credential, encryptedPassword);
             } else {
+                // if we are searching with the username of the user
                 verified = verify(resultSet, "username", credential, encryptedPassword);
             }
         } catch (SQLException e) {
@@ -550,20 +503,45 @@ public class DBUtilities {
      * @return: true on successful deletion
      */
     public static boolean deleteEvent(final int eventID) {
-        boolean deleted = false;
+        boolean deletedEvent = false;
 
         try {
             preparedStatement = connection.prepareStatement(DELETE_EVENT_QUERY);
             preparedStatement.setInt(1, eventID);
             preparedStatement.executeUpdate();
 
-            deleted = true;
+            deletedEvent = true;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
-        return deleted;
+        return deletedEvent;
+    }
+
+    /**
+     * Deletes all references from an event for a user from the database.
+     *
+     * @param: userID - ID of the user
+     * @param: eventID - ID of the event
+     * @return: true on successful deletion
+     */
+    public static boolean deleteUser_EventBridge(final int userID, final int eventID) {
+        boolean deletedBridge = false;
+
+        try {
+            preparedStatement = connection.prepareStatement(DELETE_USER_EVENT_BRIDGE_QUERY);
+            preparedStatement.setInt(1, userID);
+            preparedStatement.setInt(2, eventID);
+            preparedStatement.executeUpdate();
+
+            deletedBridge = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+        }
+        return deletedBridge;
     }
 
     /**
@@ -590,90 +568,44 @@ public class DBUtilities {
         return deleted;
     }
 
-    /**
-     * Deletes all references from an event for a user from the database.
-     *
-     * @param: userID - ID of the user
-     * @param: eventID - ID of the event
-     * @return: true on successful deletion
-     */
-    public static boolean deleteUser_EventBridge(final int userID, final int eventID) {
-        boolean deleted = false;
-
-        try {
-            preparedStatement = connection.prepareStatement(DELETE_USER_EVENT_BRIDGE_QUERY);
-            preparedStatement.setInt(1, userID);
-            preparedStatement.setInt(2, eventID);
-            preparedStatement.executeUpdate();
-
-            deleted = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-        return deleted;
-    }
-
     //##########################################################################################
 
     /**
      * This function is for fetching a user.
      *
-     * @param: email - email of the user which should be fetched
-     * @return: user with the given email
+     * @param: credential - email or username of the user
+     * @return: user - the user we looked for with the credential
      */
-    public static User fetchUser(String emailOrUsername) {
+    public static User fetchUser(final String credential) {
         User user = null;
 
+        // first we check if the given credential is the username or the email of the user
+        // and prepare the query according to it
+        boolean containsAt = credential.contains("@");
+        if (containsAt) {
+            GET_USER_QUERY = "SELECT * FROM User WHERE email = ?";
+        } else {
+            GET_USER_QUERY = "SELECT * FROM User WHERE username = ?";
+        }
+
         try {
-            preparedStatement = connection.prepareStatement(GET_USER_QUERY_email);
-            preparedStatement.setString(1, emailOrUsername);
+            // then we set the email or the username of the user in the placeholder
+            preparedStatement = connection.prepareStatement(GET_USER_QUERY);
+            preparedStatement.setString(1, credential);
             resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                if (resultSet.getString("email").equals(emailOrUsername)) {
-                    int userID = resultSet.getInt("userID");
-                    String firstname = resultSet.getString("userName");
-                    String lastname = resultSet.getString("lastName");
-                    String username = resultSet.getString("userName");
-
-                    user = new User(userID, firstname, lastname, username, emailOrUsername);
-
-                    break;
-                }
+            if (containsAt) {
+                // if we are using the email of the user for searching the user in the table
+                user = getUser(resultSet, "email", credential);
+            } else {
+                // if we are using the username of the user for searching the user in the table
+                user = getUser(resultSet, "username", credential);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
 
-        if (user == null)
-        {
-            try {
-                preparedStatement = connection.prepareStatement(GET_USER_QUERY_username);
-                preparedStatement.setString(1, emailOrUsername);
-                resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    if (resultSet.getString("username").equals(emailOrUsername)) {
-                        int userID = resultSet.getInt("userID");
-                        String firstname = resultSet.getString("userName");
-                        String lastname = resultSet.getString("lastName");
-                        String username = resultSet.getString("userName");
-
-                        user = new User(userID, firstname, lastname, username, emailOrUsername);
-
-                        break;
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closePreparedStatement();
-                closeResultSet();
-            }
-        }
         return user;
     }
 
@@ -827,7 +759,9 @@ public class DBUtilities {
     }
 
     //#####################################################################################
-    //                                  Subroutines
+    //
+    //                                  SUBROUTINES
+    //
     //#####################################################################################
 
     /**
@@ -963,18 +897,18 @@ public class DBUtilities {
      * This method is only used for looping through the table of user and verifying a given user
      *
      * @param: resultSet - the resultSet with the execution of the preparedStatement
-     * @param: searchFor - defines if we are using the email or the username for searching of the user
+     * @param: searchWith - defines if we are using the email or the username for searching of the user
      * @param: credential - email or username of the user
      * @param: password - the password of the user
      * @return: true if the user is in the table
      * @throws: SQLException - if something went wrong with the resultSet
      */
-    private static boolean verify (ResultSet resultSet, String searchFor, String credential, String password) throws SQLException {
+    private static boolean verify (ResultSet resultSet, String searchWith, String credential, String password) throws SQLException {
         boolean verified = false;
 
         // looping through the table and looking for a suiting user
         while (resultSet.next()) {
-            if (resultSet.getString(searchFor).equals(credential)
+            if (resultSet.getString(searchWith).equals(credential)
                     && resultSet.getString("password").equals(password))
             {
                 verified = true;
@@ -983,5 +917,33 @@ public class DBUtilities {
         }
 
         return verified;
+    }
+
+    /**
+     * This method is only used for getting the user from the database
+     *
+     * @param: resultSet - the resultSet with the execution of the preparedStatement
+     * @param: searchWith - defines if we are using the email or the username for searching of the user
+     * @param: credential - email or username of the user
+     * @return: user - the user we were searching for
+     * @throws: SQLException: if something went wrong with the resultSet
+     */
+    private static User getUser(ResultSet resultSet, String searchWith, String credential) throws SQLException {
+        User user = null;
+
+        while (resultSet.next()) {
+            if (resultSet.getString(searchWith).equals(credential)) {
+                int userID = resultSet.getInt("userID");
+                String firstname = resultSet.getString("userName");
+                String lastname = resultSet.getString("lastName");
+                String username = resultSet.getString("userName");
+                String email = resultSet.getString("email");
+                user = new User(userID, firstname, lastname, username, email);
+
+                break;
+            }
+        }
+
+        return user;
     }
 }
