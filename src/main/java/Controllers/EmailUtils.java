@@ -88,7 +88,7 @@ public class EmailUtils {
         printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
-    public static void reminderEmail(int option, String email, Event event) {
+    public static void eventEmail(int option, String email, Event event) {
         try {
             //set email message details
             Message mess = new MimeMessage(session);
@@ -102,8 +102,9 @@ public class EmailUtils {
             //set email subject
             switch (option) {
                 case 0 -> mess.setSubject("EVENT REMINDER");
-                case 1 -> mess.setSubject("EVENT UPDATED");
-                case 2 -> mess.setSubject("EVENT DELETED");
+                case 1 -> mess.setSubject("EVENT CREATED");
+                case 2 -> mess.setSubject("EVENT UPDATED");
+                case 3 -> mess.setSubject("EVENT DELETED");
             }
 
 
