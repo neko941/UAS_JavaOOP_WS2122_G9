@@ -8,9 +8,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
@@ -39,8 +41,27 @@ public class CreateEventController extends Application {
     @FXML private Button createButton;
     @FXML private Button cancelButton;
     @FXML private Label userlable;
+    FileChooser fileChooser = new FileChooser();
     private User currentUser;
+    ArrayList<File> attachment = new ArrayList<File>();
 
+    /**
+     * Sets the current logged-in user which will be used to fetch and create events.
+     *
+     * @param: currentUser: object of type User
+     *
+     * @return: void
+     */
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    /**
+     * Loads the Create event UI.
+     *
+     * @param: primaryStage - Stage on which the page will be rendered
+     * @return: void
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         DBUtilities();
@@ -55,13 +76,23 @@ public class CreateEventController extends Application {
         stage.show();
     }
 
-    public void cancelButtonOnAction(ActionEvent event) throws Exception {
+    /**
+     * Closes the current page.
+     *
+     * @return: void
+     */
+    public void cancelButtonOnAction() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Creates a new Event based on information filled out in the UI form and closes the Create event window.
+     *
+     * @return: void
+     */
     @FXML
-    public void CreateEventOnAction(ActionEvent event) {
+    public void CreateEventOnAction() {
         Priority selectedPriority = mapPriority(priority.getValue().toString());
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
@@ -90,7 +121,7 @@ public class CreateEventController extends Application {
                                 0),
                         mappedParticipants,
                         emails,
-                        null,
+                        attachment,
                         selectedReminder,
                         selectedPriority);
                 CreateEvent(myEvent);
@@ -100,6 +131,24 @@ public class CreateEventController extends Application {
         };
     }
 
+    /**
+     * Adds a new attachment to class attachments array, to be passed down to the controller and subsequently to the DB upon saving the changes.
+     *
+     * @return: void
+     */
+    @FXML
+    public void attachmentButtonOnAction() {
+        Stage stage = new Stage();
+        File file = fileChooser.showOpenDialog(stage);
+        this.attachment.add(file);
+    }
+
+    /**
+     * maps the selection to a Priority object.
+     *
+     * @param: the string currently selected on the ChoiceBox
+     * @return: the equivalent Priority object of the selection string
+     */
     public Priority mapPriority(String selection) {
         switch(priority.getValue().toString()){
             case "LOW":
@@ -112,6 +161,12 @@ public class CreateEventController extends Application {
         return Priority.HIGH;
     }
 
+    /**
+     * maps the selection to a Reminder object.
+     *
+     * @param: the string currently selected on the ChoiceBox
+     * @return: the equivalent Reminder object of the selection string
+     */
     public Reminder mapReminder(String selection) {
         switch(priority.getValue().toString()){
             case "1 week":
@@ -126,8 +181,5 @@ public class CreateEventController extends Application {
         return Reminder.TEN_MINUTES;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
 }
 
