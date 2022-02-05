@@ -196,7 +196,8 @@ public class CalendarController extends Application {
 
     @FXML
     private void ExportButtonOnAction(ActionEvent event) {
-    //TODO: add export function here.
+        ExportTXT txt = new ExportTXT();
+        txt.export("Event");
     }
 
     /**

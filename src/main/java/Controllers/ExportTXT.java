@@ -29,7 +29,7 @@ public class ExportTXT {
      */
     public void export(String table) {
 
-        String csvFileName = getFileName(table.concat("_Export"));
+        String txtFileName = getFileName(table.concat("_Export"));
 
         try {
             String sql = "SELECT * FROM ".concat(table);
@@ -38,7 +38,7 @@ public class ExportTXT {
 
             ResultSet result = statement.executeQuery(sql);
 
-            fileWriter = new BufferedWriter(new FileWriter(csvFileName));
+            fileWriter = new BufferedWriter(new FileWriter(txtFileName));
 
             int columnCount = writeHeaderLine(result);
 
