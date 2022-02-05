@@ -43,6 +43,7 @@ public class DBUtilities {
     private static final String INSERT_NEW_EVENT_QUERY = "INSERT INTO Event (eventName, eventDate, eventTime, duration, location, reminder, priority, emails) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_LOCATION_QUERY = "INSERT INTO Location (street, houseNumber, zip, city, country, building, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_ATTACHMENT_QUERY = "INSERT INTO Attachments (fileName, file, eventID) VALUES (?, ?, ?)";
+    private static final String INSERT_NEW_PARTICIPANTS_QUERY = "INSERT INTO Participants (username, email, userID, eventID) VALUES (?, ?, ?, ?)";
     private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (eventID, userID) VALUES (?, ?)";
 
     private static final String EDIT_USER_QUERY = "UPDATE User SET firstname = ?, lastname = ?, username = ?, email = ? WHERE userID = ?";
@@ -54,8 +55,10 @@ public class DBUtilities {
     private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
 
     private static final String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE eventID = ?";
-    private static final String DELETE_ATTACHMENT_QUERY = "DELETE FROM Attachment WHERE eventID = ?";
-    private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
+    private static final String DELETE_ATTACHMENT_QUERY = "DELETE * FROM Attachment WHERE eventID = ?";
+    private static final String DELETE_LOCATION_QUERY = "DELETE * FROM Location WHERE locationID = ?";
+    private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE * FROM User_Event WHERE userID = ? AND eventID = ?";
+    private static final String DELETE_PARTICIPANTS_QUERY = "DELETE * FROM Participants WHERE eventID = ?";
 
     private static String GET_USER_QUERY;
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE emails LIKE ?";
@@ -124,11 +127,9 @@ public class DBUtilities {
      *
      * @param user the user which created the event for the bridge
      * @param event event which should be saved
-     * @param file the file which the user wants to attach to the event
      * @return -1 on unsuccessful insertion
-     * @throws Exception if the bridge between userID and eventID could not be created
      */
-    public static int insertNewEvent(User user, Event event, File file) {
+    public static int insertNewEvent(User user, Event event) {
         int key = -1;
 
         try {
@@ -159,9 +160,15 @@ public class DBUtilities {
             createUser_EventBridge(user.getId(), event.getEventID());
 
             // we check if the user attached any attachments to the event
-            if (file != null) {
+            if (event.getAttachments() != null || event.getAttachments().size() == 0) {
                 // if so, we insert that into the database
-                insertNewAttachment(event, file);
+                insertNewAttachments(event, event.getAttachments());
+            }
+
+            // we check if the user invited any participants to the event
+            if (event.getParticipants() != null || event.getParticipants().size() != 0) {
+                // if so we insert them into the database
+                insertNewParticipants(event, event.getParticipants());
             }
         } catch (SQLException | IOException e) {
             e.printStackTrace();
@@ -368,23 +375,26 @@ public class DBUtilities {
     /**
      * Deletes a given event from database.
      *
-     * @param eventID the ID of the event which should be deleted
+     * @param event the event which should be deleted
+     * @param user the user who is initiating it
      * @return true on successful deletion
      */
-    public static boolean deleteEvent(final int userID, final int eventID) {
+    public static boolean deleteEvent(User user, Event event) {
         boolean deletedEvent = false;
 
         try {
             // first we delete the event the user wants to delete
             preparedStatement = connection.prepareStatement(DELETE_EVENT_QUERY);
-            preparedStatement.setInt(1, eventID);
+            preparedStatement.setInt(1, event.getEventID());
             preparedStatement.executeUpdate();
 
-            deletedEvent = true;
-
             // then we delete the corresponding bridge and attachments too
-            deleteUser_EventBridge(userID, eventID);
-            deleteAttachments(eventID);
+            deleteUser_EventBridge(user.getId(), event.getEventID());
+            deleteAttachments(event.getEventID());
+            deleteLocation(event.getLocation().getLocationID());
+            deleteParticipants(event.getEventID());
+
+            deletedEvent = true;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -638,25 +648,50 @@ public class DBUtilities {
      * Return ID on successful insertion
      *
      * @param event the event to which the file belongs
-     * @param file the file which should be inserted into the database
+     * @param attachments the files which should be inserted into the database
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
      * @throws IOException if something went wrong with the file handling
      */
-    private static void insertNewAttachment(Event event, File file) throws SQLException, IOException {
-        PreparedStatement insertAttachmentPreparedStatement;
-        FileInputStream fileInputStream = new FileInputStream(file);
+    private static void insertNewAttachments(Event event, ArrayList<File> attachments) throws SQLException, IOException {
+        FileInputStream fileInputStream = null;
 
-        insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY);
-        insertAttachmentPreparedStatement.setString(1, file.getName());
-        insertAttachmentPreparedStatement.setBinaryStream(2, fileInputStream);
-        insertAttachmentPreparedStatement.setInt(3, event.getEventID());
-        insertAttachmentPreparedStatement.executeUpdate();
+        PreparedStatement insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY);
+        for (File file : attachments) {
+            fileInputStream = new FileInputStream(file);
+
+            insertAttachmentPreparedStatement.setString(1, file.getName());
+            insertAttachmentPreparedStatement.setBinaryStream(2, fileInputStream);
+            insertAttachmentPreparedStatement.setInt(3, event.getEventID());
+            insertAttachmentPreparedStatement.executeUpdate();
+        }
 
         // closing fileInputStream
+        assert fileInputStream != null;
         fileInputStream.close();
 
         // closing preparedStatement
         insertAttachmentPreparedStatement.close();
+    }
+
+    /**
+     * Inserts all participants which are in the given event.
+     *
+     * @param event the event with the participants which should be inserted
+     * @param participants list of all participants of this event
+     * @throws SQLException when something went wrong with the preparedStatement
+     */
+    public static void insertNewParticipants(Event event, ArrayList<User> participants) throws SQLException {
+        PreparedStatement insertNewParticipantPreparedStatement = connection.prepareStatement(INSERT_NEW_PARTICIPANTS_QUERY);
+
+        for (User participant : participants) {
+            insertNewParticipantPreparedStatement.setString(1, participant.getUsername());
+            insertNewParticipantPreparedStatement.setString(2, participant.getEmail());
+            insertNewParticipantPreparedStatement.setInt(3, participant.getId());
+            insertNewParticipantPreparedStatement.setInt(4, event.getEventID());
+            insertNewParticipantPreparedStatement.executeUpdate();
+        }
+
+        insertNewParticipantPreparedStatement.close();
     }
 
     /**
@@ -677,6 +712,52 @@ public class DBUtilities {
     }
 
     /**
+     * Deletes a file from the database when an event is which includes an attachment
+     *      or when the attachment is deleted by user
+     *
+     * @param eventID ID of the event
+     * @throws SQLException if something went wrong with the preparedStatement
+     */
+    private static void deleteAttachments(final int eventID) throws SQLException {
+        PreparedStatement deleteAttachmentPreparedStatement;
+
+        deleteAttachmentPreparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
+        deleteAttachmentPreparedStatement.setInt(1, eventID);
+        deleteAttachmentPreparedStatement.executeUpdate();
+        deleteAttachmentPreparedStatement.close();
+    }
+
+    /**
+     * Deletes the location corresponding to the event which is deleted.
+     *
+     * @param locationID ID of the location
+     * @throws SQLException when something went wrong with the preparedStatement
+     */
+    private static void deleteLocation(final int locationID) throws SQLException {
+        PreparedStatement deleteLocationPreparedStatement;
+
+        deleteLocationPreparedStatement = connection.prepareStatement(DELETE_LOCATION_QUERY);
+        deleteLocationPreparedStatement.setInt(1, locationID);
+        deleteLocationPreparedStatement.executeUpdate();
+        deleteLocationPreparedStatement.close();
+    }
+
+    /**
+     * Deletes the participants corresponding to the event which is deleted.
+     *
+     * @param eventID the ID of the event which is deleted.
+     * @throws SQLException if something went wrong with the preparedStatement.
+     */
+    private static void deleteParticipants(final int eventID) throws SQLException {
+        PreparedStatement deleteParticipantsPreparedStatement;
+
+        deleteParticipantsPreparedStatement = connection.prepareStatement(DELETE_PARTICIPANTS_QUERY);
+        deleteParticipantsPreparedStatement.setInt(1, eventID);
+        deleteParticipantsPreparedStatement.executeUpdate();
+        deleteParticipantsPreparedStatement.close();
+    }
+
+    /**
      * Deletes all references from an event for a user from the database.
      *
      * @param userID ID of the user
@@ -691,22 +772,6 @@ public class DBUtilities {
         deleteUserEventBridgePreparedStatement.setInt(2, eventID);
         deleteUserEventBridgePreparedStatement.executeUpdate();
         deleteUserEventBridgePreparedStatement.close();
-    }
-
-    /**
-     * Deletes a file from the database when an event is which includes an attachment
-     *      or when the attachment is deleted by user
-     *
-     * @param eventID ID of the event
-     * @throws SQLException if something went wrong with the preparedStatement
-     */
-    private static void deleteAttachments(final int eventID) throws SQLException {
-        PreparedStatement deleteAttachmentPreparedStatement;
-
-        deleteAttachmentPreparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
-        deleteAttachmentPreparedStatement.setInt(1, eventID);
-        deleteAttachmentPreparedStatement.executeUpdate();
-        deleteAttachmentPreparedStatement.close();
     }
 
     /**
