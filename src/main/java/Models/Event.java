@@ -42,6 +42,7 @@ public class Event implements Comparable<Event>{
 
     /**
      * Constructor for creating an event
+     *
      * @param eventName - name of the event
      * @param date - date of the event
      * @param time - starting time of the event
@@ -67,8 +68,9 @@ public class Event implements Comparable<Event>{
     }
 
     /**
-     * Constructor for creating an event
+     * Constructor for fetching an event
      *
+     * @param eventID - ID of the event
      * @param eventName - name of the event
      * @param date - date of the event
      * @param time - starting time of the event
