@@ -101,7 +101,6 @@ public class CreateEventController extends Application {
         //TODO: add field validation
         if (true) {
             ArrayList<User> mappedParticipants = new ArrayList<User>();
-            mappedParticipants.add(currentUser);
                 for (int i = 0; i < emails.length; i++){
                     User myUser = fetchUser(emails[i]);
                     mappedParticipants.add(myUser);
