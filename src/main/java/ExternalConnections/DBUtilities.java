@@ -41,7 +41,7 @@ public class DBUtilities {
     private static final String INSERT_NEW_USER_QUERY = "INSERT INTO User (firstName, lastName, userName, password, email) VALUES (?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_EVENT_QUERY = "INSERT INTO Event (eventName, eventDate, eventTime, duration, location, reminder, priority, emails) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_LOCATION_QUERY = "INSERT INTO Location (street, houseNumber, zip, city, country, building, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String INSERT_NEW_ATTACHMENT_QUERY = "INSERT INTO Attachment (fileName, file, fk_eventID) VALUES (?, ?, ?)";
+    private static final String INSERT_NEW_ATTACHMENT_QUERY = "INSERT INTO Attachments (fileName, file, eventID) VALUES (?, ?, ?)";
     private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (eventID, userID) VALUES (?, ?)";
 
     private static final String EDIT_USER_QUERY = "UPDATE User SET firstname = ?, lastname = ?, username = ?, email = ? WHERE userID = ?";
@@ -563,10 +563,7 @@ public class DBUtilities {
                 // argument - primary key of the event
                 ArrayList<File> attachments = fetchAttachments(eventID);
 
-
-/*
                 events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority));
- */
 
             }
         } catch (SQLException e) {
@@ -887,7 +884,7 @@ public class DBUtilities {
                 }
                 attachments.add(file);
             }
-            return null;
+            return attachments;
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {

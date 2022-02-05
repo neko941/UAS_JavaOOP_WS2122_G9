@@ -30,6 +30,7 @@ import java.util.Locale;
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
 
+import static Controllers.Debugging.printNotificationInConsole;
 import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
 
@@ -39,12 +40,26 @@ public class CalendarController extends Application {
     @FXML private Button editButton;
     @FXML private CalendarView calendarView;
     @FXML private Label userlable;
+    private Thread updateTimeThread;
     public User currentUser;
 
+    /**
+     * Sets the current logged in user which will be used to fetch and create events.
+     *
+     * @param: currentUser: object of type User
+     *
+     * @return: void
+     */
     public void setCurrentUser(User currentUser){
         this.currentUser = currentUser;
     }
 
+    /**
+     * Loads the Calendar UI, initial events and creates thread which will update events and current time every 10s.
+     *
+     * @param: primaryStage - Stage on which the page will be rendered
+     * @return: void
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         URL resourceUrl = getClass().getResource("/UI/CalendarUI.fxml");
@@ -75,7 +90,7 @@ public class CalendarController extends Application {
         DBUtilities();
         showEvents(fetchAllEventsFromUser(currentUser),lowPrio, medPrio, highPrio);
 
-        Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
+        updateTimeThread = new Thread("Calendar: Update Time Thread") {
             @Override
             public void run() {
                 while (true) {
@@ -85,7 +100,7 @@ public class CalendarController extends Application {
                         highPrio.clear();
                         medPrio.clear();
                         lowPrio.clear();
-                        System.out.println("fetching events from: " + currentUser.getEmail());
+                        printNotificationInConsole("fetching events from: " + currentUser.getEmail());
                         showEvents(fetchAllEventsFromUser(currentUser),lowPrio, medPrio, highPrio);
                     });
                     try {
@@ -111,6 +126,12 @@ public class CalendarController extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Gets all events which the current user is part of and places them in the according priority calendar.
+     *
+     * @param: MyEvents - all events from a respective user
+     * @return: void
+     */
     private void showEvents(ArrayList<Event> myEvents, Calendar lowPrio, Calendar medPrio, Calendar highPrio){
         for (int i = 0; i < myEvents.size(); i++) {
             Entry<String> myEntry = new Entry<>();
@@ -137,6 +158,12 @@ public class CalendarController extends Application {
         }
     }
 
+    /**
+     * Opens a new create event window and sets it's controller and current user.
+     *
+     * @param: event - ActionEvent, in this case the clicking of a button
+     * @return: void
+     */
     @FXML
     private void CreateButtonOnAction(ActionEvent event) {
         try {
@@ -149,6 +176,12 @@ public class CalendarController extends Application {
         }
     }
 
+    /**
+     * Opens a new edit/view event window and sets it's controller and current user.
+     *
+     * @param: event - ActionEvent, in this case the clicking of a button
+     * @return: void
+     */
     @FXML
     private void EditButtonOnAction(ActionEvent event) {
         try {
@@ -166,9 +199,16 @@ public class CalendarController extends Application {
     //TODO: add export function here.
     }
 
+    /**
+     * Clears the current user data, stops the thread, and loads the login screen.
+     *
+     * @param: event - ActionEvent, in this case the clicking of a button
+     * @return: void
+     */
     @FXML
     private void LogoutButtonOnAction(ActionEvent event) {
         try {
+            updateTimeThread.stop();
             currentUser = null;
             Parent parent = FXMLLoader.load(getClass().getResource("/UI/LoginUI.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
