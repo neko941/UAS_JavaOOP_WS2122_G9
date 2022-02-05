@@ -16,6 +16,7 @@ import Models.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.event.EventListenerSupport;
 
+import javax.xml.transform.Result;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -125,9 +126,9 @@ public class DBUtilities {
      * @param event event which should be saved
      * @param file the file which the user wants to attach to the event
      * @return -1 on unsuccessful insertion
-     * @throws Exception if the bridge between userID and eventID could not be created or if someth
+     * @throws Exception if the bridge between userID and eventID could not be created
      */
-    public static int insertNewEvent(User user, Event event, File file) throws Exception {
+    public static int insertNewEvent(User user, Event event, File file) {
         int key = -1;
 
         try {
@@ -145,8 +146,8 @@ public class DBUtilities {
             String result = StringUtils.join(event.getEmails(), ",");
             preparedStatement.setString(8, result);
             preparedStatement.executeUpdate();
-            // get the ID of the event from the database
-            resultSet = preparedStatement.getGeneratedKeys();
+
+            resultSet = preparedStatement.getGeneratedKeys();   // get the ID of the event from the database
             if (resultSet.next()) {
                 key = resultSet.getInt(1);
             } else {
@@ -155,10 +156,7 @@ public class DBUtilities {
 
             // then we create a bridge between the user and the event and assign the userID of the user
             // who created the event the eventID
-            boolean created = createUser_EventBridge(user.getId(), event.getEventID());
-            if (!created) {
-                throw new Exception("DBUtilities: Bridge could not be created.");
-            }
+            createUser_EventBridge(user.getId(), event.getEventID());
 
             // we check if the user attached any attachments to the event
             if (file != null) {
@@ -248,13 +246,7 @@ public class DBUtilities {
 
         try {
             preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
-            preparedStatement.setString(1, location.getStreet());
-            preparedStatement.setInt(2, location.getStreetNumber());
-            preparedStatement.setString(3, location.getZip());
-            preparedStatement.setString(4, location.getCity());
-            preparedStatement.setString(5, location.getCountry());
-            preparedStatement.setInt(6, location.getBuilding());
-            preparedStatement.setInt(7, location.getRoom());
+            prepareLocationInsertion(location, preparedStatement);
             preparedStatement.setInt(8, location.getLocationID());
             preparedStatement.executeUpdate();
 
@@ -320,7 +312,7 @@ public class DBUtilities {
      * @param email email of the user
      * @return true if email is available
      */
-    public static boolean isEmailAvailable(String email) {
+    public static boolean isEmailAvailable(final String email) {
         boolean available = true;
 
         try {
@@ -349,7 +341,7 @@ public class DBUtilities {
      * @param username username of the user
      * @return true if the username is available
      */
-    public static boolean isUsernameAvailable(String username) {
+    public static boolean isUsernameAvailable(final String username) {
         boolean available = true;
 
         try {
@@ -379,70 +371,26 @@ public class DBUtilities {
      * @param eventID the ID of the event which should be deleted
      * @return true on successful deletion
      */
-    public static boolean deleteEvent(final int eventID) {
+    public static boolean deleteEvent(final int userID, final int eventID) {
         boolean deletedEvent = false;
 
         try {
+            // first we delete the event the user wants to delete
             preparedStatement = connection.prepareStatement(DELETE_EVENT_QUERY);
             preparedStatement.setInt(1, eventID);
             preparedStatement.executeUpdate();
 
             deletedEvent = true;
+
+            // then we delete the corresponding bridge and attachments too
+            deleteUser_EventBridge(userID, eventID);
+            deleteAttachments(eventID);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
         return deletedEvent;
-    }
-
-    /**
-     * Deletes all references from an event for a user from the database.
-     *
-     * @param userID ID of the user
-     * @param eventID ID of the event
-     * @return true on successful deletion
-     */
-    public static boolean deleteUser_EventBridge(final int userID, final int eventID) {
-        boolean deletedBridge = false;
-
-        try {
-            preparedStatement = connection.prepareStatement(DELETE_USER_EVENT_BRIDGE_QUERY);
-            preparedStatement.setInt(1, userID);
-            preparedStatement.setInt(2, eventID);
-            preparedStatement.executeUpdate();
-
-            deletedBridge = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-        return deletedBridge;
-    }
-
-    /**
-     * Deletes a file from the database when an event is which includes an attachment
-     *      or when the attachment is deleted by user
-     *
-     * @param eventID ID of the event
-     * @return true on successful deletion
-     */
-    public static boolean deleteAttachment(final int eventID) {
-        boolean deleted = false;
-            
-        try {
-            preparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
-            preparedStatement.setInt(1, eventID);
-            preparedStatement.executeUpdate();
-
-            deleted = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-        return deleted;
     }
 
     //##########################################################################################
@@ -473,7 +421,7 @@ public class DBUtilities {
                 events.add(new Event(eventID, eventname, date, time, duration, location, participants, attachments, reminder, priority));
                  */
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
@@ -566,7 +514,7 @@ public class DBUtilities {
                 events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority));
 
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
@@ -603,7 +551,7 @@ public class DBUtilities {
                 LocalDateTime reminderTime = reminder.getReminderTime(LocalDateTime.of(eventDate, eventTime));
                 events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority, reminderTime));
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
@@ -642,7 +590,7 @@ public class DBUtilities {
             return new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority);
 
         }
-        catch (SQLException e) {
+        catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
@@ -651,11 +599,11 @@ public class DBUtilities {
         return null;
     }
 
-    //#####################################################################################
-    //
-    //                                  SUBROUTINES
-    //
-    //#####################################################################################
+    //#####################################################################################//
+    //                                                                                     //
+    //                                  SUBROUTINES                                        //
+    //                                                                                     //
+    //#####################################################################################//
 
     /**
      * This function closes an opened preparedStatement
@@ -686,76 +634,29 @@ public class DBUtilities {
     }
 
     /**
-     * Makes an entry for a location in the database.
-     * Return the ID on successful insertion
-     *
-     * @param location the location which should be saved in the database
-     * @return -1 on unsuccessful insertion
-     */
-    private static int insertNewLocation (Location location) throws SQLException {
-        PreparedStatement insertLocationPreparedStatement = null;
-        int key = -1;
-
-
-        insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
-        insertLocationPreparedStatement.setString(1, location.getStreet());
-        insertLocationPreparedStatement.setInt(2, location.getStreetNumber());
-        insertLocationPreparedStatement.setString(3, location.getZip());
-        insertLocationPreparedStatement.setString(4, location.getCity());
-        insertLocationPreparedStatement.setString(5, location.getCountry());
-        insertLocationPreparedStatement.setInt(6, location.getBuilding());
-        insertLocationPreparedStatement.setInt(7, location.getRoom());
-        insertLocationPreparedStatement.executeUpdate();
-
-        // get the ID of the location from the database
-        resultSet = insertLocationPreparedStatement.getGeneratedKeys();
-        if (resultSet.next()) {
-            key = resultSet.getInt(1);
-        } else {
-            throw new SQLException("could not get the key");
-        }
-
-        return key;
-    }
-
-    /**
      * Inserts a new file into the database.
      * Return ID on successful insertion
      *
      * @param event the event to which the file belongs
      * @param file the file which should be inserted into the database
-     * @return -1 on unsuccessfully insertion
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
-     * @throws IOException if something went wron with the file handling
+     * @throws IOException if something went wrong with the file handling
      */
-    private static int insertNewAttachment(Event event, File file) throws SQLException, IOException {
-        PreparedStatement insertAttachmentPreparedStatement = null;
-        ResultSet insertAttachmentResultSet;
-        FileInputStream fileInputStream = null;
-        int key = -1;
+    private static void insertNewAttachment(Event event, File file) throws SQLException, IOException {
+        PreparedStatement insertAttachmentPreparedStatement;
+        FileInputStream fileInputStream = new FileInputStream(file);
 
-        fileInputStream = new FileInputStream(file);
-
-        insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY, Statement.RETURN_GENERATED_KEYS);
+        insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY);
         insertAttachmentPreparedStatement.setString(1, file.getName());
         insertAttachmentPreparedStatement.setBinaryStream(2, fileInputStream);
         insertAttachmentPreparedStatement.setInt(3, event.getEventID());
         insertAttachmentPreparedStatement.executeUpdate();
-
-        insertAttachmentResultSet = insertAttachmentPreparedStatement.getGeneratedKeys();
-        if (insertAttachmentResultSet.next()) {
-            key = insertAttachmentResultSet.getInt(1);
-        } else {
-            throw new SQLException("ID not received");
-        }
 
         // closing fileInputStream
         fileInputStream.close();
 
         // closing preparedStatement
         insertAttachmentPreparedStatement.close();
-
-        return key;
     }
 
     /**
@@ -764,147 +665,94 @@ public class DBUtilities {
      *
      * @param userID ID of the user which creates an event
      * @param eventID ID of the event to which the user os going to go
-     * @return true on successful connection of user to the event
      * @throws SQLException if something went wrong with the preparedStatement
      */
-    private static boolean createUser_EventBridge(final int userID, final int eventID) throws SQLException {
-        PreparedStatement userEventBridgePreparedStatement = null;
+    private static void createUser_EventBridge(final int userID, final int eventID) throws SQLException {
+        PreparedStatement userEventBridgePreparedStatement;
 
         userEventBridgePreparedStatement = connection.prepareStatement(MAKE_USER_EVENT_TABLE_QUERY);
         userEventBridgePreparedStatement.setInt(1, eventID);
         userEventBridgePreparedStatement.setInt(2, userID);
         userEventBridgePreparedStatement.executeUpdate();
-
-        return true;
     }
 
     /**
-     * This method fetches the location where the event is going to take place.
+     * Deletes all references from an event for a user from the database.
      *
-     * @param locationID ID of the location (this is the foreign key if the entity "event")
-     * @return object with the location details
+     * @param userID ID of the user
+     * @param eventID ID of the event
+     * @throws SQLException if something went wrong with the PreparedStatement
      */
-    private static Location fetchLocationFromEvent (final int locationID) {
-        PreparedStatement fetchLocationStatement = null;
-        ResultSet fetchLocationResultSet;
+    private static void deleteUser_EventBridge(final int userID, final int eventID) throws SQLException {
+        PreparedStatement deleteUserEventBridgePreparedStatement;
 
-        try {
-            fetchLocationStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
-            fetchLocationStatement.setInt(1, locationID);
-            fetchLocationResultSet = fetchLocationStatement.executeQuery();
-            if (fetchLocationResultSet.next()) {
-                String street = fetchLocationResultSet.getString(2);
-                int houseNumber = fetchLocationResultSet.getInt(3);
-                String zip = fetchLocationResultSet.getString(4);
-                String city = fetchLocationResultSet.getString(5);
-                String country = fetchLocationResultSet.getString(6);
-                int building = fetchLocationResultSet.getInt(7);
-                int room = fetchLocationResultSet.getInt(8);
-
-                return new Location(street, houseNumber, zip, city, country, building, room);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                assert fetchLocationStatement != null;
-                if (!fetchLocationStatement.isClosed()) {
-                    fetchLocationStatement.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        deleteUserEventBridgePreparedStatement = connection.prepareStatement(DELETE_USER_EVENT_BRIDGE_QUERY);
+        deleteUserEventBridgePreparedStatement.setInt(1, userID);
+        deleteUserEventBridgePreparedStatement.setInt(2, eventID);
+        deleteUserEventBridgePreparedStatement.executeUpdate();
+        deleteUserEventBridgePreparedStatement.close();
     }
 
     /**
-     * This method fetches all the participants of an event.
-     *
-     * @param eventID ID of the event (primary key of the entity "Event")
-     * @return participants - returns a list of participants which participate in the event with the
-     *      given eventID
-     */
-    private static ArrayList<User> fetchParticipants (final int eventID) {
-        PreparedStatement fetchParticipantsPreparedStatement = null;
-        ResultSet fetchParticipantsResultSet;
-        ArrayList<User> participants = new ArrayList<>();
-
-        try {
-            fetchParticipantsPreparedStatement = connection.prepareStatement(GET_PARTICIPANTS_FROM_EVENT_QUERY);
-            fetchParticipantsPreparedStatement.setInt(1, eventID);
-            fetchParticipantsResultSet = fetchParticipantsPreparedStatement.executeQuery();
-            while (fetchParticipantsResultSet.next()) {
-                String username = fetchParticipantsResultSet.getString("username");
-                String email = fetchParticipantsResultSet.getString("email");
-                int userID = fetchParticipantsResultSet.getInt("userID");
-
-                participants.add(new User(username, email, userID));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                assert fetchParticipantsPreparedStatement != null;
-                if (!fetchParticipantsPreparedStatement.isClosed()) {
-                    fetchParticipantsPreparedStatement.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return participants;
-    }
-
-    /**
-     * This method fetches all attachments for an event.
+     * Deletes a file from the database when an event is which includes an attachment
+     *      or when the attachment is deleted by user
      *
      * @param eventID ID of the event
-     * @return returns a list with all the files which are attached to the given event
+     * @throws SQLException if something went wrong with the preparedStatement
      */
-    private static ArrayList<File> fetchAttachments (final int eventID) {
-        PreparedStatement fetchAttachmentPreparedStatement = null;
-        ResultSet fetchAttachmentResultSet;
-        ArrayList<File> attachments = new ArrayList<>();
-        FileOutputStream outputStream = null;
-        InputStream inputStream = null;
-        File file;
+    private static void deleteAttachments(final int eventID) throws SQLException {
+        PreparedStatement deleteAttachmentPreparedStatement;
 
-        try {
-            fetchAttachmentPreparedStatement = connection.prepareStatement(GET_ATTACHMENTS_FROM_EVENT_QUERY);
-            fetchAttachmentPreparedStatement.setInt(1, eventID);
-            fetchAttachmentResultSet = fetchAttachmentPreparedStatement.executeQuery();
-            while (fetchAttachmentResultSet.next()) {
-                file = new File(fetchAttachmentResultSet.getString("fileName"));
-                outputStream = new FileOutputStream(file);
-                inputStream = fetchAttachmentResultSet.getBinaryStream("file");
-                byte[] buffer = new byte[1024];
-                while (inputStream.read(buffer) > 0) {
-                    outputStream.write(buffer);
-                }
-                attachments.add(file);
-            }
-            return attachments;
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            // closing input and output streams
-            try {
-                if (outputStream != null)
-                    outputStream.close();
+        deleteAttachmentPreparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
+        deleteAttachmentPreparedStatement.setInt(1, eventID);
+        deleteAttachmentPreparedStatement.executeUpdate();
+        deleteAttachmentPreparedStatement.close();
+    }
 
-                if (inputStream != null)
-                    inputStream.close();
+    /**
+     * This method just prevents code redundancy in insertNewLocation and editLocation since this code snippet
+     *      was in both functions
+     *
+     * @param location the location which should be edited or inserted
+     * @param preparedStatement the preparedStatement
+     * @throws SQLException if something went wrong with the preparedStatement
+     */
+    private static void prepareLocationInsertion(Location location, PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.setString(1, location.getStreet());
+        preparedStatement.setInt(2, location.getStreetNumber());
+        preparedStatement.setString(3, location.getZip());
+        preparedStatement.setString(4, location.getCity());
+        preparedStatement.setString(5, location.getCountry());
+        preparedStatement.setInt(6, location.getBuilding());
+        preparedStatement.setInt(7, location.getRoom());
+    }
 
-                assert fetchAttachmentPreparedStatement != null;
-                if (!fetchAttachmentPreparedStatement.isClosed())
-                    fetchAttachmentPreparedStatement.close();
+    /**
+     * Makes an entry for a location in the database.
+     * Return the ID on successful insertion
+     *
+     * @param location the location which should be saved in the database
+     * @return -1 on unsuccessful insertion
+     * @throws SQLException if something went wrong with the preparedStatement or resultSet
+     */
+    private static int insertNewLocation(Location location) throws SQLException {
+        PreparedStatement insertLocationPreparedStatement;
+        ResultSet insertLocationResultSet;
+        int key;
 
-            } catch (IOException | SQLException e) {
-                e.printStackTrace();
-            }
+        insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
+        prepareLocationInsertion(location, insertLocationPreparedStatement);
+        insertLocationPreparedStatement.executeUpdate();
+
+        // get the ID of the location from the database
+        insertLocationResultSet = insertLocationPreparedStatement.getGeneratedKeys();
+        if (insertLocationResultSet.next()) {
+            key = insertLocationResultSet.getInt(1);
+        } else {
+            throw new SQLException("could not get the key");
         }
-        return attachments;
+
+        return key;
     }
 
     /**
@@ -917,7 +765,7 @@ public class DBUtilities {
      * @return true if the user is in the table
      * @throws SQLException if something went wrong with the resultSet
      */
-    private static boolean verify (ResultSet resultSet, String searchWith, String credential, String password) throws SQLException {
+    private static boolean verify(ResultSet resultSet, String searchWith, String credential, String password) throws SQLException {
         boolean verified = false;
 
         // looping through the table and looking for a suiting user
@@ -931,6 +779,36 @@ public class DBUtilities {
         }
 
         return verified;
+    }
+
+    /**
+     * This method fetches the location where the event is going to take place.
+     *
+     * @param locationID ID of the location (this is the foreign key if the entity "event")
+     * @return object with the location details
+     * @throws SQLException if something went wrong with the preparedStatement
+     */
+    private static Location fetchLocationFromEvent(final int locationID) throws SQLException {
+        PreparedStatement fetchLocationPreparedStatement;
+        ResultSet fetchLocationResultSet;
+
+        fetchLocationPreparedStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
+        fetchLocationPreparedStatement.setInt(1, locationID);
+        fetchLocationResultSet = fetchLocationPreparedStatement.executeQuery();
+        if (fetchLocationResultSet.next()) {
+            String street = fetchLocationResultSet.getString(2);
+            int houseNumber = fetchLocationResultSet.getInt(3);
+            String zip = fetchLocationResultSet.getString(4);
+            String city = fetchLocationResultSet.getString(5);
+            String country = fetchLocationResultSet.getString(6);
+            int building = fetchLocationResultSet.getInt(7);
+            int room = fetchLocationResultSet.getInt(8);
+
+            return new Location(street, houseNumber, zip, city, country, building, room);
+        }
+        fetchLocationPreparedStatement.close();
+
+        return null;
     }
 
     /**
@@ -961,4 +839,70 @@ public class DBUtilities {
         return user;
     }
 
+    /**
+     * This method fetches all the participants of an event.
+     *
+     * @param eventID ID of the event (primary key of the entity "Event")
+     * @return participants - returns a list of participants which participate in the event with the
+     *      given eventID
+     * @throws SQLException if something went wrong if the preparedStatement or resultSet
+     */
+    private static ArrayList<User> fetchParticipants(final int eventID) throws SQLException {
+        PreparedStatement fetchParticipantsPreparedStatement;
+        ResultSet fetchParticipantsResultSet;
+        ArrayList<User> participants = new ArrayList<>();
+
+        fetchParticipantsPreparedStatement = connection.prepareStatement(GET_PARTICIPANTS_FROM_EVENT_QUERY);
+        fetchParticipantsPreparedStatement.setInt(1, eventID);
+        fetchParticipantsResultSet = fetchParticipantsPreparedStatement.executeQuery();
+        while (fetchParticipantsResultSet.next()) {
+            String username = fetchParticipantsResultSet.getString("username");
+            String email = fetchParticipantsResultSet.getString("email");
+            int userID = fetchParticipantsResultSet.getInt("userID");
+
+            participants.add(new User(username, email, userID));
+        }
+        fetchParticipantsPreparedStatement.close();
+
+        return participants;
+    }
+
+    /**
+     * This method fetches all attachments for an event.
+     *
+     * @param eventID ID of the event
+     * @return returns a list with all the files which are attached to the given event
+     * @throws SQLException if something went wrong with the preparedStatement or resultSet
+     * @throws IOException if something went wrong with the file handling
+     */
+    private static ArrayList<File> fetchAttachments(final int eventID) throws SQLException, IOException {
+        PreparedStatement fetchAttachmentPreparedStatement;
+        ResultSet fetchAttachmentResultSet;
+        ArrayList<File> attachments = new ArrayList<>();
+        FileOutputStream outputStream = null;
+        InputStream inputStream = null;
+        File file;
+
+
+        fetchAttachmentPreparedStatement = connection.prepareStatement(GET_ATTACHMENTS_FROM_EVENT_QUERY);
+        fetchAttachmentPreparedStatement.setInt(1, eventID);
+        fetchAttachmentResultSet = fetchAttachmentPreparedStatement.executeQuery();
+        while (fetchAttachmentResultSet.next()) {
+            file = new File(fetchAttachmentResultSet.getString("fileName"));
+            outputStream = new FileOutputStream(file);
+            inputStream = fetchAttachmentResultSet.getBinaryStream("file");
+            byte[] buffer = new byte[1024];
+            while (inputStream.read(buffer) > 0) {
+                outputStream.write(buffer);
+            }
+            attachments.add(file);
+        }
+        fetchAttachmentPreparedStatement.close();
+
+        // closing input and output streams
+        if (outputStream != null) outputStream.close();
+        if (inputStream != null) inputStream.close();
+
+        return attachments;
+    }
 }
