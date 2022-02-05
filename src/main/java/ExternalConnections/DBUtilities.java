@@ -121,19 +121,23 @@ public class DBUtilities {
     /**
      * Makes a new entry for a new event in the database.
      *
+     * @param user the user which created the event for the bridge
      * @param event event which should be saved
+     * @param file the file which the user wants to attach to the event
      * @return -1 on unsuccessful insertion
+     * @throws Exception if the bridge between userID and eventID could not be created or if someth
      */
-    public static int insertNewEvent(Event event) {
+    public static int insertNewEvent(User user, Event event, File file) throws Exception {
         int key = -1;
 
         try {
-            int locationID = insertNewLocation(event.getLocation());
+            // first we create a new event entry in the database
             preparedStatement = connection.prepareStatement(INSERT_NEW_EVENT_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, event.getEventName());
             preparedStatement.setDate(2, Date.valueOf(event.getDate()));
             preparedStatement.setTime(3, Time.valueOf(event.getTime()));
             preparedStatement.setInt(4, event.getDuration());
+            int locationID = insertNewLocation(event.getLocation());
             preparedStatement.setInt(5, locationID);
             preparedStatement.setString(6, event.getReminder().name());
             preparedStatement.setString(7, event.getPriority().name());
@@ -148,120 +152,26 @@ public class DBUtilities {
             } else {
                 throw new SQLException("No eventID received");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-            closeResultSet();
-        }
 
-        return key;
-    }
-
-    /**
-     * Makes an entry for a location in the database.
-     * Return the ID on successful insertion
-     *
-     * @param location the location which should be saved in the database
-     * @return -1 on unsuccessful insertion
-     */
-    private static int insertNewLocation (Location location) {
-        PreparedStatement insertLocationPreparedStatement = null;
-        int key = -1;
-            
-        try {
-            insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
-            insertLocationPreparedStatement.setString(1, location.getStreet());
-            insertLocationPreparedStatement.setInt(2, location.getStreetNumber());
-            insertLocationPreparedStatement.setString(3, location.getZip());
-            insertLocationPreparedStatement.setString(4, location.getCity());
-            insertLocationPreparedStatement.setString(5, location.getCountry());
-            insertLocationPreparedStatement.setInt(6, location.getBuilding());
-            insertLocationPreparedStatement.setInt(7, location.getRoom());
-            insertLocationPreparedStatement.executeUpdate();
-
-            // get the ID of the location from the database
-            resultSet = insertLocationPreparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                key = resultSet.getInt(1);
-            } else {
-                throw new SQLException("could not get the key");
+            // then we create a bridge between the user and the event and assign the userID of the user
+            // who created the event the eventID
+            boolean created = createUser_EventBridge(user.getId(), event.getEventID());
+            if (!created) {
+                throw new Exception("DBUtilities: Bridge could not be created.");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return key;
-    }
-
-    /**
-     * Inserts a new file into the database.
-     * Return ID on successful insertion
-     *
-     * @param event the event to which the file belongs
-     * @param file the file which should be inserted into the database
-     * @return -1 on unseccssful insertion
-     */
-    public static int insertNewAttachment(Event event, File file) {
-        FileInputStream fileInputStream = null;
-        int key = -1;
-            
-        try {
-            fileInputStream = new FileInputStream(file);
-
-            preparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, file.getName());
-            preparedStatement.setBinaryStream(2, fileInputStream);
-            preparedStatement.setInt(3, event.getEventID());
-            preparedStatement.executeUpdate();
-
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                key = resultSet.getInt(1);
-            } else {
-                throw new SQLException("ID not received");
+            // we check if the user attached any attachments to the event
+            if (file != null) {
+                // if so, we insert that into the database
+                insertNewAttachment(event, file);
             }
-        } catch (SQLException | FileNotFoundException e){
-            e.printStackTrace();
-        } finally {
-            // closing fileInputStream
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            closePreparedStatement();
-            closeResultSet();
-        }
-        return key;
-    }
-
-    /**
-     * This method should be called everytime a user creates an event for making a
-     *      reference in the database, so that one knows which user is going to go to which event.
-     *
-     * @param userID ID of the user which creates an event
-     * @param eventID ID of the event to which the user os going to go
-     * @return true on successful connection of user to the event
-     */
-    public static boolean createUser_EventBridge(final int userID, final int eventID) {
-        boolean created = false;
-            
-        try {
-            preparedStatement = connection.prepareStatement(MAKE_USER_EVENT_TABLE_QUERY);
-            preparedStatement.setInt(1, eventID);
-            preparedStatement.setInt(2, userID);
-            preparedStatement.executeUpdate();
-
-            created = true;
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
-        return created;
+
+        return key;
     }
 
     //##########################################################################################
@@ -537,6 +447,41 @@ public class DBUtilities {
 
     //##########################################################################################
 
+    //TODO: complete this function by maybe merging the other in one function
+    public static ArrayList<Event> fetchEvents(final User user) {
+        ArrayList<Event> events = new ArrayList<>();
+
+        String sql = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user.getId());
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int eventID = resultSet.getInt("eventID");
+                String eventname = resultSet.getString("eventName");
+                LocalDate date = resultSet.getDate("eventDate").toLocalDate();
+                LocalTime time = resultSet.getTime("eventTime").toLocalTime();
+                int duration = resultSet.getInt("duration");
+                Location location = fetchLocationFromEvent(resultSet.getInt("location"));
+                ArrayList<User> participants = fetchParticipants(eventID);
+                ArrayList<File> attachments = fetchAttachments(eventID);
+                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
+
+                /*
+                events.add(new Event(eventID, eventname, date, time, duration, location, participants, attachments, reminder, priority));
+                 */
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+        }
+
+        return null;
+    }
+
     /**
      * This function is for fetching a user.
      *
@@ -741,6 +686,99 @@ public class DBUtilities {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Makes an entry for a location in the database.
+     * Return the ID on successful insertion
+     *
+     * @param location the location which should be saved in the database
+     * @return -1 on unsuccessful insertion
+     */
+    private static int insertNewLocation (Location location) throws SQLException {
+        PreparedStatement insertLocationPreparedStatement = null;
+        int key = -1;
+
+
+        insertLocationPreparedStatement = connection.prepareStatement(INSERT_NEW_LOCATION_QUERY, Statement.RETURN_GENERATED_KEYS);
+        insertLocationPreparedStatement.setString(1, location.getStreet());
+        insertLocationPreparedStatement.setInt(2, location.getStreetNumber());
+        insertLocationPreparedStatement.setString(3, location.getZip());
+        insertLocationPreparedStatement.setString(4, location.getCity());
+        insertLocationPreparedStatement.setString(5, location.getCountry());
+        insertLocationPreparedStatement.setInt(6, location.getBuilding());
+        insertLocationPreparedStatement.setInt(7, location.getRoom());
+        insertLocationPreparedStatement.executeUpdate();
+
+        // get the ID of the location from the database
+        resultSet = insertLocationPreparedStatement.getGeneratedKeys();
+        if (resultSet.next()) {
+            key = resultSet.getInt(1);
+        } else {
+            throw new SQLException("could not get the key");
+        }
+
+        return key;
+    }
+
+    /**
+     * Inserts a new file into the database.
+     * Return ID on successful insertion
+     *
+     * @param event the event to which the file belongs
+     * @param file the file which should be inserted into the database
+     * @return -1 on unsuccessfully insertion
+     * @throws SQLException if something went wrong with the preparedStatement or resultSet
+     * @throws IOException if something went wron with the file handling
+     */
+    private static int insertNewAttachment(Event event, File file) throws SQLException, IOException {
+        PreparedStatement insertAttachmentPreparedStatement = null;
+        ResultSet insertAttachmentResultSet;
+        FileInputStream fileInputStream = null;
+        int key = -1;
+
+        fileInputStream = new FileInputStream(file);
+
+        insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY, Statement.RETURN_GENERATED_KEYS);
+        insertAttachmentPreparedStatement.setString(1, file.getName());
+        insertAttachmentPreparedStatement.setBinaryStream(2, fileInputStream);
+        insertAttachmentPreparedStatement.setInt(3, event.getEventID());
+        insertAttachmentPreparedStatement.executeUpdate();
+
+        insertAttachmentResultSet = insertAttachmentPreparedStatement.getGeneratedKeys();
+        if (insertAttachmentResultSet.next()) {
+            key = insertAttachmentResultSet.getInt(1);
+        } else {
+            throw new SQLException("ID not received");
+        }
+
+        // closing fileInputStream
+        fileInputStream.close();
+
+        // closing preparedStatement
+        insertAttachmentPreparedStatement.close();
+
+        return key;
+    }
+
+    /**
+     * This method should be called everytime a user creates an event for making a
+     *      reference in the database, so that one knows which user is going to go to which event.
+     *
+     * @param userID ID of the user which creates an event
+     * @param eventID ID of the event to which the user os going to go
+     * @return true on successful connection of user to the event
+     * @throws SQLException if something went wrong with the preparedStatement
+     */
+    private static boolean createUser_EventBridge(final int userID, final int eventID) throws SQLException {
+        PreparedStatement userEventBridgePreparedStatement = null;
+
+        userEventBridgePreparedStatement = connection.prepareStatement(MAKE_USER_EVENT_TABLE_QUERY);
+        userEventBridgePreparedStatement.setInt(1, eventID);
+        userEventBridgePreparedStatement.setInt(2, userID);
+        userEventBridgePreparedStatement.executeUpdate();
+
+        return true;
     }
 
     /**
