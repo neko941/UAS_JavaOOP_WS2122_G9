@@ -91,7 +91,7 @@ public class DBUtilities {
      * @return -1 on unsuccessful insertion
      */
     public static int insertNewUser(User user) {
-        int key = -1;
+        int key = -1;       // this is the userID
 
         // password encryption
         String encryptedPassword = Security.sha512(user.getPassword());
@@ -130,7 +130,7 @@ public class DBUtilities {
      * @return -1 on unsuccessful insertion
      */
     public static int insertNewEvent(User user, Event event) {
-        int key = -1;
+        int key = -1;   // this is the eventID
 
         try {
             // first we create a new event entry in the database
@@ -157,18 +157,18 @@ public class DBUtilities {
 
             // then we create a bridge between the user and the event and assign the userID of the user
             // who created the event the eventID
-            createUser_EventBridge(user.getId(), event.getEventID());
+            createUser_EventBridge(user.getId(), key);
 
             // we check if the user attached any attachments to the event
             if (event.getAttachments() != null || event.getAttachments().size() == 0) {
                 // if so, we insert that into the database
-                insertNewAttachments(event, event.getAttachments());
+                insertNewAttachments(key, event.getAttachments());
             }
 
             // we check if the user invited any participants to the event
             if (event.getParticipants() != null || event.getParticipants().size() != 0) {
                 // if so we insert them into the database
-                insertNewParticipants(event, event.getParticipants());
+                insertNewParticipants(key, event.getParticipants());
             }
         } catch (SQLException | IOException e) {
             e.printStackTrace();
@@ -647,12 +647,12 @@ public class DBUtilities {
      * Inserts a new file into the database.
      * Return ID on successful insertion
      *
-     * @param event the event to which the file belongs
+     * @param eventID the ID of the event to which the file belongs
      * @param attachments the files which should be inserted into the database
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
      * @throws IOException if something went wrong with the file handling
      */
-    private static void insertNewAttachments(Event event, ArrayList<File> attachments) throws SQLException, IOException {
+    private static void insertNewAttachments(final int eventID, ArrayList<File> attachments) throws SQLException, IOException {
         FileInputStream fileInputStream = null;
 
         PreparedStatement insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY);
@@ -661,13 +661,14 @@ public class DBUtilities {
 
             insertAttachmentPreparedStatement.setString(1, file.getName());
             insertAttachmentPreparedStatement.setBinaryStream(2, fileInputStream);
-            insertAttachmentPreparedStatement.setInt(3, event.getEventID());
+            insertAttachmentPreparedStatement.setInt(3, eventID);
             insertAttachmentPreparedStatement.executeUpdate();
         }
 
         // closing fileInputStream
-        assert fileInputStream != null;
-        fileInputStream.close();
+        if (fileInputStream != null) {
+            fileInputStream.close();
+        }
 
         // closing preparedStatement
         insertAttachmentPreparedStatement.close();
@@ -676,18 +677,18 @@ public class DBUtilities {
     /**
      * Inserts all participants which are in the given event.
      *
-     * @param event the event with the participants which should be inserted
+     * @param eventID the ID of the event with the participants which should be inserted
      * @param participants list of all participants of this event
      * @throws SQLException when something went wrong with the preparedStatement
      */
-    public static void insertNewParticipants(Event event, ArrayList<User> participants) throws SQLException {
+    public static void insertNewParticipants(final int eventID, ArrayList<User> participants) throws SQLException {
         PreparedStatement insertNewParticipantPreparedStatement = connection.prepareStatement(INSERT_NEW_PARTICIPANTS_QUERY);
 
         for (User participant : participants) {
             insertNewParticipantPreparedStatement.setString(1, participant.getUsername());
             insertNewParticipantPreparedStatement.setString(2, participant.getEmail());
             insertNewParticipantPreparedStatement.setInt(3, participant.getId());
-            insertNewParticipantPreparedStatement.setInt(4, event.getEventID());
+            insertNewParticipantPreparedStatement.setInt(4, eventID);
             insertNewParticipantPreparedStatement.executeUpdate();
         }
 
@@ -830,7 +831,7 @@ public class DBUtilities {
      * @return true if the user is in the table
      * @throws SQLException if something went wrong with the resultSet
      */
-    private static boolean verify(ResultSet resultSet, String searchWith, String credential, String password) throws SQLException {
+    private static boolean verify(ResultSet resultSet, final String searchWith, final String credential, final String password) throws SQLException {
         boolean verified = false;
 
         // looping through the table and looking for a suiting user
@@ -885,7 +886,7 @@ public class DBUtilities {
      * @return user the user we were searching for
      * @throws SQLException if something went wrong with the resultSet
      */
-    private static User getUser(ResultSet resultSet, String searchWith, String credential) throws SQLException {
+    private static User getUser(ResultSet resultSet, final String searchWith, final String credential) throws SQLException {
         User user = null;
 
         while (resultSet.next()) {
