@@ -10,6 +10,7 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Location {
 
@@ -18,7 +19,7 @@ public class Location {
     // street of a location
     private String street;
     // house Number of a location
-    private int houseNumber;
+    private String houseNumber;
     // zip of a location
     private String zip;
     // city of a location
@@ -26,9 +27,9 @@ public class Location {
     // country of a location
     private String country;
     // if there are multiple building with different letters e.g. building b (Gebäude b)
-    private int building;
+    private String building;
     // room of the building
-    private int room;
+    private String room;
 
     /**
      * Constructor for creating a location.
@@ -41,7 +42,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(String street, int houseNumber, String zip, String city, String country, int building, int room) {
+    public Location(String street, String houseNumber, String zip, String city, String country, String building, String room) {
         this.street = street;
         this.houseNumber = houseNumber;
         this.zip = zip;
@@ -63,7 +64,7 @@ public class Location {
      * @param building - if there are multiple building with different letters e.g. building b (Gebäude b)
      * @param room -  room of the building
      */
-    public Location(int locationID, String street, int houseNumber, String zip, String city, String country, int building, int room) {
+    public Location(int locationID, String street, String houseNumber, String zip, String city, String country, String building, String room) {
         this.locationID = locationID;
         this.street = street;
         this.houseNumber = houseNumber;
@@ -76,46 +77,31 @@ public class Location {
 
     public boolean checkNotEmpty(String string)
     {
-        return string != "" && string != null;
+        return !Objects.equals(string, "") && string != null;
+    }
+
+    public String mergeTwoStrings(String string1, String string2)
+    {
+        if(checkNotEmpty(string1) && checkNotEmpty(string2))
+        {
+            return string1 + " " + string2;
+        }
+        else if (checkNotEmpty(string1) && !checkNotEmpty(string2))
+        {
+            return string1;
+        }
+        return string2;
     }
 
     @Override
     public String toString()
     {
-        String temp1;
-        if (checkNotEmpty(this.getStreet()) && this.getStreetNumber() != -1)
-        {
-            temp1 = this.getStreet() + " " + this.getStreetNumber();
-        }
-        else if (checkNotEmpty(this.getStreet()) && this.getStreetNumber() == -1)
-        {
-            temp1 = this.getStreet();
-        }
-        else
-        {
-            temp1 = String.valueOf(this.getStreetNumber());
-        }
-
-        String temp2;
-        if (checkNotEmpty(this.getCity()) && checkNotEmpty(this.getZip()))
-        {
-            temp2 = this.getCity() + " " + this.getZip();
-        }
-        else if  (checkNotEmpty(this.getCity()) && !checkNotEmpty(this.getZip()))
-        {
-            temp2 = this.getCity();
-        }
-        else
-        {
-            temp2 = this.getZip();
-        }
-
         String[] temp = {
-                temp1,
-                temp2,
-                (this.getCountry() != null) ? this.getCountry() : null,
-                (this.getBuilding() != -1) ? "building " + this.getBuilding() : null,
-                (this.getRoom() != -1) ? "room " + this.getRoom() : null};
+                mergeTwoStrings(this.getStreet(), this.getStreetNumber()),
+                mergeTwoStrings(this.getCity(), this.getZip()),
+                (checkNotEmpty(this.getCountry())) ? this.getCountry() : null,
+                (checkNotEmpty(this.getBuilding())) ? "building " + this.getBuilding() : null,
+                (checkNotEmpty(this.getRoom())) ? "room " + this.getRoom() : null};
 
         List<String> result = new ArrayList<String>();
         for(String string : temp) {
@@ -138,7 +124,7 @@ public class Location {
         this.street = street;
     }
 
-    public void setStreetNumber(int houseNumber) {
+    public void setStreetNumber(String houseNumber) {
         this.houseNumber = houseNumber;
     }
 
@@ -154,11 +140,11 @@ public class Location {
         this.country = country;
     }
 
-    public void setBuilding(int building) {
+    public void setBuilding(String building) {
         this.building = building;
     }
 
-    public void setRoom(int room) {
+    public void setRoom(String room) {
         this.room = room;
     }
 
@@ -174,7 +160,7 @@ public class Location {
         return street;
     }
 
-    public int getStreetNumber() {
+    public String getStreetNumber() {
         return houseNumber;
     }
 
@@ -190,11 +176,11 @@ public class Location {
         return country;
     }
 
-    public int getBuilding() {
+    public String getBuilding() {
         return building;
     }
 
-    public int getRoom() {
+    public String getRoom() {
         return room;
     }
 }
