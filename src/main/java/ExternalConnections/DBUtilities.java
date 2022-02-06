@@ -520,12 +520,16 @@ public class DBUtilities {
             resultSet = preparedStatement.executeQuery();
             ArrayList<String> fetchedEmails = new ArrayList<String>();
             while (resultSet.next()) {
+                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                if (reminder == Reminder.NO_REMINDER)
+                {
+                    continue;
+                }
                 // primary key of the entity "event"
                 int eventID = resultSet.getInt("eventID");
                 String eventName = resultSet.getString("eventName");
                 LocalDate eventDate = resultSet.getDate("eventDate").toLocalDate();
                 LocalTime eventTime = resultSet.getTime("eventTime").toLocalTime();
-                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
                 Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
                 int duration = resultSet.getInt("duration");
                 // argument - foreign key of the location table
@@ -537,10 +541,9 @@ public class DBUtilities {
                 for (User participant : participants){
                     fetchedEmails.add(participant.getEmail());
                 }
-                String[] emails = fetchedEmails.toArray(new String[0]);
 
                 LocalDateTime reminderTime = reminder.getReminderTime(LocalDateTime.of(eventDate, eventTime));
-                events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority, reminderTime));
+                events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, attachments, reminder, priority, reminderTime));
             }
         } catch (SQLException | IOException e) {
             e.printStackTrace();

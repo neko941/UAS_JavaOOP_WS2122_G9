@@ -116,7 +116,6 @@ public class Event implements Comparable<Event>{
                  int duration,
                  Location location,
                  ArrayList<User> participants,
-                 String[] emails,
                  ArrayList<File> attachments,
                  Reminder reminder,
                  Priority priority,
