@@ -28,7 +28,8 @@ public class MultiThreading implements Runnable{
         printNotificationInConsole(String.format("Creating new thred \"%s\"", threadName));
     }
 
-    public void run() {
+    public void run()
+    {
         printNotificationInConsole(String.format("Running thread \"%s\"", threadName));
 
         try {
