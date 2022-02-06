@@ -226,11 +226,8 @@ public class DBUtilities {
             preparedStatement.setInt(4, event.getDuration());
             preparedStatement.setInt(5, event.getLocation().getLocationID());
             preparedStatement.setString(6, event.getPriority().name());
-            if (event.getReminder() != null) {
-                preparedStatement.setString(7, event.getReminder().name());
-            } else{
-                preparedStatement.setString(7, null);
-            }
+            preparedStatement.setString(7, event.getReminder().name());
+            
             String result = StringUtils.join(event.getEmails(), ",");
             preparedStatement.setString(8, result);
             preparedStatement.setInt(9, event.getEventID());
@@ -518,7 +515,6 @@ public class DBUtilities {
         try {
             preparedStatement = connection.prepareStatement("SELECT * FROM Event");
             resultSet = preparedStatement.executeQuery();
-            ArrayList<String> fetchedEmails = new ArrayList<String>();
             while (resultSet.next()) {
                 Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
                 if (reminder == Reminder.NO_REMINDER)
@@ -538,9 +534,6 @@ public class DBUtilities {
                 ArrayList<User> participants = fetchParticipants(eventID);
                 // argument - primary key of the event
                 ArrayList<File> attachments = fetchAttachments(eventID);
-                for (User participant : participants){
-                    fetchedEmails.add(participant.getEmail());
-                }
 
                 LocalDateTime reminderTime = reminder.getReminderTime(LocalDateTime.of(eventDate, eventTime));
                 events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, attachments, reminder, priority, reminderTime));

@@ -180,7 +180,7 @@ public class CreateEventController extends Application {
      * @return: the equivalent Reminder object of the selection string
      */
     public Reminder mapReminder(String selection) {
-        switch(priority.getValue().toString()){
+        switch(reminder.getValue().toString()){
             case "1 week":
                 return Reminder.ONE_WEEK;
             case "3 days":
@@ -189,8 +189,10 @@ public class CreateEventController extends Application {
                 return Reminder.ONE_HOUR;
             case "10 minutes":
                 return Reminder.TEN_MINUTES;
+            case "No reminder":
+                return Reminder.NO_REMINDER;
         }
-        return Reminder.TEN_MINUTES;
+        return Reminder.NO_REMINDER;
     }
 
 }

@@ -68,8 +68,19 @@ public class Main extends Application {
 
 // public class Main {
 //     public static void main(String[] args) {
-////         verificationEmail("nguyenkhoa090401@gmail.com", "1234567");
-////         System.out.println(Reminder.defaultOr(Reminder.TEN_MINUTES));
+//         DBUtilities();
+////         ArrayList<Event> events = fetchAllEventsWithReminderFromDatabase();
+////         for(Event event : events)
+////         {
+////             System.out.println(event.getEventID());
+////         }
+//         deleteEvent(fetchUser("neko941"),
+//                 new Event(
+//                         "event1",
+//                         LocalDate.parse("2022-02-06"),
+//                         LocalTime.parse("21:30:00"),
+//                         10,
+//                         new Location("1", -1, "", "", "", "", ""));
 //     }
 // }
 
