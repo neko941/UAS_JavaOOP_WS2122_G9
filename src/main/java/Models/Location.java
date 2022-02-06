@@ -8,6 +8,9 @@
 
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Location {
 
     // location ID
@@ -71,6 +74,58 @@ public class Location {
         this.room = room;
     }
 
+    public boolean checkNotEmpty(String string)
+    {
+        return string != "" && string != null;
+    }
+
+    @Override
+    public String toString()
+    {
+        String temp1;
+        if (checkNotEmpty(this.getStreet()) && this.getStreetNumber() != -1)
+        {
+            temp1 = this.getStreet() + " " + this.getStreetNumber();
+        }
+        else if (checkNotEmpty(this.getStreet()) && this.getStreetNumber() == -1)
+        {
+            temp1 = this.getStreet();
+        }
+        else
+        {
+            temp1 = String.valueOf(this.getStreetNumber());
+        }
+
+        String temp2;
+        if (checkNotEmpty(this.getCity()) && checkNotEmpty(this.getZip()))
+        {
+            temp2 = this.getCity() + " " + this.getZip();
+        }
+        else if  (checkNotEmpty(this.getCity()) && !checkNotEmpty(this.getZip()))
+        {
+            temp2 = this.getCity();
+        }
+        else
+        {
+            temp2 = this.getZip();
+        }
+
+        String[] temp = {
+                temp1,
+                temp2,
+                (this.getCountry() != null) ? this.getCountry() : null,
+                (this.getBuilding() != -1) ? "building " + this.getBuilding() : null,
+                (this.getRoom() != -1) ? "room " + this.getRoom() : null};
+
+        List<String> result = new ArrayList<String>();
+        for(String string : temp) {
+            if(checkNotEmpty(string)) {
+                result.add(string);
+            }
+        }
+
+        return String.join(", ", result);
+    }
     //###############################################
     //                   Setter
     //###############################################

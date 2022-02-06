@@ -109,12 +109,12 @@ public class EmailUtils {
                 case 3 -> mess.setSubject("EVENT DELETED");
             }
 
-
             //set email content
-            String eventName = "<br><strong> Event: </strong>" + event.getEventName() + "</br>";
-            String eventStartTime = "<br><strong> Event starts: </strong>%s</br>".formatted(LocalDateTime.of(event.getDate(), event.getTime()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String eventEndTime = "<br><strong> Event ends:  </strong>%s</br>".formatted(event.getReminder().getReminderTime(LocalDateTime.of(event.getDate(), event.getTime())).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            mess.setContent(eventName + eventStartTime + eventEndTime, "text/html; charset=utf-8");
+            String eventName =      "<br><strong> Event Name     : </strong>" + event.getEventName() + "</br>";
+            String eventStartTime = "<br><strong> Event Starts   : </strong>%s</br>".formatted(LocalDateTime.of(event.getDate(), event.getTime()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            String eventEndTime =   "<br><strong> Event Ends     : </strong>%s</br>".formatted(event.getReminder().getReminderTime(LocalDateTime.of(event.getDate(), event.getTime())).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            String eventLocation =  "<br><strong> Event Location : </strong>%s</br>".formatted(event.getLocation().toString());
+            mess.setContent(eventName + eventStartTime + eventEndTime + eventLocation, "text/html; charset=utf-8");
 
             // set send day
             mess.setSentDate(new Date());
