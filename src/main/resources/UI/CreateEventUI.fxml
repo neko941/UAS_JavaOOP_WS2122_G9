@@ -179,6 +179,11 @@
                 <Font size="16.0" />
             </font>
         </Button>
+        <Label fx:id="errorLabel" layoutX="240.0" layoutY="700.0" textFill="RED">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </Label>
         <Button fx:id="createButton" layoutX="370.0" layoutY="700.0" onAction="#CreateEventOnAction" mnemonicParsing="false" prefHeight="40.0" prefWidth="103.0" style="-fx-background-color: #0ea488; -fx-cursor: hand;" text="Create" textFill="#ffffff">
             <font>
                 <Font size="16.0" />

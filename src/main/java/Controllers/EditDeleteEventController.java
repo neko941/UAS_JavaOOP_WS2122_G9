@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +50,7 @@ public class EditDeleteEventController extends Application {
     @FXML private Button cancelButton;
     @FXML private Button attachmentsButton;
     @FXML private Button openButton;
+    @FXML private Label errorLabel;
 
     private User currentUser;
     FileChooser fileChooser = new FileChooser();
@@ -92,6 +90,7 @@ public class EditDeleteEventController extends Application {
         }
         createButton.setDisable(true);
         deleteButton.setDisable(true);
+        errorLabel.setText("");
         attachmentsButton.setDisable(true);
         openButton.setDisable(true);
         stage.show();
@@ -152,34 +151,49 @@ public class EditDeleteEventController extends Application {
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
         parseInt(eventDuration.getText());
         ArrayList<User> mappedParticipants = new ArrayList<User>();
-        mappedParticipants.add(currentUser);
-        for (int i = 0; i < emails.length; i++){
-            User myUser = fetchUser(emails[i]);
-            mappedParticipants.add(myUser);
+        if(!eventName.getText().trim().isEmpty() &&
+                !eventTime.getText().trim().isEmpty() &&
+                !eventMinutes.getText().trim().isEmpty() &&
+                !eventDuration.getText().trim().isEmpty() &&
+                !eventStreet.getText().trim().isEmpty() &&
+                !eventHouseNr.getText().trim().isEmpty() &&
+                !eventZipCode.getText().trim().isEmpty() &&
+                !eventCity.getText().trim().isEmpty() &&
+                !eventCountry.getText().trim().isEmpty() ) {
+
+            errorLabel.setText("");
+            mappedParticipants.add(currentUser);
+            for (int i = 0; i < emails.length; i++) {
+                User myUser = fetchUser(emails[i]);
+                mappedParticipants.add(myUser);
+            }
+
+            Event myEvent = fetchEventsFromID(selectedId);
+
+            EditEvent(myEvent,
+                    eventName.getText(),
+                    eventDate.getValue(),
+                    LocalTime.of(parseInt(eventTime.getText()),
+                            parseInt(eventMinutes.getText())),
+                    parseInt(eventDuration.getText()),
+                    new Location(eventStreet.getText().replaceAll("\\s", ""),
+                            parseInt(eventHouseNr.getText().replaceAll("\\s", "")),
+                            eventZipCode.getText().replaceAll("\\s", ""),
+                            eventCity.getText().replaceAll("\\s", ""),
+                            eventCountry.getText().replaceAll("\\s", ""),
+                            0,
+                            0),
+                    mappedParticipants,
+                    emails,
+                    attachment,
+                    selectedReminder,
+                    selectedPriority);
+            Stage stage = (Stage) createButton.getScene().getWindow();
+            stage.close();
         }
-
-        Event myEvent = fetchEventsFromID(selectedId);
-
-        EditEvent(myEvent,
-                eventName.getText(),
-                eventDate.getValue(),
-                LocalTime.of(parseInt(eventTime.getText()),
-                        parseInt(eventMinutes.getText())),
-                parseInt(eventDuration.getText()),
-                new Location(eventStreet.getText().replaceAll("\\s",""),
-                        parseInt(eventHouseNr.getText().replaceAll("\\s","")),
-                        eventZipCode.getText().replaceAll("\\s",""),
-                        eventCity.getText().replaceAll("\\s",""),
-                        eventCountry.getText().replaceAll("\\s",""),
-                        0,
-                        0),
-                mappedParticipants,
-                emails,
-                attachment,
-                selectedReminder,
-                selectedPriority);
-        Stage stage = (Stage) createButton.getScene().getWindow();
-        stage.close();
+        else{
+            errorLabel.setText("Missing Data!");
+        }
     }
 
     /**

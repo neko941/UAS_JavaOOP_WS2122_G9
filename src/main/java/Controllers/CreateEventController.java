@@ -41,6 +41,7 @@ public class CreateEventController extends Application {
     @FXML private Button createButton;
     @FXML private Button cancelButton;
     @FXML private Label userlable;
+    @FXML private Label errorLabel;
     FileChooser fileChooser = new FileChooser();
     private User currentUser;
     ArrayList<File> attachment = new ArrayList<File>();
@@ -72,6 +73,7 @@ public class CreateEventController extends Application {
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         userlable.setText(currentUser.getUsername());
+        errorLabel.setText("");
         participants.setText(currentUser.getEmail() + ", ");
         stage.show();
     }
@@ -98,36 +100,47 @@ public class CreateEventController extends Application {
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
 
 
-        //TODO: add field validation
-        if (true) {
+        if (!eventName.getText().trim().isEmpty() &&
+            !eventTime.getText().trim().isEmpty() &&
+            !eventMinutes.getText().trim().isEmpty() &&
+            !eventDuration.getText().trim().isEmpty() &&
+            !eventStreet.getText().trim().isEmpty() &&
+            !eventHouseNr.getText().trim().isEmpty() &&
+            !eventZipCode.getText().trim().isEmpty() &&
+            !eventCity.getText().trim().isEmpty() &&
+            !eventCountry.getText().trim().isEmpty() ) {
+
+            errorLabel.setText("");
             ArrayList<User> mappedParticipants = new ArrayList<User>();
-                for (int i = 0; i < emails.length; i++){
-                    User myUser = fetchUser(emails[i]);
-                    mappedParticipants.add(myUser);
-                }
+            for (int i = 0; i < emails.length; i++){
+                User myUser = fetchUser(emails[i]);
+                mappedParticipants.add(myUser);
+            }
 
-                Event myEvent = new Event(eventName.getText(),
-                        eventDate.getValue(),
-                        LocalTime.of(parseInt(eventTime.getText()),
-                                parseInt(eventMinutes.getText())),
-                        parseInt(eventDuration.getText()),
-                        new Location(eventStreet.getText().replaceAll("\\s",""),
-                                parseInt(eventHouseNr.getText().replaceAll("\\s","")),
-                                eventZipCode.getText().replaceAll("\\s",""),
-                                eventCity.getText().replaceAll("\\s",""),
-                                eventCountry.getText().replaceAll("\\s",""),
-                                0,
-                                0),
-                        mappedParticipants,
-                        emails,
-                        attachment,
-                        selectedReminder,
-                        selectedPriority);
-                CreateEvent(currentUser, myEvent);
-                Stage stage = (Stage) createButton.getScene().getWindow();
-                stage.close();
-
-        };
+            Event myEvent = new Event(eventName.getText(),
+                    eventDate.getValue(),
+                    LocalTime.of(parseInt(eventTime.getText()),
+                            parseInt(eventMinutes.getText())),
+                    parseInt(eventDuration.getText()),
+                    new Location(eventStreet.getText().replaceAll("\\s",""),
+                            parseInt(eventHouseNr.getText().replaceAll("\\s","")),
+                            eventZipCode.getText().replaceAll("\\s",""),
+                            eventCity.getText().replaceAll("\\s",""),
+                            eventCountry.getText().replaceAll("\\s",""),
+                            0,
+                            0),
+                    mappedParticipants,
+                    emails,
+                    attachment,
+                    selectedReminder,
+                    selectedPriority);
+            CreateEvent(currentUser, myEvent);
+            Stage stage = (Stage) createButton.getScene().getWindow();
+            stage.close();
+        }
+        else{
+            errorLabel.setText("Missing Data!");
+        }
     }
 
     /**
