@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.Debugging.printNotificationInConsole;
 
+/**
+ * @author Trung Nguyen Quoc
+ *
+ * A Java class to establish the connection to the databases
+ */
+
 public class DBConn {
     private static Connection connection = null;
 
@@ -17,6 +23,12 @@ public class DBConn {
 
         return connection;
     }
+
+    /**
+     *
+     *
+     * A method to set a connection to our database
+     */
 
     public static void setConnection() {
         String jdbcURL = getDataFromConfig("database", "url");
