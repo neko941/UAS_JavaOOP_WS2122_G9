@@ -155,7 +155,8 @@ public class RegistrationController {
     public void continueButtonOnAction(ActionEvent event) throws IOException {
         if (verification.equals(confirmCodeTextField.getText()))
         {
-            System.out.println("Create account successfully");
+            printNotificationInConsole("Create account successfully");
+
             insertNewUser(user);
 
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
@@ -166,7 +167,7 @@ public class RegistrationController {
         }
         else
         {
-            System.out.println("Wrong confirmation code");
+            printNotificationInConsole("Wrong confirmation code");
         }
     }
     public void CloseButtonOnAction(ActionEvent event) {
@@ -190,7 +191,7 @@ public class RegistrationController {
     {
         // create verification code
         verification = Security.generateRandomNumber();
-        System.out.println(verification);
+        printNotificationInConsole(String.format("Verification code generated \t%s", verification));
         // send code to user's email
         verificationEmail(tempEmail, verification);
     }

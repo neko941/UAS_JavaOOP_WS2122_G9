@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static Controllers.ColorController.changeLabelText;
+import static Controllers.Debugging.printNotificationInConsole;
 
 public class LoginController {
     @FXML private Label LoginMessageLabel;
@@ -46,6 +47,8 @@ public class LoginController {
 
         if (check)
         {
+            printNotificationInConsole("Successfully log-in as " + usernameLogin.getText());
+
             try {
                 User currentUser = DBUtilities.fetchUser(usernameLogin.getText());
                 CalendarController calendarController = new CalendarController();
