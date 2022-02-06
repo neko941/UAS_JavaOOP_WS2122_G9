@@ -29,10 +29,11 @@ public class EventController {
         int eventId = insertNewEvent(creator, selectedEvent);
         selectedEvent.setEventID(eventId);
 
-        printNotificationInConsole("Event " + selectedEvent.getEventName() + " created.");
+
 
         //TODO: Add Email function
         eventEmail(1, selectedEvent.getParticipants(), selectedEvent);
+        printNotificationInConsole("Event " + selectedEvent.getEventName() + " created.");
         return selectedEvent;
     }
 
