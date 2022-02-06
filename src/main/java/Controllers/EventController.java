@@ -13,6 +13,7 @@ import java.time.*;
 import java.io.File;
 import java.util.ArrayList;
 
+import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.eventEmail;
 import static ExternalConnections.DBUtilities.*;
 
@@ -27,7 +28,9 @@ public class EventController {
     public static Event CreateEvent(User creator, Event selectedEvent){
         int eventId = insertNewEvent(creator, selectedEvent);
         selectedEvent.setEventID(eventId);
-        System.out.println("Event " + selectedEvent.getEventName() + " created.");
+
+        printNotificationInConsole("Event " + selectedEvent.getEventName() + " created.");
+
         //TODO: Add Email function
         eventEmail(1, selectedEvent.getParticipants(), selectedEvent);
         return selectedEvent;
@@ -72,6 +75,8 @@ public class EventController {
         selectedEvent.setEmails(emails);
         selectedEvent.setPriority(priority);
 
+        printNotificationInConsole("Event " + selectedEvent.getEventName() + " edited.");
+
         //TODO: Add Email function
 
         eventEmail(2, selectedEvent.getParticipants(), selectedEvent);
@@ -95,7 +100,7 @@ public class EventController {
         selectedEvent = null;
 
         System.gc();
-        System.out.println("Event number " + id + " successfully deleted.");
+        printNotificationInConsole("Event number " + id + " successfully deleted.");
         return 0;
     }
 
