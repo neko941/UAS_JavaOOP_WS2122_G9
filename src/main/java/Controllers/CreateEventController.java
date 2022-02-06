@@ -123,7 +123,7 @@ public class CreateEventController extends Application {
                         attachment,
                         selectedReminder,
                         selectedPriority);
-                CreateEvent(myEvent);
+                CreateEvent(currentUser, myEvent);
                 Stage stage = (Stage) createButton.getScene().getWindow();
                 stage.close();
 

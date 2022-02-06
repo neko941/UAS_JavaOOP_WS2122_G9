@@ -180,8 +180,6 @@ public class EditDeleteEventController extends Application {
                 selectedPriority);
         Stage stage = (Stage) createButton.getScene().getWindow();
         stage.close();
-
-
     }
 
     /**
@@ -217,7 +215,7 @@ public class EditDeleteEventController extends Application {
     @FXML
     public void DeleteButtonOnAction() {
         Event myEvent = fetchEventsFromID(selectedId);
-        DeleteEvent(myEvent);
+        DeleteEvent(currentUser, myEvent);
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.close();
     }

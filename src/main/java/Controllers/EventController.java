@@ -24,18 +24,9 @@ public class EventController {
      * @param selectedEvent: the event object to be created in the DB
      * @return Event: the event object appended with the ID which is the primary key in the Database.
      */
-    public static Event CreateEvent(Event selectedEvent){
-        int eventId = insertNewEvent(selectedEvent);
+    public static Event CreateEvent(User creator, Event selectedEvent){
+        int eventId = insertNewEvent(creator, selectedEvent);
         selectedEvent.setEventID(eventId);
-        ArrayList<User> participants = selectedEvent.getParticipants();
-        ArrayList<File> attachments = selectedEvent.getAttachments();
-        for (int i = 0; i < participants.size(); i++){
-            createUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
-        }
-        for (int i = 0; i < attachments.size(); i++){
-            insertNewAttachment(selectedEvent, attachments.get(i));
-        }
-
         System.out.println("Event " + selectedEvent.getEventName() + " created.");
         //TODO: Add Email function
         eventEmail(1, selectedEvent.getEmails(), selectedEvent);
@@ -78,12 +69,8 @@ public class EventController {
         selectedEvent.setAttachments(attachments);
         selectedEvent.setLocation(location);
         selectedEvent.setReminder(reminder);
-        //TODO: remove this
         selectedEvent.setEmails(emails);
         selectedEvent.setPriority(priority);
-        for (int i = 0; i < attachments.size(); i++){
-            insertNewAttachment(selectedEvent, attachments.get(i));
-        }
 
         //TODO: Add Email function
 
@@ -98,17 +85,13 @@ public class EventController {
      * @param selectedEvent: the event object to be deleted in the DB
      * @return int: 0 if the deletion was successful.
      */
-    public static int DeleteEvent(Event selectedEvent){
+    public static int DeleteEvent(User creator, Event selectedEvent){
         int id = selectedEvent.getEventID();
 
         //TODO: Add Email function
         eventEmail(3, selectedEvent.getEmails(), selectedEvent);
 
-        ArrayList<User> participants = selectedEvent.getParticipants();
-        for (int i = 0; i < participants.size(); i++){
-            deleteUser_EventBridge(participants.get(i).getId(), selectedEvent.getEventID());
-        }
-        deleteEvent(id);
+        deleteEvent(creator, selectedEvent);
         selectedEvent = null;
 
         System.gc();

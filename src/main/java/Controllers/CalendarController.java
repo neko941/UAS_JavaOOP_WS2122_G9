@@ -30,6 +30,7 @@ import java.util.Locale;
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
 
+import static Controllers.ExportTXT.*;
 import static Controllers.Debugging.printNotificationInConsole;
 import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
