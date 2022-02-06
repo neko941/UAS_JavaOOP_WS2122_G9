@@ -218,13 +218,13 @@ public class DBUtilities {
         boolean edited = false;
             
         try {
-            int locationID = insertNewLocation(event.getLocation());
+            editLocation(event.getLocation());
             preparedStatement = connection.prepareStatement(EDIT_EVENT_QUERY);
             preparedStatement.setString(1, event.getEventName());
             preparedStatement.setDate(2, Date.valueOf(event.getDate()));
             preparedStatement.setTime(3, Time.valueOf(event.getTime()));
             preparedStatement.setInt(4, event.getDuration());
-            preparedStatement.setInt(5, locationID);
+            preparedStatement.setInt(5, event.getLocation().getLocationID());
             preparedStatement.setString(6, event.getPriority().name());
             if (event.getReminder() != null) {
                 preparedStatement.setString(7, event.getReminder().name());
@@ -765,12 +765,12 @@ public class DBUtilities {
      */
     private static void prepareLocationInsertion(Location location, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, location.getStreet());
-        preparedStatement.setInt(2, location.getStreetNumber());
+        preparedStatement.setString(2, location.getStreetNumber());
         preparedStatement.setString(3, location.getZip());
         preparedStatement.setString(4, location.getCity());
         preparedStatement.setString(5, location.getCountry());
-        preparedStatement.setInt(6, location.getBuilding());
-        preparedStatement.setInt(7, location.getRoom());
+        preparedStatement.setString(6, location.getBuilding());
+        preparedStatement.setString(7, location.getRoom());
     }
 
     /**
@@ -843,12 +843,12 @@ public class DBUtilities {
         fetchLocationResultSet = fetchLocationPreparedStatement.executeQuery();
         if (fetchLocationResultSet.next()) {
             String street = fetchLocationResultSet.getString(2);
-            int houseNumber = fetchLocationResultSet.getInt(3);
+            String houseNumber = fetchLocationResultSet.getString(3);
             String zip = fetchLocationResultSet.getString(4);
             String city = fetchLocationResultSet.getString(5);
             String country = fetchLocationResultSet.getString(6);
-            int building = fetchLocationResultSet.getInt(7);
-            int room = fetchLocationResultSet.getInt(8);
+            String building = fetchLocationResultSet.getString(7);
+            String room = fetchLocationResultSet.getString(8);
 
             return new Location(street, houseNumber, zip, city, country, building, room);
         }

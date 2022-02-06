@@ -126,7 +126,7 @@ public class EditDeleteEventController extends Application {
 
         Location myLocation = selectedEvent.getLocation();
         eventStreet.setText(myLocation.getStreet());
-        eventHouseNr.setText(Integer.toString(myLocation.getStreetNumber()));
+        eventHouseNr.setText(myLocation.getStreetNumber());
         eventZipCode.setText(myLocation.getZip());
         eventCity.setText(myLocation.getCity());
         eventCountry.setText(myLocation.getCountry());
@@ -177,12 +177,12 @@ public class EditDeleteEventController extends Application {
                             parseInt(eventMinutes.getText())),
                     parseInt(eventDuration.getText()),
                     new Location(eventStreet.getText().replaceAll("\\s", ""),
-                            parseInt(eventHouseNr.getText().replaceAll("\\s", "")),
+                            eventHouseNr.getText().replaceAll("\\s", ""),
                             eventZipCode.getText().replaceAll("\\s", ""),
                             eventCity.getText().replaceAll("\\s", ""),
                             eventCountry.getText().replaceAll("\\s", ""),
-                            0,
-                            0),
+                            "",
+                            ""),
                     mappedParticipants,
                     emails,
                     attachment,

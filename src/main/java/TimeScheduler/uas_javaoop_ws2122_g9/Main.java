@@ -65,14 +65,6 @@ public class Main extends Application {
 //     }
 // }
 
-// public class Main {
-//     public static void main(String[] args)
-//     {
-//         Location location = new Location("Berliner Strasse", -1, null, "Gross-Gerau", "Germany", -1, -1);
-//
-//         System.out.println(location.toString());
-//     }
-// }
 
 // public class Main {
 //     public static void main(String[] args) {
