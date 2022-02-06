@@ -38,10 +38,7 @@ public class EventController {
 
         System.out.println("Event " + selectedEvent.getEventName() + " created.");
         //TODO: Add Email function
-        for (String email : selectedEvent.getEmails())
-        {
-            eventEmail(1, email, selectedEvent);
-        }
+        eventEmail(1, selectedEvent.getEmails(), selectedEvent);
         return selectedEvent;
     }
 
@@ -89,10 +86,9 @@ public class EventController {
         }
 
         //TODO: Add Email function
-        for (String email : selectedEvent.getEmails())
-        {
-            eventEmail(2, email, selectedEvent);
-        }
+
+        eventEmail(2, selectedEvent.getEmails(), selectedEvent);
+
         editEvent(selectedEvent);
         return selectedEvent;
     }
@@ -106,10 +102,7 @@ public class EventController {
         int id = selectedEvent.getEventID();
 
         //TODO: Add Email function
-        for (String email : selectedEvent.getEmails())
-        {
-            eventEmail(3, email, selectedEvent);
-        }
+        eventEmail(3, selectedEvent.getEmails(), selectedEvent);
 
         ArrayList<User> participants = selectedEvent.getParticipants();
         for (int i = 0; i < participants.size(); i++){

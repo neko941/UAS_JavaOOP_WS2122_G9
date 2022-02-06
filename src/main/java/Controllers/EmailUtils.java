@@ -8,12 +8,14 @@
 package Controllers;
 
 import Models.Event;
+import Models.User;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
@@ -126,5 +128,21 @@ public class EmailUtils {
             e.printStackTrace();
         }
         printNotificationInConsole(String.format("Reminder of event \"%s\" \"%s\"",event.getEventName(), email));
+    }
+
+    public static void eventEmail(int option, ArrayList<User> users, Event event)
+    {
+        for (User user : users)
+        {
+            eventEmail(option, user.getEmail(), event);
+        }
+    }
+
+    public static void eventEmail(int option, String[] emails, Event event)
+    {
+        for (String email : emails)
+        {
+            eventEmail(option, email, event);
+        }
     }
 }
