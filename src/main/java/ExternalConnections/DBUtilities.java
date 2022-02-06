@@ -55,10 +55,10 @@ public class DBUtilities {
     private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
 
     private static final String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE eventID = ?";
-    private static final String DELETE_ATTACHMENT_QUERY = "DELETE * FROM Attachment WHERE eventID = ?";
-    private static final String DELETE_LOCATION_QUERY = "DELETE * FROM Location WHERE locationID = ?";
-    private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE * FROM User_Event WHERE userID = ? AND eventID = ?";
-    private static final String DELETE_PARTICIPANTS_QUERY = "DELETE * FROM Participants WHERE eventID = ?";
+    private static final String DELETE_ATTACHMENTS_QUERY = "DELETE FROM Attachments WHERE eventID = ?";
+    private static final String DELETE_LOCATION_QUERY = "DELETE FROM Location WHERE locationID = ?";
+    private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
+    private static final String DELETE_PARTICIPANTS_QUERY = "DELETE FROM Participants WHERE eventID = ?";
 
     private static String GET_USER_QUERY;
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE emails LIKE ?";
@@ -386,7 +386,7 @@ public class DBUtilities {
             // first we delete the event the user wants to delete
             preparedStatement = connection.prepareStatement(DELETE_EVENT_QUERY);
             preparedStatement.setInt(1, event.getEventID());
-            preparedStatement.executeUpdate();
+            preparedStatement. executeUpdate();
 
             // then we delete the corresponding bridge and attachments too
             deleteUser_EventBridge(user.getId(), event.getEventID());
@@ -722,7 +722,7 @@ public class DBUtilities {
     private static void deleteAttachments(final int eventID) throws SQLException {
         PreparedStatement deleteAttachmentPreparedStatement;
 
-        deleteAttachmentPreparedStatement = connection.prepareStatement(DELETE_ATTACHMENT_QUERY);
+        deleteAttachmentPreparedStatement = connection.prepareStatement(DELETE_ATTACHMENTS_QUERY);
         deleteAttachmentPreparedStatement.setInt(1, eventID);
         deleteAttachmentPreparedStatement.executeUpdate();
         deleteAttachmentPreparedStatement.close();
