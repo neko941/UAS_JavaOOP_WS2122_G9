@@ -517,6 +517,7 @@ public class DBUtilities {
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                ArrayList<String> fetchedEmails = new ArrayList<String>();
                 if (reminder == Reminder.NO_REMINDER)
                 {
                     continue;
@@ -534,9 +535,13 @@ public class DBUtilities {
                 ArrayList<User> participants = fetchParticipants(eventID);
                 // argument - primary key of the event
                 ArrayList<File> attachments = fetchAttachments(eventID);
+                for (User participant : participants){
+                    fetchedEmails.add(participant.getEmail());
+                }
+                String[] emails = fetchedEmails.toArray(new String[0]);
 
                 LocalDateTime reminderTime = reminder.getReminderTime(LocalDateTime.of(eventDate, eventTime));
-                events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, attachments, reminder, priority, reminderTime));
+                events.add(new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority, reminderTime));
             }
         } catch (SQLException | IOException e) {
             e.printStackTrace();
