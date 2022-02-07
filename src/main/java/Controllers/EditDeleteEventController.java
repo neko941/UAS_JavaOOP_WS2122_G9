@@ -59,7 +59,7 @@ public class EditDeleteEventController extends Application {
     /**
      * Sets the current logged-in user which will be used to fetch and create events.
      *
-     * @param: currentUser: object of type User
+     * @param currentUser: object of type User
      *
      * @return: void
      */

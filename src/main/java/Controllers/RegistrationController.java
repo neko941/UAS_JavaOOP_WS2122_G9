@@ -59,6 +59,12 @@ public class RegistrationController {
     public static User user;
     public static String tempEmail;
 
+    /**
+     * Check all fields
+     *
+     * @return <code>true</code> if all fields are true
+     *         <code>false</code> otherwise
+     */
     public boolean checkAllTextField()
     {
         return Stream.of(
@@ -121,6 +127,11 @@ public class RegistrationController {
                 .allMatch(val -> val);
     }
 
+    /**
+     *
+     * @param event when clicking "Register" button
+     * @throws IOException Signals that an I/O exception to some sort has occurred
+     */
     public void registerUserOnAction(ActionEvent event) throws IOException {
         tempEmail = emailTextField.getText();
         if (checkAllTextField())
@@ -152,6 +163,11 @@ public class RegistrationController {
 
     }
 
+    /**
+     *
+     * @param event when clicking "Continue" button
+     * @throws IOException Signals that an I/O exception to some sort has occurred
+     */
     public void continueButtonOnAction(ActionEvent event) throws IOException {
         if (verification.equals(confirmCodeTextField.getText()))
         {
@@ -170,11 +186,20 @@ public class RegistrationController {
             printNotificationInConsole("Wrong confirmation code");
         }
     }
+
+    /**
+     *
+     * @param event when clicking "Close" button
+     */
     public void CloseButtonOnAction(ActionEvent event) {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     *
+     * @param event when clicking "Sign In" button
+     */
     public void SignInButtonOnAction(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
@@ -187,6 +212,10 @@ public class RegistrationController {
         }
     }
 
+    /**
+     *
+     * @param event when clicking "Resend Email" button
+     */
     public void resendEmailButtonOnAction(ActionEvent event)
     {
         // create verification code

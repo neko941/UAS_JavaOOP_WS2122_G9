@@ -94,9 +94,10 @@ public class Validation
      */
     public static boolean checkPunctuation(String string)
     {
-        Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
-        Matcher hasSpecial = special.matcher(string);
-        return hasSpecial.find();
+//        Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+//        Matcher hasSpecial = special.matcher(string);
+//        return hasSpecial.find();
+        return Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]").matcher(string).find();
     }
 
     /**

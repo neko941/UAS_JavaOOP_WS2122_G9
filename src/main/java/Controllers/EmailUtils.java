@@ -90,6 +90,16 @@ public class EmailUtils {
         printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
+    /**
+     * Send an email about the event
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param email send reminder to this email
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, String email, Event event) {
         try {
             //set email message details
@@ -137,6 +147,16 @@ public class EmailUtils {
 
     }
 
+    /**
+     * Send emails to a list of users
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param users send reminder to this list of users
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, ArrayList<User> users, Event event)
     {
         for (User user : users)
@@ -145,6 +165,16 @@ public class EmailUtils {
         }
     }
 
+    /**
+     * Send emails to a list of emails
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param emails send reminder to this list of emails
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, String[] emails, Event event)
     {
         for (String email : emails)

@@ -508,6 +508,11 @@ public class DBUtilities {
         return events;
     }
 
+    /**
+     * Fetching all events that need to send remind email
+     *
+     * @return list of events that need to send remind email
+     */
     public static ArrayList<Event> fetchAllEventsWithReminderFromDatabase() {
         ArrayList<Event> events = new ArrayList<>();
 
