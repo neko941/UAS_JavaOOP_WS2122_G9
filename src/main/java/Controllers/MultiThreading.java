@@ -42,7 +42,7 @@ public class MultiThreading implements Runnable{
                 {
                     if(event.getReminderTime().isBefore(LocalDateTime.now()))
                     {
-                        eventEmail(0, event.getEmails(), event);
+                        eventEmail(0, event.getParticipants(), event);
                         event.setReminder(Reminder.NO_REMINDER);
                         editEvent(event);
                     }

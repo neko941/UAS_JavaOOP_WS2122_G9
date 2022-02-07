@@ -31,6 +31,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 
+import static Controllers.Debugging.printNotificationInConsole;
+
 public class DBUtilities {
 
     // Connection to the database
@@ -215,7 +217,6 @@ public class DBUtilities {
         boolean edited = false;
             
         try {
-            System.out.println(event.getLocation().getLocationID());
             editLocation(event.getLocation());
             preparedStatement = connection.prepareStatement(EDIT_EVENT_QUERY);
             preparedStatement.setString(1, event.getEventName());
@@ -231,6 +232,7 @@ public class DBUtilities {
             preparedStatement.setInt(9, event.getEventID());
             preparedStatement.executeUpdate();
 
+            printNotificationInConsole(String.format("Event \"%s\" is edited in the database", event.getEventName()));
             edited = true;
         } catch (SQLException e) {
             e.printStackTrace();

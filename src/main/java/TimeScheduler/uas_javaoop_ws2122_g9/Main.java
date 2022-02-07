@@ -40,6 +40,7 @@ import static Controllers.EmailUtils.eventEmail;
 import static Controllers.EmailUtils.verificationEmail;
 import static ExternalConnections.DBConn.getConnection;
 import static ExternalConnections.DBUtilities.*;
+import static java.lang.Thread.sleep;
 
 public class Main extends Application {
    @Override
@@ -66,14 +67,32 @@ public class Main extends Application {
 // }
 
 
+// @SuppressWarnings("ALL")
 // public class Main {
-//     public static void main(String[] args) {
+//     public static void main(String[] args) throws InterruptedException {
 //         DBUtilities();
-////         ArrayList<Event> events = fetchAllEventsWithReminderFromDatabase();
-////         for(Event event : events)
-////         {
-////             System.out.println(event.getEventID());
-////         }
+//
+//         while(true)
+//         {
+//             LocalDateTime time = LocalDateTime.of(LocalDate.parse("2022-02-07"), LocalTime.parse("10:30:00"));
+//             LocalDateTime reminderTime = Reminder.TEN_MINUTES.getReminderTime(time);
+//
+//             if (reminderTime.isBefore(LocalDateTime.now()))
+//             {
+//                 printNotificationInConsole(String.format("%s yes", reminderTime));
+//                 break;
+//             }
+//             else
+//             {
+//                printNotificationInConsole(String.format("%s no", reminderTime));
+//             }
+//
+//             sleep(1000*5);
+//         }
+
+
+
+
 //         deleteEvent(fetchUser("neko941"),
 //                 new Event(
 //                         "event1",

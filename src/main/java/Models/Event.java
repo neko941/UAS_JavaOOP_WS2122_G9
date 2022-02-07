@@ -135,6 +135,13 @@ public class Event implements Comparable<Event>{
         this.reminderTime = reminderTime;
     }
 
+    public void printInfo()
+    {
+        System.out.format("Event Name: %s\n", this.getEventName());
+        System.out.format("Event ID: %d\n", this.getEventID());
+        System.out.format("Event Reminder: %s\n", this.getReminder());
+        System.out.format("Event Reminder Time: %s\n\n", this.getReminderTime());
+    }
     public void setEventID(int eventID) {
         this.eventID = eventID;
     }

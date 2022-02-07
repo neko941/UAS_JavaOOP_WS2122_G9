@@ -127,7 +127,14 @@ public class EmailUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        printNotificationInConsole(String.format("Reminder of event \"%s\" \"%s\"",event.getEventName(), email));
+
+        switch (option) {
+            case 0 -> printNotificationInConsole(String.format("Reminder of event \"%s\" is sent to \"%s\"",event.getEventName(), email));
+            case 1 -> printNotificationInConsole(String.format("Event \"%s\" is created successfully sent to \"%s\"",event.getEventName(), email));
+            case 2 -> printNotificationInConsole(String.format("Event \"%s\" is edited sent to \"%s\"",event.getEventName(), email));
+            case 3 -> printNotificationInConsole(String.format("Event \"%s\" is deleted sent to \"%s\"", event.getEventName(), email));
+        }
+
     }
 
     public static void eventEmail(int option, ArrayList<User> users, Event event)

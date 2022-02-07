@@ -23,6 +23,6 @@ public enum Reminder {
 
     public LocalDateTime getReminderTime(LocalDateTime startDay)
     {
-        return startDay.plusMinutes(value);
+        return startDay.minusMinutes(value);
     }
 }
