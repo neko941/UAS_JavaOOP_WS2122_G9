@@ -71,6 +71,8 @@ public class EventController {
         selectedEvent.setDuration(duration);
         selectedEvent.setParticipants(participants);
         selectedEvent.setAttachments(attachments);
+        int locationId = selectedEvent.getLocation().getLocationID();
+        location.setLocationID(locationId);
         selectedEvent.setLocation(location);
         selectedEvent.setReminder(reminder);
         selectedEvent.setEmails(emails);
@@ -78,7 +80,6 @@ public class EventController {
 
         printNotificationInConsole("Event " + selectedEvent.getEventName() + " edited.");
 
-        //TODO: Add Email function
 
         eventEmail(2, selectedEvent.getParticipants(), selectedEvent);
 

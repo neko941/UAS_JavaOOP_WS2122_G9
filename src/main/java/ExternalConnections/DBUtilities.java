@@ -40,7 +40,7 @@ public class DBUtilities {
 
     // Queries for the database
     private static final String INSERT_NEW_USER_QUERY = "INSERT INTO User (firstName, lastName, userName, password, email) VALUES (?, ?, ?, ?, ?)";
-    private static final String INSERT_NEW_EVENT_QUERY = "INSERT INTO Event (eventName, eventDate, eventTime, duration, location, reminder, priority, emails) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_NEW_EVENT_QUERY = "INSERT INTO Event (eventName, eventDate, eventTime, duration, location, reminder, priority) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_LOCATION_QUERY = "INSERT INTO Location (street, houseNumber, zip, city, country, building, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_NEW_ATTACHMENT_QUERY = "INSERT INTO Attachments (fileName, file, eventID) VALUES (?, ?, ?)";
     private static final String INSERT_NEW_PARTICIPANTS_QUERY = "INSERT INTO Participants (username, email, userID, eventID) VALUES (?, ?, ?, ?)";
@@ -143,9 +143,6 @@ public class DBUtilities {
             preparedStatement.setInt(5, locationID);
             preparedStatement.setString(6, event.getReminder().name());
             preparedStatement.setString(7, event.getPriority().name());
-            //TODO: remove this
-            String result = StringUtils.join(event.getEmails(), ",");
-            preparedStatement.setString(8, result);
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();   // get the ID of the event from the database
@@ -218,6 +215,7 @@ public class DBUtilities {
         boolean edited = false;
             
         try {
+            System.out.println(event.getLocation().getLocationID());
             editLocation(event.getLocation());
             preparedStatement = connection.prepareStatement(EDIT_EVENT_QUERY);
             preparedStatement.setString(1, event.getEventName());
@@ -250,7 +248,6 @@ public class DBUtilities {
      */
     public static boolean editLocation(Location location) {
         boolean edited = false;
-
         try {
             preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
             prepareLocationInsertion(location, preparedStatement);
@@ -557,6 +554,7 @@ public class DBUtilities {
     public static Event fetchEventsFromID(final int eventID) {
         PreparedStatement fetchEventPreparedStatement = null;
         try {
+            ArrayList<String> fetchedEmails = new ArrayList<String>();
             fetchEventPreparedStatement = connection.prepareStatement(GET_EVENT_FROM_ID);
             fetchEventPreparedStatement.setInt(1, eventID);
             ResultSet eventResultSet = fetchEventPreparedStatement.executeQuery();
@@ -568,8 +566,6 @@ public class DBUtilities {
             LocalTime eventTime = eventResultSet.getTime("eventTime").toLocalTime();
             Reminder reminder = Enum.valueOf(Reminder.class, eventResultSet.getString("reminder"));
             Priority priority = Enum.valueOf(Priority.class, eventResultSet.getString("priority"));
-            //TODO: remove this
-            String[] emails = eventResultSet.getString("emails").split(",");
             int duration = eventResultSet.getInt("duration");
             // argument - foreign key of the location table
             Location location = fetchLocationFromEvent(eventResultSet.getInt("location"));
@@ -577,6 +573,10 @@ public class DBUtilities {
             ArrayList<User> participants = fetchParticipants(eventID);
             // argument - primary key of the event
             ArrayList<File> attachments = fetchAttachments(eventID);
+            for (User participant : participants){
+                fetchedEmails.add(participant.getEmail());
+            }
+            String[] emails = fetchedEmails.toArray(new String[0]);
             fetchEventPreparedStatement.close();
             return new Event(eventID, eventName, eventDate, eventTime, duration, location, participants, emails, attachments, reminder, priority);
 
@@ -835,11 +835,11 @@ public class DBUtilities {
     private static Location fetchLocationFromEvent(final int locationID) throws SQLException {
         PreparedStatement fetchLocationPreparedStatement;
         ResultSet fetchLocationResultSet;
-
         fetchLocationPreparedStatement = connection.prepareStatement(GET_LOCATION_FROM_EVENT_QUERY);
         fetchLocationPreparedStatement.setInt(1, locationID);
         fetchLocationResultSet = fetchLocationPreparedStatement.executeQuery();
         if (fetchLocationResultSet.next()) {
+            int locationId = fetchLocationResultSet.getInt(1);
             String street = fetchLocationResultSet.getString(2);
             String houseNumber = fetchLocationResultSet.getString(3);
             String zip = fetchLocationResultSet.getString(4);
@@ -848,7 +848,7 @@ public class DBUtilities {
             String building = fetchLocationResultSet.getString(7);
             String room = fetchLocationResultSet.getString(8);
 
-            return new Location(street, houseNumber, zip, city, country, building, room);
+            return new Location(locationId, street, houseNumber, zip, city, country, building, room);
         }
         fetchLocationPreparedStatement.close();
 
