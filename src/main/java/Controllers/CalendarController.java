@@ -40,7 +40,7 @@ public class CalendarController extends Application {
     @FXML private Button createButton;
     @FXML private Button editButton;
     @FXML private CalendarView calendarView;
-    @FXML private Label userlable;
+    @FXML private Button userlable;
     private Thread updateTimeThread;
     public User currentUser;
 
@@ -63,7 +63,7 @@ public class CalendarController extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        URL resourceUrl = getClass().getResource("/UI/CalendarUI.fxml");
+        URL resourceUrl = getClass().getResource("/UI/CalendarNewUI.fxml");
         FXMLLoader loader = new FXMLLoader(resourceUrl);
         loader.setController(this);
         Parent root = loader.load();
@@ -218,6 +218,18 @@ public class CalendarController extends Application {
             stage.setWidth(550);
             stage.setHeight(580);
             stage.show();
+        } catch (Exception e) {
+            System.err.println(String.format("Error: %s", e.getMessage()));
+        }
+    }
+
+    @FXML
+    private void UserProfileButtonOnAction(ActionEvent event){
+        try{
+            UserProfileController userProfileController = new UserProfileController();
+            userProfileController.setCurrentUser(currentUser);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            userProfileController.start(stage);
         } catch (Exception e) {
             System.err.println(String.format("Error: %s", e.getMessage()));
         }
