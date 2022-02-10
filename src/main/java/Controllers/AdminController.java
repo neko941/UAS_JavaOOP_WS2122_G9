@@ -84,11 +84,11 @@
 //
 //}
 
-/** 
-*@author neko941, Khang Nguyen
-*
-* 
-*/
+/**
+ *@author neko941, klangthang
+ *Created on: 2022-02-09
+ *
+ */
 
 package Controllers;
 
@@ -110,14 +110,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
-import static Controllers.ColorController.changeLabelColor;
+
 import static Controllers.ColorController.changeLabelText;
 import static ExternalConnections.DBUtilities.*;
-import static java.lang.Thread.sleep;
+
 
 public class AdminController implements Initializable {
     @FXML private ScrollPane userScrollPane;
@@ -144,8 +143,8 @@ public class AdminController implements Initializable {
     /**
      * Initializes the controller class.
      * @param url
-     * @param rb
-     * 
+     * @param resourceBundle
+     *
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -193,39 +192,11 @@ public class AdminController implements Initializable {
             System.err.printf("Error: %s%n", e.getMessage());
         }
     }
-//    private void showEditUserDialog() throws IOException {
-////        FXMLLoader loader = new FXMLLoader(
-////                getClass().getResource(
-////                        "admin_edit_popup.fxml"
-////                )
-////        );
-////
-////        Stage stage = new Stage(StageStyle.DECORATED);
-////        stage.setScene(
-////                new Scene(loader.load())
-////        );
-////
-////        AdminEditUserPopupController controller = loader.getController();
-////        controller.initUserData(selectedUser);
-////
-////        // We want to disable the parent stage when the user edit dialog is on
-////        stage.initModality(Modality.APPLICATION_MODAL);
-////        stage.showAndWait();
-//
-//        try {
-//            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/admin_edit_popup.fxml")));
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            Scene scene = new Scene(root);
-//            stage.setScene(scene);
-//            stage.show();
-//        } catch (IOException e) {
-//            System.out.format("Error: %s\n", e.getMessage());
-//        }
-//    }
+
 
     /**
      * When user clicks on a row in the table, the selected user is set to the selectedUser variable
-     * 
+     *
      */
 
     public void adminUserTableOnMouseDoubleClicked() throws IOException, SQLException {
@@ -233,39 +204,19 @@ public class AdminController implements Initializable {
         selectedUser = userTableView.getSelectionModel().getSelectedItem();
         if (selectedUser != null) {
             URL resourceUrl = getClass().getResource("/UI/admin_edit_popup.fxml");
-                FXMLLoader loader = new FXMLLoader(resourceUrl);
-                loader.setController(this);
-                Parent root = loader.load();
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.show();
-                FirstNameField.setText(selectedUser.getFirstname());
-                LastNameField.setText(selectedUser.getLastname());
-                EmailField.setText(selectedUser.getEmail());
-                UserNameField.setText(selectedUser.getUsername());
-
-
-//            try {
-//                AdminEditUserPopupController adminEditUserPopupController = new AdminEditUserPopupController();
-//                adminEditUserPopupController.setCurrentUser(selectedUser);
-//                URL resourceUrl = getClass().getResource("/UI/admin_edit_popup.fxml");
-//                FXMLLoader loader = new FXMLLoader(resourceUrl);
-//                loader.setController(this);
-//                Parent root = loader.load();
-//                Stage stage = new Stage();
-//                stage.setScene(new Scene(root));
-//                stage.show();
-//                System.out.println(selectedUser.getUsername());
-//            } catch (IOException e) {
-//                System.out.format("Error: %s\n", e.getMessage());
-//            }
-
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            loader.setController(this);
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+            FirstNameField.setText(selectedUser.getFirstname());
+            LastNameField.setText(selectedUser.getLastname());
+            EmailField.setText(selectedUser.getEmail());
+            UserNameField.setText(selectedUser.getUsername());
         }
     }
-    /**
-     * When user clicks on the edit button, the selected user is set to the selectedUser variable
-     * 
-     */
+
 
     public boolean checkUserNameAndPasswordAvailable()
     {
@@ -286,10 +237,8 @@ public class AdminController implements Initializable {
                                 "Email already exists"))
                 .allMatch(val -> val);
     }
-    /**
-     * When user clicks on the edit button, the selected user is set to the selectedUser variable
-     * 
-     */
+
+
     @FXML
     public void CloseButtonOnAction(ActionEvent event){
         Stage stage = (Stage) CancelButton.getScene().getWindow();
@@ -297,10 +246,11 @@ public class AdminController implements Initializable {
     }
 
     /**
-     * When user clicks on the edit button, the selected user is set to the selectedUser variable
-     * 
+     * Used when the admin wants to save the user profile that admin has changed
+     *
+     * @param event when user clicks on "Save" button
      */
-
+    @FXML
     public void SaveButtonOnActon(ActionEvent event) throws SQLException {
         if(checkUserNameAndPasswordAvailable())
         {
@@ -316,6 +266,12 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Used when the admin wants to delete the user profile
+     *
+     * @param event when user clicks on "Delete" button
+     */
+    @FXML
     public void DeleteButtonOnButton(ActionEvent event) throws SQLException {
         deleteUser(fetchUser(selectedUser.getUsername()));
         CloseButtonOnAction(new ActionEvent());

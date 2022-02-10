@@ -1,5 +1,5 @@
 /**
- * @author neko941
+ * @author neko941, klangthang
  * Created on: 2022-01-21
  */
 package Controllers;
@@ -39,8 +39,8 @@ public class LoginController {
         boolean check = changeLabelText(
                 DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText()),
                 Stream.of(
-                        usernameLogin.getText().isBlank(),
-                        PasswordLogin.getText().isBlank())
+                                usernameLogin.getText().isBlank(),
+                                PasswordLogin.getText().isBlank())
                         .allMatch(val -> val),
                 LoginMessageLabel,
                 "Congratulations!",
@@ -75,15 +75,6 @@ public class LoginController {
             }
         }
 
-//        try {
-//            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/admin_edit2.fxml")));
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            Scene scene = new Scene(root);
-//            stage.setScene(scene);
-//            stage.show();
-//        } catch (IOException e) {
-//            System.out.format("Error: %s\n", e.getMessage());
-//        }
     }
 
     /**

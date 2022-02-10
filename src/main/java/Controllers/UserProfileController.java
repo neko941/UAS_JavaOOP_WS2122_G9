@@ -1,3 +1,7 @@
+/**
+ * @author klangthang
+ * Created on: 2022-02-08
+ */
 package Controllers;
 
 import Models.User;
@@ -17,7 +21,7 @@ import java.net.URL;
 import java.util.Objects;
 
 import static ExternalConnections.DBUtilities.DBUtilities;
-import static ExternalConnections.DBUtilities.fetchUser;
+
 
 public class UserProfileController extends Application {
     @FXML private Label FirstNameLabel;
@@ -27,17 +31,34 @@ public class UserProfileController extends Application {
     @FXML private Button CloseButton;
     private User currentUser;
 
+    /**
+     * Sets the current logged-in user which will be used to fetch and show user profile.
+     *
+     * @param: currentUser: object of type User
+     *
+     * @return: void
+     */
     public void setCurrentUser(User currentUser){
         this.currentUser = currentUser;
     }
 
 
-
+    /**
+     * Used when a user wants to close the user profile
+     *
+     * @param event when user clicks on "Close" button
+     */
+    @FXML
     public void CloseButtonOnAction(ActionEvent event){
         Stage stage = (Stage) CloseButton.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Used when a user wants to reset their password
+     *
+     * @param event when user clicks on "Reset Password" button
+     */
     @FXML
     public void ResetPasswordOnAction(ActionEvent event) {
         try{
@@ -51,7 +72,12 @@ public class UserProfileController extends Application {
         }
     }
 
-
+    /**
+     * Loads the UserProfile UI.
+     *
+     * @param: primaryStage - Stage on which the page will be rendered
+     * @return: void
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         DBUtilities();
@@ -61,7 +87,6 @@ public class UserProfileController extends Application {
         Parent root = loader.load();
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
-        // here is a feature not a bug
         FirstNameLabel.setText(currentUser.getFirstname());
         LastNameLabel.setText(currentUser.getLastname());
         EmailLabel.setText(currentUser.getEmail());
