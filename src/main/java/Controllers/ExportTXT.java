@@ -14,7 +14,7 @@ import java.io.*;
 // import java.time.LocalDate;
 
 /**
- * @author Trung Nguyen Quoc
+ * @author tysunqua
  *
  * A Java program that exports data from any table to Txt file.
  */
