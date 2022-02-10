@@ -246,24 +246,15 @@ public class DBUtilities {
      * Updated the location in the database, if the location changes
      *
      * @param location the location which should be updated in the database
-     * @return true on successful editing
+     * @throws SQLException if something went wrong with the preparedStatement
      */
-    public static boolean editLocation(Location location) {
-        boolean edited = false;
+    public static void editLocation(Location location) throws SQLException {
+        PreparedStatement editLocationPreparedStatement;
 
-        try {
-            preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
-            prepareLocationInsertion(location, preparedStatement);
-            preparedStatement.setInt(8, location.getLocationID());
-            preparedStatement.executeUpdate();
-
-            edited = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-        return edited;
+        editLocationPreparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
+        prepareLocationInsertion(location, editLocationPreparedStatement);
+        editLocationPreparedStatement.executeUpdate();
+        editLocationPreparedStatement.close();
     }
 
     //##########################################################################################
@@ -656,7 +647,7 @@ public class DBUtilities {
         FileInputStream fileInputStream = null;
 
         PreparedStatement insertAttachmentPreparedStatement = connection.prepareStatement(INSERT_NEW_ATTACHMENT_QUERY);
-        for (File file : attachments) {
+        for (var file : attachments) {
             fileInputStream = new FileInputStream(file);
 
             insertAttachmentPreparedStatement.setString(1, file.getName());
@@ -684,7 +675,7 @@ public class DBUtilities {
     public static void insertNewParticipants(final int eventID, ArrayList<User> participants) throws SQLException {
         PreparedStatement insertNewParticipantPreparedStatement = connection.prepareStatement(INSERT_NEW_PARTICIPANTS_QUERY);
 
-        for (User participant : participants) {
+        for (var participant : participants) {
             insertNewParticipantPreparedStatement.setString(1, participant.getUsername());
             insertNewParticipantPreparedStatement.setString(2, participant.getEmail());
             insertNewParticipantPreparedStatement.setInt(3, participant.getId());
@@ -791,6 +782,7 @@ public class DBUtilities {
         preparedStatement.setString(5, location.getCountry());
         preparedStatement.setInt(6, location.getBuilding());
         preparedStatement.setInt(7, location.getRoom());
+        preparedStatement.setInt(8, location.getLocationID());
     }
 
     /**
@@ -798,7 +790,7 @@ public class DBUtilities {
      * Return the ID on successful insertion
      *
      * @param location the location which should be saved in the database
-     * @return -1 on unsuccessful insertion
+     * @return key the locationID of the location which will be saved as a foreign key in the event table
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
      */
     private static int insertNewLocation(Location location) throws SQLException {
@@ -851,7 +843,7 @@ public class DBUtilities {
      * This method fetches the location where the event is going to take place.
      *
      * @param locationID ID of the location (this is the foreign key if the entity "event")
-     * @return object with the location details
+     * @return location object with the location details
      * @throws SQLException if something went wrong with the preparedStatement
      */
     private static Location fetchLocationFromEvent(final int locationID) throws SQLException {
@@ -909,7 +901,7 @@ public class DBUtilities {
      * This method fetches all the participants of an event.
      *
      * @param eventID ID of the event (primary key of the entity "Event")
-     * @return participants - returns a list of participants which participate in the event with the
+     * @return participants returns a list of participants which participate in the event with the
      *      given eventID
      * @throws SQLException if something went wrong if the preparedStatement or resultSet
      */
