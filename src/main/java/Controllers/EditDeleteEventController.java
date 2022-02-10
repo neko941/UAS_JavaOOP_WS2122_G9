@@ -23,41 +23,11 @@ import static Controllers.EventController.*;
 import static ExternalConnections.DBUtilities.*;
 import static java.lang.Integer.parseInt;
 
-public class EditDeleteEventController extends Application {
+public class EditDeleteEventController extends EventUIController {
     private int selectedId;
     @FXML private ChoiceBox eventChoice;
-    @FXML private TextField eventName;
-    @FXML private DatePicker eventDate;
-    @FXML private TextField eventTime;
-    @FXML private TextField eventMinutes;
-    @FXML private TextField eventDuration;
-    @FXML private TextField eventStreet;
-    @FXML private TextField eventHouseNr;
-    @FXML private TextField eventZipCode;
-    @FXML private TextField eventCity;
-    @FXML private TextField eventCountry;
-    @FXML private TextField participants;
-    @FXML private ChoiceBox priority;
-    @FXML private ChoiceBox reminder;
-    @FXML private Button createButton;
     @FXML private Button deleteButton;
-    @FXML private Button cancelButton;
-    @FXML private Button attachmentsButton;
     @FXML private Button openButton;
-    @FXML private Label errorLabel;
-
-    private User currentUser;
-    FileChooser fileChooser = new FileChooser();
-    ArrayList<File> attachment = new ArrayList<File>();
-
-    /**
-     * Sets the current logged-in user which will be used to fetch and create events.
-     *
-     * @param currentUser: object of type User
-     *
-     * @return: void
-     */
-    public void setCurrentUser(User currentUser){ this.currentUser = currentUser; }
 
     /**
      * Loads the View/Edit event UI,initial events and loads events on the dropdown list for selection.
@@ -191,18 +161,6 @@ public class EditDeleteEventController extends Application {
     }
 
     /**
-     * Adds a new attachment to class attachments array, to be passed down to the controller and subsequently to the DB upon saving the changes.
-     *
-     * @return: void
-     */
-    @FXML
-    public void attachmentButtonOnAction() {
-        Stage stage = new Stage();
-        File file = fileChooser.showOpenDialog(stage);
-        this.attachment.add(file);
-    }
-
-    /**
      * Opens up the attachments from the currently selected event.
      *
      * @return: void
@@ -226,54 +184,5 @@ public class EditDeleteEventController extends Application {
         DeleteEvent(currentUser, myEvent);
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.close();
-    }
-
-    /**
-     * Closes the current page.
-     *
-     * @return: void
-     */
-    @FXML
-    public void cancelButtonOnAction() {
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
-        stage.close();
-    }
-
-    /**
-     * maps the selection to a Priority object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Priority object of the selection string
-     */
-    public Priority mapPriority(String selection) {
-        switch(priority.getValue().toString()){
-            case "LOW":
-                return Priority.LOW;
-            case "MEDIUM":
-                return Priority.MEDIUM;
-            case "HIGH":
-                return Priority.HIGH;
-        }
-        return Priority.HIGH;
-    }
-
-    /**
-     * maps the selection to a Reminder object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Reminder object of the selection string
-     */
-    public Reminder mapReminder(String selection) {
-        switch(priority.getValue().toString()){
-            case "1 week":
-                return Reminder.ONE_WEEK;
-            case "3 days":
-                return Reminder.THREE_DAYS;
-            case "1 hour":
-                return Reminder.ONE_HOUR;
-            case "10 minutes":
-                return Reminder.TEN_MINUTES;
-        }
-        return Reminder.TEN_MINUTES;
     }
 }

@@ -21,38 +21,9 @@ import static ExternalConnections.DBUtilities.fetchUser;
 import static java.lang.Integer.parseInt;
 
 
-public class CreateEventController extends Application {
-    @FXML private TextField eventName;
-    @FXML private DatePicker eventDate;
-    @FXML private TextField eventTime;
-    @FXML private TextField eventMinutes;
-    @FXML private TextField eventDuration;
-    @FXML private TextField eventStreet;
-    @FXML private TextField eventHouseNr;
-    @FXML private TextField eventZipCode;
-    @FXML private TextField eventCity;
-    @FXML private TextField eventCountry;
-    @FXML private TextField participants;
-    @FXML private ChoiceBox priority;
-    @FXML private ChoiceBox reminder;
-    @FXML private Button createButton;
-    @FXML private Button cancelButton;
+public class CreateEventController extends EventUIController {
     @FXML private Label userlable;
-    @FXML private Label errorLabel;
-    FileChooser fileChooser = new FileChooser();
-    private User currentUser;
-    ArrayList<File> attachment = new ArrayList<File>();
 
-    /**
-     * Sets the current logged-in user which will be used to fetch and create events.
-     *
-     * @param: currentUser: object of type User
-     *
-     * @return: void
-     */
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
 
     /**
      * Loads the Create event UI.
@@ -73,16 +44,6 @@ public class CreateEventController extends Application {
         errorLabel.setText("");
         participants.setText(currentUser.getEmail() + ", ");
         stage.show();
-    }
-
-    /**
-     * Closes the current page.
-     *
-     * @return: void
-     */
-    public void cancelButtonOnAction() {
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
-        stage.close();
     }
 
     /**
@@ -138,58 +99,6 @@ public class CreateEventController extends Application {
         else{
             errorLabel.setText("Missing Data!");
         }
-    }
-
-    /**
-     * Adds a new attachment to class attachments array, to be passed down to the controller and subsequently to the DB upon saving the changes.
-     *
-     * @return: void
-     */
-    @FXML
-    public void attachmentButtonOnAction() {
-        Stage stage = new Stage();
-        File file = fileChooser.showOpenDialog(stage);
-        this.attachment.add(file);
-    }
-
-    /**
-     * maps the selection to a Priority object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Priority object of the selection string
-     */
-    public Priority mapPriority(String selection) {
-        switch(priority.getValue().toString()){
-            case "LOW":
-                return Priority.LOW;
-            case "MEDIUM":
-                return Priority.MEDIUM;
-            case "HIGH":
-                return Priority.HIGH;
-        }
-        return Priority.HIGH;
-    }
-
-    /**
-     * maps the selection to a Reminder object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Reminder object of the selection string
-     */
-    public Reminder mapReminder(String selection) {
-        switch(reminder.getValue().toString()){
-            case "1 week":
-                return Reminder.ONE_WEEK;
-            case "3 days":
-                return Reminder.THREE_DAYS;
-            case "1 hour":
-                return Reminder.ONE_HOUR;
-            case "10 minutes":
-                return Reminder.TEN_MINUTES;
-            case "No reminder":
-                return Reminder.NO_REMINDER;
-        }
-        return Reminder.NO_REMINDER;
     }
 
 }
