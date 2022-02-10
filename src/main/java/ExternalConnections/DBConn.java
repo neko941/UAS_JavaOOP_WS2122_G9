@@ -8,7 +8,7 @@ import static Controllers.ConfigController.getDataFromConfig;
 import static Controllers.Debugging.printNotificationInConsole;
 
 /**
- * @author Trung Nguyen Quoc
+ * @author tysunqua
  *
  * A Java class to establish the connection to the databases
  */
