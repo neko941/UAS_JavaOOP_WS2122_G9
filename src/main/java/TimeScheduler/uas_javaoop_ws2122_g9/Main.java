@@ -1,7 +1,6 @@
 package TimeScheduler.uas_javaoop_ws2122_g9;
 
-import Controllers.CalendarController;
-import Controllers.MultiThreading;
+import Controllers.*;
 import ExternalConnections.DBUtilities;
 import Models.*;
 import javafx.application.Application;
@@ -34,13 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
-import static Controllers.ConfigController.getDataFromConfig;
-import static Controllers.Debugging.*;
-import static Controllers.EmailUtils.eventEmail;
-import static Controllers.EmailUtils.verificationEmail;
-import static ExternalConnections.DBConn.getConnection;
-import static ExternalConnections.DBUtilities.*;
-import static java.lang.Thread.sleep;
 
 public class Main extends Application {
    @Override
@@ -62,7 +54,9 @@ public class Main extends Application {
 
 // public class Main {
 //     public static void main(String[] args) {
-//         Application.launch(CalendarController.class,args);
+//         DBUtilities();
+//
+//         fetchUser("neko941").printInfo();
 //     }
 // }
 

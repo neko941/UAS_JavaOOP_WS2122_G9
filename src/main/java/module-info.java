@@ -15,4 +15,6 @@ module timescheduler.uas_javaoop_ws2122_g9 {
     opens Controllers to javafx.fxml;
     exports TimeScheduler.uas_javaoop_ws2122_g9;
     exports Controllers;
+    opens Models to javafx.fxml;
+    exports Models;
 }

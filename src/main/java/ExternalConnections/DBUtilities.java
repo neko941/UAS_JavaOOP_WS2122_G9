@@ -14,16 +14,12 @@ import Models.Priority;
 import Models.Reminder;
 import Models.User;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.event.EventListenerSupport;
 
-import javax.xml.transform.Result;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,6 +53,7 @@ public class DBUtilities {
     private static final String USERNAME_AVAILABLE_QUERY = "SELECT * FROM User WHERE username = ?";
 
     private static final String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE eventID = ?";
+    private static final String DELETE_USER_QUERY = "DELETE FROM User WHERE userID = ?";
     private static final String DELETE_ATTACHMENTS_QUERY = "DELETE FROM Attachments WHERE eventID = ?";
     private static final String DELETE_LOCATION_QUERY = "DELETE FROM Location WHERE locationID = ?";
     private static final String DELETE_USER_EVENT_BRIDGE_QUERY = "DELETE FROM User_Event WHERE userID = ? AND eventID = ?";
@@ -199,6 +196,7 @@ public class DBUtilities {
             preparedStatement.executeUpdate();
 
             edited = true;
+            printNotificationInConsole(String.format("Information of user ID = %s is edited", user.getId()));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -402,6 +400,24 @@ public class DBUtilities {
         return deletedEvent;
     }
 
+    public static boolean deleteUser(User user) {
+        boolean deletedUser = false;
+
+        try {
+            // first we delete the event the user wants to delete
+            preparedStatement = connection.prepareStatement(DELETE_USER_QUERY);
+            preparedStatement.setInt(1, user.getId());
+            preparedStatement.executeUpdate();
+
+            printNotificationInConsole(String.format("User ID = %s is deleted", user.getId()));
+            deletedUser = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+        }
+        return deletedUser;
+    }
     //##########################################################################################
 
     //TODO: complete this function by maybe merging the other in one function
@@ -556,6 +572,32 @@ public class DBUtilities {
 
         Collections.sort(events);
         return events;
+    }
+
+    public static ArrayList<User> fetchAllUsersFromDatabase() {
+        ArrayList<User> users = new ArrayList<>();
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM User");
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next())
+            {
+                users.add(new User(
+                        resultSet.getString("userName"),
+                        resultSet.getString("email"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("lastName")
+                        ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+            closeResultSet();
+        }
+
+        return users;
     }
 
     public static Event fetchEventsFromID(final int eventID) {
@@ -877,7 +919,7 @@ public class DBUtilities {
         while (resultSet.next()) {
             if (resultSet.getString(searchWith).equals(credential)) {
                 int userID = resultSet.getInt("userID");
-                String firstname = resultSet.getString("userName");
+                String firstname = resultSet.getString("firstName");
                 String lastname = resultSet.getString("lastName");
                 String username = resultSet.getString("userName");
                 String email = resultSet.getString("email");

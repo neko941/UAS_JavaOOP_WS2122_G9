@@ -15,7 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -30,7 +29,6 @@ import java.util.Locale;
 import com.calendarfx.view.CalendarView;
 import com.calendarfx.model.Calendar;
 
-import static Controllers.ExportTXT.*;
 import static Controllers.Debugging.printNotificationInConsole;
 import static ExternalConnections.DBUtilities.DBUtilities;
 import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
