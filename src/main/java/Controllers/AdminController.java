@@ -84,6 +84,11 @@
 //
 //}
 
+/** 
+*@author neko941, Khang Nguyen
+*
+* 
+*/
 
 package Controllers;
 
@@ -136,6 +141,12 @@ public class AdminController implements Initializable {
 
     ObservableList<User> userObservableList = FXCollections.observableArrayList();
 
+    /**
+     * Initializes the controller class.
+     * @param url
+     * @param rb
+     * 
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -149,6 +160,11 @@ public class AdminController implements Initializable {
     void loadDataFromDB() throws SQLException{
         loadUserFromDB();
     }
+
+    /**
+     * Loads all users from database
+     * @throws SQLException
+     */
 
     public void loadUserFromDB() throws SQLException {
         userObservableList.clear();
@@ -207,7 +223,10 @@ public class AdminController implements Initializable {
 //        }
 //    }
 
-
+    /**
+     * When user clicks on a row in the table, the selected user is set to the selectedUser variable
+     * 
+     */
 
     public void adminUserTableOnMouseDoubleClicked() throws IOException, SQLException {
         //Get the user from the user table view
@@ -243,6 +262,10 @@ public class AdminController implements Initializable {
 
         }
     }
+    /**
+     * When user clicks on the edit button, the selected user is set to the selectedUser variable
+     * 
+     */
 
     public boolean checkUserNameAndPasswordAvailable()
     {
@@ -263,12 +286,20 @@ public class AdminController implements Initializable {
                                 "Email already exists"))
                 .allMatch(val -> val);
     }
-
+    /**
+     * When user clicks on the edit button, the selected user is set to the selectedUser variable
+     * 
+     */
     @FXML
     public void CloseButtonOnAction(ActionEvent event){
         Stage stage = (Stage) CancelButton.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     * When user clicks on the edit button, the selected user is set to the selectedUser variable
+     * 
+     */
 
     public void SaveButtonOnActon(ActionEvent event) throws SQLException {
         if(checkUserNameAndPasswordAvailable())

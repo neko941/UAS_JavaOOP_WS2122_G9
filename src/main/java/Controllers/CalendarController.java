@@ -221,6 +221,12 @@ public class CalendarController extends Application {
         }
     }
 
+    /**
+     * Opens a new create event window and sets it's controller and current user.
+     *
+     * @param: event - ActionEvent, in this case the clicking of a button
+     * @return: void
+     */
     @FXML
     private void UserProfileButtonOnAction(ActionEvent event){
         try{
