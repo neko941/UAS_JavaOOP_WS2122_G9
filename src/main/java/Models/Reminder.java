@@ -11,7 +11,8 @@ public enum Reminder {
     ONE_WEEK(10080),
     THREE_DAYS(4320),
     ONE_HOUR(60),
-    TEN_MINUTES(10);
+    TEN_MINUTES(10),
+    NO_REMINDER(0);
 
     public final Integer value;
 
@@ -22,6 +23,6 @@ public enum Reminder {
 
     public LocalDateTime getReminderTime(LocalDateTime startDay)
     {
-        return startDay.plusMinutes(value);
+        return startDay.minusMinutes(value);
     }
 }

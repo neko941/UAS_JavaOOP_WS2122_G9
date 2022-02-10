@@ -17,5 +17,11 @@
         "url" : "jdbc:mysql://bkyhmn5ukri7jfw1kpjs-mysql.services.clever-cloud.com:3306/bkyhmn5ukri7jfw1kpjs",
         "username" : "upqkamkqerixvpbb",
         "password" : "dNJnm1pH1qC7uSU2IgrJ"
-    }
+    },
+
+     "adminAccount":
+     {
+         "username" : "admin1",
+         "password" : "@Admin1"
+     }
 }

@@ -1,5 +1,5 @@
 /**
- * @author neko941
+ * @author neko941, klangthang
  * Created on: 2022-01-21
  */
 package Controllers;
@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import static Controllers.ColorController.changeLabelText;
 import static Controllers.Debugging.printNotificationInConsole;
+import static Controllers.ConfigController.getDataFromConfig;
 
 public class LoginController {
     @FXML private Label LoginMessageLabel;
@@ -38,14 +39,26 @@ public class LoginController {
         boolean check = changeLabelText(
                 DBUtilities.verifyUser(usernameLogin.getText(), PasswordLogin.getText()),
                 Stream.of(
-                        usernameLogin.getText().isBlank(),
-                        PasswordLogin.getText().isBlank())
+                                usernameLogin.getText().isBlank(),
+                                PasswordLogin.getText().isBlank())
                         .allMatch(val -> val),
                 LoginMessageLabel,
                 "Congratulations!",
                 "Invalid Login. Please try again");
 
-        if (check)
+        if(check && usernameLogin.getText().equals(getDataFromConfig("adminAccount", "username"))
+                && PasswordLogin.getText().equals(getDataFromConfig("adminAccount", "password"))){
+            try {
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/admin_edit2.fxml")));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                System.out.format("Error: %s\n", e.getMessage());
+            }
+        }
+        else if (check)
         {
             printNotificationInConsole("Successfully log-in as " + usernameLogin.getText());
 
@@ -61,6 +74,7 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
+
     }
 
     /**

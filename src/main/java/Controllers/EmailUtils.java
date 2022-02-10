@@ -90,6 +90,16 @@ public class EmailUtils {
         printNotificationInConsole(String.format("Verification code has been sent to email \"%s\"", email));
     }
 
+    /**
+     * Send an email about the event
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param email send reminder to this email
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, String email, Event event) {
         try {
             //set email message details
@@ -127,9 +137,26 @@ public class EmailUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        printNotificationInConsole(String.format("Reminder of event \"%s\" \"%s\"",event.getEventName(), email));
+
+        switch (option) {
+            case 0 -> printNotificationInConsole(String.format("Reminder of event \"%s\" is sent to \"%s\"",event.getEventName(), email));
+            case 1 -> printNotificationInConsole(String.format("Event \"%s\" is created successfully sent to \"%s\"",event.getEventName(), email));
+            case 2 -> printNotificationInConsole(String.format("Event \"%s\" is edited sent to \"%s\"",event.getEventName(), email));
+            case 3 -> printNotificationInConsole(String.format("Event \"%s\" is deleted sent to \"%s\"", event.getEventName(), email));
+        }
+
     }
 
+    /**
+     * Send emails to a list of users
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param users send reminder to this list of users
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, ArrayList<User> users, Event event)
     {
         for (User user : users)
@@ -138,6 +165,16 @@ public class EmailUtils {
         }
     }
 
+    /**
+     * Send emails to a list of emails
+     *
+     * @param option <code>0</code> used when reminding an event
+     *               <code>1</code> used when creating an event
+     *               <code>2</code> used when updating an event
+     *               <code>3</code> used when deleting an event
+     * @param emails send reminder to this list of emails
+     * @param event event that needs to be sent
+     */
     public static void eventEmail(int option, String[] emails, Event event)
     {
         for (String email : emails)

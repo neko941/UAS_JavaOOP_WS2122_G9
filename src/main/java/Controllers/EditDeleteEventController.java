@@ -1,28 +1,17 @@
 package Controllers;
 
 import Models.*;
-import com.calendarfx.model.Entry;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -32,40 +21,11 @@ import static Controllers.EventController.*;
 import static ExternalConnections.DBUtilities.*;
 import static java.lang.Integer.parseInt;
 
-public class EditDeleteEventController extends Application {
+public class EditDeleteEventController extends EventUIController {
     private int selectedId;
     @FXML private ChoiceBox eventChoice;
-    @FXML private TextField eventName;
-    @FXML private DatePicker eventDate;
-    @FXML private TextField eventTime;
-    @FXML private TextField eventMinutes;
-    @FXML private TextField eventDuration;
-    @FXML private TextField eventStreet;
-    @FXML private TextField eventHouseNr;
-    @FXML private TextField eventZipCode;
-    @FXML private TextField eventCity;
-    @FXML private TextField eventCountry;
-    @FXML private TextField participants;
-    @FXML private ChoiceBox priority;
-    @FXML private ChoiceBox reminder;
-    @FXML private Button createButton;
     @FXML private Button deleteButton;
-    @FXML private Button cancelButton;
-    @FXML private Button attachmentsButton;
     @FXML private Button openButton;
-
-    private User currentUser;
-    FileChooser fileChooser = new FileChooser();
-    ArrayList<File> attachment = new ArrayList<File>();
-
-    /**
-     * Sets the current logged-in user which will be used to fetch and create events.
-     *
-     * @param: currentUser: object of type User
-     *
-     * @return: void
-     */
-    public void setCurrentUser(User currentUser){ this.currentUser = currentUser; }
 
     /**
      * Loads the View/Edit event UI,initial events and loads events on the dropdown list for selection.
@@ -92,6 +52,7 @@ public class EditDeleteEventController extends Application {
         }
         createButton.setDisable(true);
         deleteButton.setDisable(true);
+        errorLabel.setText("");
         attachmentsButton.setDisable(true);
         openButton.setDisable(true);
         stage.show();
@@ -127,7 +88,7 @@ public class EditDeleteEventController extends Application {
 
         Location myLocation = selectedEvent.getLocation();
         eventStreet.setText(myLocation.getStreet());
-        eventHouseNr.setText(Integer.toString(myLocation.getStreetNumber()));
+        eventHouseNr.setText(myLocation.getStreetNumber());
         eventZipCode.setText(myLocation.getZip());
         eventCity.setText(myLocation.getCity());
         eventCountry.setText(myLocation.getCountry());
@@ -152,46 +113,49 @@ public class EditDeleteEventController extends Application {
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
         parseInt(eventDuration.getText());
         ArrayList<User> mappedParticipants = new ArrayList<User>();
-        mappedParticipants.add(currentUser);
-        for (int i = 0; i < emails.length; i++){
-            User myUser = fetchUser(emails[i]);
-            mappedParticipants.add(myUser);
+        if(!eventName.getText().trim().isEmpty() &&
+                !eventTime.getText().trim().isEmpty() &&
+                !eventMinutes.getText().trim().isEmpty() &&
+                !eventDuration.getText().trim().isEmpty() &&
+                !eventStreet.getText().trim().isEmpty() &&
+                !eventHouseNr.getText().trim().isEmpty() &&
+                !eventZipCode.getText().trim().isEmpty() &&
+                !eventCity.getText().trim().isEmpty() &&
+                !eventCountry.getText().trim().isEmpty() ) {
+
+            errorLabel.setText("");
+            mappedParticipants.add(currentUser);
+            for (int i = 0; i < emails.length; i++) {
+                User myUser = fetchUser(emails[i]);
+                mappedParticipants.add(myUser);
+            }
+
+            Event myEvent = fetchEventsFromID(selectedId);
+
+            EditEvent(myEvent,
+                    eventName.getText(),
+                    eventDate.getValue(),
+                    LocalTime.of(parseInt(eventTime.getText()),
+                            parseInt(eventMinutes.getText())),
+                    parseInt(eventDuration.getText()),
+                    new Location(eventStreet.getText().replaceAll("\\s", ""),
+                            eventHouseNr.getText().replaceAll("\\s", ""),
+                            eventZipCode.getText().replaceAll("\\s", ""),
+                            eventCity.getText().replaceAll("\\s", ""),
+                            eventCountry.getText().replaceAll("\\s", ""),
+                            "",
+                            ""),
+                    mappedParticipants,
+                    emails,
+                    attachment,
+                    selectedReminder,
+                    selectedPriority);
+            Stage stage = (Stage) createButton.getScene().getWindow();
+            stage.close();
         }
-
-        Event myEvent = fetchEventsFromID(selectedId);
-
-        EditEvent(myEvent,
-                eventName.getText(),
-                eventDate.getValue(),
-                LocalTime.of(parseInt(eventTime.getText()),
-                        parseInt(eventMinutes.getText())),
-                parseInt(eventDuration.getText()),
-                new Location(eventStreet.getText().replaceAll("\\s",""),
-                        parseInt(eventHouseNr.getText().replaceAll("\\s","")),
-                        eventZipCode.getText().replaceAll("\\s",""),
-                        eventCity.getText().replaceAll("\\s",""),
-                        eventCountry.getText().replaceAll("\\s",""),
-                        0,
-                        0),
-                mappedParticipants,
-                emails,
-                attachment,
-                selectedReminder,
-                selectedPriority);
-        Stage stage = (Stage) createButton.getScene().getWindow();
-        stage.close();
-    }
-
-    /**
-     * Adds a new attachment to class attachments array, to be passed down to the controller and subsequently to the DB upon saving the changes.
-     *
-     * @return: void
-     */
-    @FXML
-    public void attachmentButtonOnAction() {
-        Stage stage = new Stage();
-        File file = fileChooser.showOpenDialog(stage);
-        this.attachment.add(file);
+        else{
+            errorLabel.setText("Missing Data!");
+        }
     }
 
     /**
@@ -218,54 +182,5 @@ public class EditDeleteEventController extends Application {
         DeleteEvent(currentUser, myEvent);
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.close();
-    }
-
-    /**
-     * Closes the current page.
-     *
-     * @return: void
-     */
-    @FXML
-    public void cancelButtonOnAction() {
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
-        stage.close();
-    }
-
-    /**
-     * maps the selection to a Priority object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Priority object of the selection string
-     */
-    public Priority mapPriority(String selection) {
-        switch(priority.getValue().toString()){
-            case "LOW":
-                return Priority.LOW;
-            case "MEDIUM":
-                return Priority.MEDIUM;
-            case "HIGH":
-                return Priority.HIGH;
-        }
-        return Priority.HIGH;
-    }
-
-    /**
-     * maps the selection to a Reminder object.
-     *
-     * @param: the string currently selected on the ChoiceBox
-     * @return: the equivalent Reminder object of the selection string
-     */
-    public Reminder mapReminder(String selection) {
-        switch(priority.getValue().toString()){
-            case "1 week":
-                return Reminder.ONE_WEEK;
-            case "3 days":
-                return Reminder.THREE_DAYS;
-            case "1 hour":
-                return Reminder.ONE_HOUR;
-            case "10 minutes":
-                return Reminder.TEN_MINUTES;
-        }
-        return Reminder.TEN_MINUTES;
     }
 }

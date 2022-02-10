@@ -14,9 +14,9 @@ import java.io.*;
 // import java.time.LocalDate;
 
 /**
- * @author Trung
+ * @author tysunqua
  *
- * An advanced Java program that exports data from any table to CSV file.
+ * A Java program that exports data from any table to Txt file.
  */
 public class ExportTXT {
     Connection connection = DBConn.getConnection();
@@ -24,6 +24,7 @@ public class ExportTXT {
     private BufferedWriter fileWriter;
 
     /**
+     * A Function to choose a name of the table to export
      *
      * @param table
      */

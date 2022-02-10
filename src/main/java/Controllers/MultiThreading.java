@@ -9,6 +9,7 @@
 package Controllers;
 
 import Models.Event;
+import Models.Reminder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class MultiThreading implements Runnable{
                 {
                     if(event.getReminderTime().isBefore(LocalDateTime.now()))
                     {
-                        eventEmail(0, event.getEmails(), event);
-                        event.setReminder(null);
+                        eventEmail(0, event.getParticipants(), event);
+                        event.setReminder(Reminder.NO_REMINDER);
                         editEvent(event);
                     }
                     else
