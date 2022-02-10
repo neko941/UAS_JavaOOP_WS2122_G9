@@ -198,7 +198,6 @@ public class AdminController implements Initializable {
      * When user clicks on a row in the table, the selected user is set to the selectedUser variable
      *
      */
-
     public void adminUserTableOnMouseDoubleClicked() throws IOException, SQLException {
         //Get the user from the user table view
         selectedUser = userTableView.getSelectionModel().getSelectedItem();

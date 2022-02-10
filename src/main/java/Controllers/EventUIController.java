@@ -3,22 +3,13 @@ package Controllers;
 import Models.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.net.URL;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
-import static Controllers.EventController.CreateEvent;
-import static ExternalConnections.DBUtilities.DBUtilities;
-import static ExternalConnections.DBUtilities.fetchUser;
-import static java.lang.Integer.parseInt;
 
 
 public abstract class EventUIController extends Application {
