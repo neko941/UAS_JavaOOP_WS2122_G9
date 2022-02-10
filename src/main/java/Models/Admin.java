@@ -1,6 +1,6 @@
 /**
- * @author neko941, jatenderjossan
- * Created on: 2021-12-13
+ * @author tysunqua
+ * 
  * This class provides model for a Admin
  */
 
