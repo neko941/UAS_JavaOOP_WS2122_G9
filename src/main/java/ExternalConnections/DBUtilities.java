@@ -116,7 +116,6 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
 
         return key;
@@ -263,6 +262,7 @@ public class DBUtilities {
      * Verifies if a given user corresponds to a user in the database.
      *
      * @param credential the email or username of the user which should be verified
+     * @param password the password of the user
      * @return true on successful verification
      */
     public static boolean verifyUser (final String credential, final String password) {
@@ -328,7 +328,6 @@ public class DBUtilities {
             available = false;
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return available;
     }
@@ -357,7 +356,6 @@ public class DBUtilities {
             available = false;
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return available;
     }
@@ -395,41 +393,6 @@ public class DBUtilities {
     }
 
     //##########################################################################################
-
-    //TODO: complete this function by maybe merging the other in one function
-    public static ArrayList<Event> fetchEvents(final User user) {
-        ArrayList<Event> events = new ArrayList<>();
-
-        String sql = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
-
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, user.getId());
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                int eventID = resultSet.getInt("eventID");
-                String eventname = resultSet.getString("eventName");
-                LocalDate date = resultSet.getDate("eventDate").toLocalDate();
-                LocalTime time = resultSet.getTime("eventTime").toLocalTime();
-                int duration = resultSet.getInt("duration");
-                Location location = fetchLocationFromEvent(resultSet.getInt("location"));
-                ArrayList<User> participants = fetchParticipants(eventID);
-                ArrayList<File> attachments = fetchAttachments(eventID);
-                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
-                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
-
-                /*
-                events.add(new Event(eventID, eventname, date, time, duration, location, participants, attachments, reminder, priority));
-                 */
-            }
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-
-        return null;
-    }
 
     /**
      * This function is for fetching a user.
@@ -519,11 +482,15 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return events;
     }
 
+    /**
+     * Fetches all events with the reminder.
+     *
+     * @return a list with all events
+     */
     public static ArrayList<Event> fetchAllEventsWithReminderFromDatabase() {
         ArrayList<Event> events = new ArrayList<>();
 
@@ -556,13 +523,18 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
 
         Collections.sort(events);
         return events;
     }
 
+    /**
+     * Fetches a single event with a given eventID
+     *
+     * @param eventID the ID of the event
+     * @return the event with the given eventID
+     */
     public static Event fetchEventsFromID(final int eventID) {
 
         try {
@@ -595,7 +567,6 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return null;
     }
@@ -614,20 +585,6 @@ public class DBUtilities {
             try {
                 preparedStatement.close();
                 preparedStatement = null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * This function closes an open resultSet
-     */
-    private static void closeResultSet() {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-                resultSet = null;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -776,21 +733,21 @@ public class DBUtilities {
      */
     private static void prepareLocationInsertion(Location location, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, location.getStreet());
-        preparedStatement.setInt(2, location.getStreetNumber());
+        preparedStatement.setString(2, location.getStreetNumber());
         preparedStatement.setString(3, location.getZip());
         preparedStatement.setString(4, location.getCity());
         preparedStatement.setString(5, location.getCountry());
-        preparedStatement.setInt(6, location.getBuilding());
-        preparedStatement.setInt(7, location.getRoom());
+        preparedStatement.setString(6, location.getBuilding());
+        preparedStatement.setString(7, location.getRoom());
         preparedStatement.setInt(8, location.getLocationID());
     }
 
     /**
      * Makes an entry for a location in the database.
-     * Return the ID on successful insertion
+     * Return the ID on successful insertion.
      *
      * @param location the location which should be saved in the database
-     * @return key the locationID of the location which will be saved as a foreign key in the event table
+     * @return the locationID of the location which will be saved as a foreign key in the event table
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
      */
     private static int insertNewLocation(Location location) throws SQLException {
@@ -855,12 +812,12 @@ public class DBUtilities {
         fetchLocationResultSet = fetchLocationPreparedStatement.executeQuery();
         if (fetchLocationResultSet.next()) {
             String street = fetchLocationResultSet.getString(2);
-            int houseNumber = fetchLocationResultSet.getInt(3);
+            String houseNumber = fetchLocationResultSet.getString(3);
             String zip = fetchLocationResultSet.getString(4);
             String city = fetchLocationResultSet.getString(5);
             String country = fetchLocationResultSet.getString(6);
-            int building = fetchLocationResultSet.getInt(7);
-            int room = fetchLocationResultSet.getInt(8);
+            String building = fetchLocationResultSet.getString(7);
+            String room = fetchLocationResultSet.getString(8);
 
             return new Location(street, houseNumber, zip, city, country, building, room);
         }
@@ -875,7 +832,7 @@ public class DBUtilities {
      * @param resultSet the resultSet with the execution of the preparedStatement
      * @param searchWith defines if we are using the email or the username for searching of the user
      * @param credential email or username of the user
-     * @return user the user we were searching for
+     * @return the user we were searching for
      * @throws SQLException if something went wrong with the resultSet
      */
     private static User getUser(ResultSet resultSet, final String searchWith, final String credential) throws SQLException {
@@ -901,7 +858,7 @@ public class DBUtilities {
      * This method fetches all the participants of an event.
      *
      * @param eventID ID of the event (primary key of the entity "Event")
-     * @return participants returns a list of participants which participate in the event with the
+     * @return  a list of participants which participate in the event with the
      *      given eventID
      * @throws SQLException if something went wrong if the preparedStatement or resultSet
      */
@@ -929,7 +886,7 @@ public class DBUtilities {
      * This method fetches all attachments for an event.
      *
      * @param eventID ID of the event
-     * @return returns a list with all the files which are attached to the given event
+     * @return a list with all the files which are attached to the given event
      * @throws SQLException if something went wrong with the preparedStatement or resultSet
      * @throws IOException if something went wrong with the file handling
      */
@@ -962,5 +919,54 @@ public class DBUtilities {
         if (inputStream != null) inputStream.close();
 
         return attachments;
+    }
+
+    //TODO: complete this function by maybe merging the other in one function
+    public static ArrayList<Event> fetchEvents(final User user) {
+        ArrayList<Event> events = new ArrayList<>();
+
+        String sql = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user.getId());
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int eventID = resultSet.getInt("eventID");
+                String eventname = resultSet.getString("eventName");
+                LocalDate date = resultSet.getDate("eventDate").toLocalDate();
+                LocalTime time = resultSet.getTime("eventTime").toLocalTime();
+                int duration = resultSet.getInt("duration");
+                Location location = fetchLocationFromEvent(resultSet.getInt("location"));
+                ArrayList<User> participants = fetchParticipants(eventID);
+                ArrayList<File> attachments = fetchAttachments(eventID);
+                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
+                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
+
+                /*
+                events.add(new Event(eventID, eventname, date, time, duration, location, participants, attachments, reminder, priority));
+                 */
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+        }
+
+        return null;
+    }
+    private static final String GET_EVENTS_AS_PARTICIPANT_QUERY = "SELECT * FROM Events WHERE Participants.userID = ? AND Participants.eventID = Event.eventID";
+    public static void main(String[] args) {
+        User user = new User("jatender", "jossan", "jatenderjossan", "test", "jatender@outlook.de");
+
+        Location location = new Location("Nibelungenplatz", "1", "60326", "Frankfurt am Main", "Deutschland", "4", "148");
+        ArrayList<User> p = new ArrayList<>(); p.add(new User("first", "parti", "firstpart", "test", "firstparti@outlook.de"));
+        ArrayList<File> a = new ArrayList<>();
+        LocalDate date = LocalDate.of(20022, 2, 15);
+        LocalTime time = LocalTime.of(15, 30, 0);
+        Event event = new Event(13, "database", date, time, 120, location, p, null, a, Reminder.ONE_HOUR, Priority.HIGH);
+
+        DBUtilities();
+        deleteEvent(user, event);
     }
 }
