@@ -119,10 +119,9 @@ public class EditDeleteEventController extends EventUIController {
             errorLabel.setText("");
             for (int i = 0; i < emails.length; i++) {
                 List<String> currentEmails = List.of(myEvent.getEmails());
-                if (!currentEmails.contains(emails[i])) {
-                    User myUser = fetchUser(emails[i]);
-                    mappedParticipants.add(myUser);
-                }
+                User myUser = fetchUser(emails[i]);
+                mappedParticipants.add(myUser);
+
             }
 
 
