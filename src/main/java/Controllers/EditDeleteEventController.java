@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.awt.Desktop;
+import java.util.List;
 
 import static Controllers.EventController.*;
 import static ExternalConnections.DBUtilities.*;
@@ -76,15 +77,6 @@ public class EditDeleteEventController extends EventUIController {
         reminder.setValue(selectedEvent.getReminder());
         participants.setText(StringUtils.join(selectedEvent.getEmails(), ","));
         this.selectedId = eventId;
-        /*
-        ArrayList<User> eventParticipants = fetchParticipants(eventId);
-        String userIds = "";
-        for (int i = 0; i< eventParticipants.size(); i++){
-            String email = eventParticipants.get(i).getEmail();
-
-            userIds += email + "; ";
-        }
-        participants.setText(userIds);*/
 
         Location myLocation = selectedEvent.getLocation();
         eventStreet.setText(myLocation.getStreet());
@@ -110,6 +102,7 @@ public class EditDeleteEventController extends EventUIController {
     public void EditEventOnAction() {
         Priority selectedPriority = mapPriority(priority.getValue().toString());
         Reminder selectedReminder = mapReminder(reminder.getValue().toString());
+        Event myEvent = fetchEventsFromID(selectedId);
         String[] emails = participants.getText().replaceAll("\\s","").split(",");
         parseInt(eventDuration.getText());
         ArrayList<User> mappedParticipants = new ArrayList<User>();
@@ -126,11 +119,13 @@ public class EditDeleteEventController extends EventUIController {
             errorLabel.setText("");
             mappedParticipants.add(currentUser);
             for (int i = 0; i < emails.length; i++) {
-                User myUser = fetchUser(emails[i]);
-                mappedParticipants.add(myUser);
+                List<String> currentEmails = List.of(myEvent.getEmails());
+                if (!currentEmails.contains(emails[i])) {
+                    User myUser = fetchUser(emails[i]);
+                    mappedParticipants.add(myUser);
+                }
             }
 
-            Event myEvent = fetchEventsFromID(selectedId);
 
             EditEvent(myEvent,
                     eventName.getText(),

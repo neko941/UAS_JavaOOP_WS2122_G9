@@ -45,7 +45,7 @@ public class DBUtilities {
     private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (eventID, userID) VALUES (?, ?)";
 
     private static final String EDIT_USER_QUERY = "UPDATE User SET firstname = ?, lastname = ?, username = ?, email = ? WHERE userID = ?";
-    private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? , emails = ? WHERE eventID = ?";
+    private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? WHERE eventID = ?";
     private static final String EDIT_LOCATION_QUERY = "UPDATE Location SET street = ?, houseNumber = ?, zip = ?, city = ?, country = ?, building = ?, room = ? WHERE locationID = ?";
 
     private static String VERIFY_USER_QUERY;
@@ -224,12 +224,12 @@ public class DBUtilities {
             preparedStatement.setInt(5, event.getLocation().getLocationID());
             preparedStatement.setString(6, event.getPriority().name());
             preparedStatement.setString(7, event.getReminder().name());
+            preparedStatement.setInt(8, event.getEventID());
 
-            String result = StringUtils.join(event.getEmails(), ",");
-            preparedStatement.setString(8, result);
-            preparedStatement.setInt(9, event.getEventID());
-            preparedStatement.executeUpdate();
-
+            if (event.getParticipants() != null || event.getParticipants().size() != 0) {
+                // if so we insert them into the database
+                insertNewParticipants(event.getEventID(), event.getParticipants());
+            }
             printNotificationInConsole(String.format("Event \"%s\" is edited in the database", event.getEventName()));
             edited = true;
         } catch (SQLException e) {

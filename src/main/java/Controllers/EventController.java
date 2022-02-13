@@ -12,6 +12,7 @@ import Models.*;
 import java.time.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.eventEmail;
