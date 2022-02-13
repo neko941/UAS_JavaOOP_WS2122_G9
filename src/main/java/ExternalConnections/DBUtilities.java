@@ -13,7 +13,6 @@ import Models.Location;
 import Models.Priority;
 import Models.Reminder;
 import Models.User;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +59,9 @@ public class DBUtilities {
     private static final String DELETE_PARTICIPANTS_QUERY = "DELETE FROM Participants WHERE eventID = ?";
 
     private static String GET_USER_QUERY;
-    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Participants WHERE userID LIKE ?";
+    private static final String GET_ALL_USERS_QUERY = "SELECT * FROM User";
+    private static final String GET_ALL_EVENTS_WITH_REMINDER_QUERY = "SELECT * FROM Event";
+    private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Participants WHERE userID = ?";
     private static final String GET_EVENT_FROM_ID = "SELECT * FROM Event WHERE eventID = ?";
     private static final String GET_LOCATION_FROM_EVENT_QUERY = "SELECT * FROM Location WHERE locationID = ?";
     private static final String GET_ATTACHMENTS_FROM_EVENT_QUERY = "SELECT * FROM Attachments WHERE eventID = ?";
@@ -85,10 +86,8 @@ public class DBUtilities {
      * Returns ID of the user on successful insertion
      *
      * @param user makes an entry for the user which should be added to the database
-     * @return -1 on unsuccessful insertion
      */
-    public static int insertNewUser(User user) {
-        int key = -1;       // this is the userID
+    public static void insertNewUser(User user) {
 
         // password encryption
         String encryptedPassword = Security.sha512(user.getPassword());
@@ -101,22 +100,11 @@ public class DBUtilities {
             preparedStatement.setString(4, encryptedPassword);
             preparedStatement.setString(5, user.getEmail());
             preparedStatement.executeUpdate();
-
-            // get the ID of the user from the database
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet != null && resultSet.next()) {
-                key = resultSet.getInt(1);
-            } else {
-                throw new SQLException("No userID received");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
-
-        return key;
     }
 
     /**
@@ -179,10 +167,8 @@ public class DBUtilities {
      * Updates user information in the database.
      *
      * @param user user, which wants to update his credentials
-     * @return false on unsuccessful editing
      */
-    public static boolean editUser (User user){
-        boolean edited = false;
+    public static void editUser (User user){
 
         try {
             preparedStatement = connection.prepareStatement(EDIT_USER_QUERY);
@@ -193,18 +179,16 @@ public class DBUtilities {
             preparedStatement.setInt(5, user.getId());
             preparedStatement.executeUpdate();
 
-            edited = true;
             printNotificationInConsole(String.format("Information of user ID = %s is edited", user.getId()));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
-        return edited;
     }
 
     /**
-     * Updates an event in the database
+     * Updates an event in the database. Updates the corresponding location too.
      *
      * @param event the event which should be updated
      * @return true on successful editing
@@ -227,40 +211,24 @@ public class DBUtilities {
 
             // we check if the user attached any participants to the event
             if (event.getParticipants() != null || event.getParticipants().size() != 0) {
-                // if so we insert them into the database
+                // if so, we first delete the participants which were saved before
+                deleteParticipants(event.getEventID());
+                // and insert the new ones
                 insertNewParticipants(event.getEventID(), event.getParticipants());
             }
+
             // we check if the user attached any attachments to the event
             if (event.getAttachments() != null || event.getAttachments().size() == 0) {
-                // if so, we insert that into the database
+                // if so, we first delete the attachments which were saved before
+                deleteAttachments(event.getEventID());
+                // and insert the new ones
                 insertNewAttachments(event.getEventID(), event.getAttachments());
             }
+
             printNotificationInConsole(String.format("Event \"%s\" is edited in the database", event.getEventName()));
+
             edited = true;
         } catch (SQLException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-        return edited;
-    }
-
-    /**
-     * Updated the location in the database, if the location changes
-     *
-     * @param location the location which should be updated in the database
-     * @return true on successful editing
-     */
-    public static boolean editLocation(Location location) {
-        boolean edited = false;
-        try {
-            preparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
-            prepareLocationInsertion(location, preparedStatement);
-            preparedStatement.setInt(8, location.getLocationID());
-            preparedStatement.executeUpdate();
-
-            edited = true;
-        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
@@ -339,7 +307,6 @@ public class DBUtilities {
             available = false;
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return available;
     }
@@ -368,7 +335,6 @@ public class DBUtilities {
             available = false;
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
         return available;
     }
@@ -379,10 +345,8 @@ public class DBUtilities {
      *
      * @param event the event which should be deleted
      * @param user the user who is initiating it
-     * @return true on successful deletion
      */
-    public static boolean deleteEvent(User user, Event event) {
-        boolean deletedEvent = false;
+    public static void deleteEvent(User user, Event event) {
 
         try {
             // first we delete the event the user wants to delete
@@ -390,80 +354,38 @@ public class DBUtilities {
             preparedStatement.setInt(1, event.getEventID());
             preparedStatement. executeUpdate();
 
-            // then we delete the corresponding bridge and attachments too
+            // then we first delete the corresponding bridge
             deleteUser_EventBridge(user.getId(), event.getEventID());
+            // then we secondly delete the attachments for that event
             deleteAttachments(event.getEventID());
+            // then thirdly the corresponding location
             deleteLocation(event.getLocation().getLocationID());
+            // and last but not least the participants of that event
             deleteParticipants(event.getEventID());
 
-            deletedEvent = true;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
-        return deletedEvent;
     }
 
-    public static boolean deleteUser(User user) {
-        boolean deletedUser = false;
+    public static void deleteUser(User user) {
 
         try {
-            // first we delete the event the user wants to delete
             preparedStatement = connection.prepareStatement(DELETE_USER_QUERY);
             preparedStatement.setInt(1, user.getId());
             preparedStatement.executeUpdate();
 
             printNotificationInConsole(String.format("User ID = %s is deleted", user.getId()));
-            deletedUser = true;
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
         }
-        return deletedUser;
     }
     //##########################################################################################
-
-    //TODO: complete this function by maybe merging the other in one function
-    public static ArrayList<Event> fetchEvents(final User user) {
-        ArrayList<Event> events = new ArrayList<>();
-
-        String sql = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
-
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, user.getId());
-            resultSet = preparedStatement.executeQuery();
-            ArrayList<String> fetchedEmails = new ArrayList<String>();
-            while (resultSet.next()) {
-                int eventID = resultSet.getInt("eventID");
-                String eventname = resultSet.getString("eventName");
-                LocalDate date = resultSet.getDate("eventDate").toLocalDate();
-                LocalTime time = resultSet.getTime("eventTime").toLocalTime();
-                int duration = resultSet.getInt("duration");
-                Location location = fetchLocationFromEvent(resultSet.getInt("location"));
-                ArrayList<User> participants = fetchParticipants(eventID);
-                ArrayList<File> attachments = fetchAttachments(eventID);
-                Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
-                Priority priority = Enum.valueOf(Priority.class, resultSet.getString("priority"));
-                for (User participant : participants){
-                    fetchedEmails.add(participant.getEmail());
-                }
-                String[] emails = fetchedEmails.toArray(new String[0]);
-
-
-                events.add(new Event(eventID, eventname, date, time, duration, location, participants, emails, attachments, reminder, priority));
-
-            }
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            closePreparedStatement();
-        }
-
-        return null;
-    }
 
     /**
      * This function is for fetching a user.
@@ -538,11 +460,11 @@ public class DBUtilities {
         ArrayList<Event> events = new ArrayList<>();
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM Event");
+            preparedStatement = connection.prepareStatement(GET_ALL_EVENTS_WITH_REMINDER_QUERY);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Reminder reminder = Enum.valueOf(Reminder.class, resultSet.getString("reminder"));
-                ArrayList<String> fetchedEmails = new ArrayList<String>();
+                ArrayList<String> fetchedEmails = new ArrayList<>();
                 if (reminder == Reminder.NO_REMINDER)
                 {
                     continue;
@@ -572,18 +494,17 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
 
         Collections.sort(events);
         return events;
     }
 
-    public static ArrayList<User> fetchAllUsersFromDatabase() {
+    public static ArrayList<User> fetchAllUsersFromDatabase()  {
         ArrayList<User> users = new ArrayList<>();
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM User");
+            preparedStatement = connection.prepareStatement(GET_ALL_USERS_QUERY);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next())
             {
@@ -599,16 +520,15 @@ public class DBUtilities {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
-            closeResultSet();
         }
 
         return users;
     }
 
     public static Event fetchEventsFromID(final int eventID) {
-        PreparedStatement fetchEventPreparedStatement = null;
+        PreparedStatement fetchEventPreparedStatement;
         try {
-            ArrayList<String> fetchedEmails = new ArrayList<String>();
+            ArrayList<String> fetchedEmails = new ArrayList<>();
             fetchEventPreparedStatement = connection.prepareStatement(GET_EVENT_FROM_ID);
             fetchEventPreparedStatement.setInt(1, eventID);
             ResultSet eventResultSet = fetchEventPreparedStatement.executeQuery();
@@ -655,20 +575,6 @@ public class DBUtilities {
             try {
                 preparedStatement.close();
                 preparedStatement = null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * This function closes an open resultSet
-     */
-    private static void closeResultSet() {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-                resultSet = null;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -742,6 +648,22 @@ public class DBUtilities {
         userEventBridgePreparedStatement.setInt(1, eventID);
         userEventBridgePreparedStatement.setInt(2, userID);
         userEventBridgePreparedStatement.executeUpdate();
+    }
+
+    /**
+     * Updated the location in the database, if the location changes
+     *
+     * @param location the location which should be updated in the database
+     * @throws SQLException if something went wrong with the preparedStatement
+     */
+    public static void editLocation(Location location) throws SQLException {
+        PreparedStatement editLocationPreparedStatement;
+
+        editLocationPreparedStatement = connection.prepareStatement(EDIT_LOCATION_QUERY);
+        prepareLocationInsertion(location, editLocationPreparedStatement);
+        editLocationPreparedStatement.setInt(8, location.getLocationID());
+        editLocationPreparedStatement.executeUpdate();
+        editLocationPreparedStatement.close();
     }
 
     /**
