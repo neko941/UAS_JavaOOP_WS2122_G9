@@ -117,7 +117,6 @@ public class EditDeleteEventController extends EventUIController {
                 !eventCountry.getText().trim().isEmpty() ) {
 
             errorLabel.setText("");
-            mappedParticipants.add(currentUser);
             for (int i = 0; i < emails.length; i++) {
                 List<String> currentEmails = List.of(myEvent.getEmails());
                 if (!currentEmails.contains(emails[i])) {

@@ -61,8 +61,6 @@ public class DBUtilities {
 
     private static String GET_USER_QUERY;
     private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Participants WHERE userID LIKE ?";
-    // TODO: Uncomment this when the bridge works
-    // private static final String GET_ALL_EVENTS_FROM_USER_QUERY = "SELECT * FROM Event WHERE User_Event.userID = ? AND User_Event.eventID = Event.eventID";
     private static final String GET_EVENT_FROM_ID = "SELECT * FROM Event WHERE eventID = ?";
     private static final String GET_LOCATION_FROM_EVENT_QUERY = "SELECT * FROM Location WHERE locationID = ?";
     private static final String GET_ATTACHMENTS_FROM_EVENT_QUERY = "SELECT * FROM Attachments WHERE eventID = ?";
@@ -106,7 +104,7 @@ public class DBUtilities {
 
             // get the ID of the user from the database
             resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
+            if (resultSet != null && resultSet.next()) {
                 key = resultSet.getInt(1);
             } else {
                 throw new SQLException("No userID received");
@@ -225,14 +223,21 @@ public class DBUtilities {
             preparedStatement.setString(6, event.getPriority().name());
             preparedStatement.setString(7, event.getReminder().name());
             preparedStatement.setInt(8, event.getEventID());
+            preparedStatement.executeUpdate();
 
+            // we check if the user attached any participants to the event
             if (event.getParticipants() != null || event.getParticipants().size() != 0) {
                 // if so we insert them into the database
                 insertNewParticipants(event.getEventID(), event.getParticipants());
             }
+            // we check if the user attached any attachments to the event
+            if (event.getAttachments() != null || event.getAttachments().size() == 0) {
+                // if so, we insert that into the database
+                insertNewAttachments(event.getEventID(), event.getAttachments());
+            }
             printNotificationInConsole(String.format("Event \"%s\" is edited in the database", event.getEventName()));
             edited = true;
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         } finally {
             closePreparedStatement();
