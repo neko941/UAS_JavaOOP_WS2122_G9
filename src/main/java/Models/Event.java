@@ -109,6 +109,20 @@ public class Event implements Comparable<Event>{
         }
     }
 
+    @Override
+    public String toString()
+    {
+        ArrayList<String> event = new ArrayList<>();
+        event.add(String.valueOf(this.getEventID()));
+        event.add(String.valueOf(this.getEventName()));
+        event.add(String.valueOf(this.getDate()));
+        event.add(String.valueOf(this.getTime()));
+        event.add(String.valueOf(this.getDuration()));
+        event.add(String.valueOf(this.getLocation().toString()));
+
+        return String.join("; ", event);
+    }
+
     /**
      * Constructor for fetching an event for reminder
      *

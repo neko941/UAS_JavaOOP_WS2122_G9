@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -194,9 +195,9 @@ public class CalendarController extends Application {
     }
 
     @FXML
-    private void ExportButtonOnAction(ActionEvent event) {
+    private void ExportButtonOnAction(ActionEvent event) throws IOException {
         ExportTXT txt = new ExportTXT();
-        txt.export("Event");
+        txt.export(currentUser);
     }
 
     /**

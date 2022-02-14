@@ -1,6 +1,8 @@
 package Controllers;
 
 import ExternalConnections.DBConn;
+import Models.Event;
+import Models.User;
 
 import java.sql.*;
 import java.sql.Date;
@@ -10,6 +12,12 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+
+import static Controllers.Debugging.printNotificationInConsole;
+import static ExternalConnections.DBUtilities.fetchAllEventsFromUser;
 
 // import java.time.LocalDate;
 
@@ -19,93 +27,27 @@ import java.io.*;
  * A Java program that exports data from any table to Txt file.
  */
 public class ExportTXT {
-    Connection connection = DBConn.getConnection();
-
-    private BufferedWriter fileWriter;
-
     /**
      * A Function to choose a name of the table to export
      *
-     * @param table
+     * @param
      */
-    public void export(String table) {
-
-        String txtFileName = getFileName(table.concat("_Export"));
-
+    public void export(User user) throws IOException {
         try {
-            String sql = "SELECT * FROM ".concat(table);
+            ArrayList<Event> eventList = fetchAllEventsFromUser(user);
+            String time = String.format("%s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-            Statement statement = connection.createStatement();
+            FileWriter txtFileName = new FileWriter(String.format("%s _ Events of %s.txt", time, user.getUsername()));
 
-            ResultSet result = statement.executeQuery(sql);
+            txtFileName.write("eventID; eventName; eventDate; eventTime; duration; location");
 
-            fileWriter = new BufferedWriter(new FileWriter(txtFileName));
-
-            int columnCount = writeHeaderLine(result);
-
-            while (result.next()) {
-                String line = "";
-
-                for (int i = 2; i <= columnCount; i++) {
-                    Object valueObject = result.getObject(i);
-                    String valueString = "";
-
-                    if (valueObject != null)
-                        valueString = valueObject.toString();
-
-                    if (valueObject instanceof String) {
-                        valueString = "\"" + escapeDoubleQuotes(valueString) + "\"";
-                    }
-
-                    line = line.concat(valueString);
-
-                    if (i != columnCount) {
-                        line = line.concat(",");
-                    }
-                }
-
-                fileWriter.newLine();
-                fileWriter.write(line);
+            for (Event event : eventList) {
+                txtFileName.write(String.format("\n%s", event.toString()));
             }
-
-            statement.close();
-            fileWriter.close();
-
-        } catch (SQLException e) {
-            System.out.println("Database error:");
-            e.printStackTrace();
+            txtFileName.close();
+            printNotificationInConsole("TXT file exported");
         } catch (IOException e) {
-            System.out.println("File IO error:");
             e.printStackTrace();
         }
-
     }
-
-    private String getFileName(String baseName) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        String dateTimeInfo = dateFormat.format(new Date(0));
-        return baseName.concat(String.format("_%s.txt", dateTimeInfo));
-    }
-
-    private int writeHeaderLine(ResultSet result) throws SQLException, IOException {
-        // write header line containing column names
-        ResultSetMetaData metaData = result.getMetaData();
-        int numberOfColumns = metaData.getColumnCount();
-        String headerLine = "";
-
-        // exclude the first column which is the ID field
-        for (int i = 2; i <= numberOfColumns; i++) {
-            String columnName = metaData.getColumnName(i);
-            headerLine = headerLine.concat(columnName).concat(",");
-        }
-
-        fileWriter.write(headerLine.substring(0, headerLine.length() - 1));
-
-        return numberOfColumns;
-    }
-
-    private String escapeDoubleQuotes(String value) {
-        return value.replaceAll("\"", "\"\"");
-    }
-
 }
