@@ -4,6 +4,7 @@
  */
 package Controllers;
 
+import Models.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,7 @@ import static Controllers.ColorController.changeLabelColor;
 import static Controllers.ColorController.changeLabelText;
 import static Controllers.Debugging.printNotificationInConsole;
 import static Controllers.EmailUtils.verificationEmail;
-import static ExternalConnections.DBUtilities.isEmailAvailable;
+import static ExternalConnections.DBUtilities.*;
 
 public class ForgetPasswordController {
     @FXML private Label emailWarning;
@@ -43,6 +44,8 @@ public class ForgetPasswordController {
     @FXML private PasswordField confirmNewPassWordTextField;
 
     public static String verification;
+    public static String email;
+    public static String password;
 
     /**
      *
@@ -50,6 +53,7 @@ public class ForgetPasswordController {
      */
     public boolean checkAllTextFieldForgotPasswordUI()
     {
+        email = emailTextField.getText();
         return Stream.of(
                         // check email
                         changeLabelColor(
@@ -71,6 +75,7 @@ public class ForgetPasswordController {
      */
     public boolean checkAllTextFieldResetPasswordUI()
     {
+        password = newPasswordTextField.getText();
         return Stream.of(
                         // check password
                         changeLabelColor(
@@ -145,7 +150,9 @@ public class ForgetPasswordController {
         if (checkAllTextFieldResetPasswordUI())
         {
             //TODO: change password in database
-
+            User user = fetchUser(email);
+            user.setPassword(password);
+            editUserPassword(user);
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/UI/LoginUI.fxml")));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

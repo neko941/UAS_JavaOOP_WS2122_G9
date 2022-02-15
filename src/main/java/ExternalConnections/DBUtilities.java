@@ -27,6 +27,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 
 import static Controllers.Debugging.printNotificationInConsole;
+import static Controllers.Security.sha512;
 
 public class DBUtilities {
 
@@ -43,6 +44,7 @@ public class DBUtilities {
     private static final String INSERT_NEW_PARTICIPANTS_QUERY = "INSERT INTO Participants (username, email, userID, eventID) VALUES (?, ?, ?, ?)";
     private static final String MAKE_USER_EVENT_TABLE_QUERY = "INSERT INTO User_Event (eventID, userID) VALUES (?, ?)";
 
+    private static final String EDIT_USER_PASSWORD_QUERY = "UPDATE User SET password = ? WHERE userID = ?";;
     private static final String EDIT_USER_QUERY = "UPDATE User SET firstname = ?, lastname = ?, username = ?, email = ? WHERE userID = ?";
     private static final String EDIT_EVENT_QUERY = "UPDATE Event SET eventName = ?, eventDate = ?, eventTime = ?, duration = ?, location = ?, priority = ?, reminder = ? WHERE eventID = ?";
     private static final String EDIT_LOCATION_QUERY = "UPDATE Location SET street = ?, houseNumber = ?, zip = ?, city = ?, country = ?, building = ?, room = ? WHERE locationID = ?";
@@ -90,7 +92,7 @@ public class DBUtilities {
     public static void insertNewUser(User user) {
 
         // password encryption
-        String encryptedPassword = Security.sha512(user.getPassword());
+        String encryptedPassword = sha512(user.getPassword());
 
         try {
             preparedStatement = connection.prepareStatement(INSERT_NEW_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -188,6 +190,26 @@ public class DBUtilities {
     }
 
     /**
+     * Updates user information in the database.
+     *
+     * @param user user, which wants to update his password
+     */
+    public static void editUserPassword (User user){
+        try {
+            preparedStatement = connection.prepareStatement(EDIT_USER_PASSWORD_QUERY);
+            preparedStatement.setString(1, sha512(user.getPassword()));
+            preparedStatement.setInt(2, user.getId());
+            preparedStatement.executeUpdate();
+
+            printNotificationInConsole(String.format("Password of user ID = %s is edited", user.getId()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement();
+        }
+    }
+
+    /**
      * Updates an event in the database. Updates the corresponding location too.
      *
      * @param event the event which should be updated
@@ -257,7 +279,7 @@ public class DBUtilities {
         }
 
         // password encryption
-        String encryptedPassword = Security.sha512(password);
+        String encryptedPassword = sha512(password);
 
         try {
             // then we prepare the preparedStatement according to that

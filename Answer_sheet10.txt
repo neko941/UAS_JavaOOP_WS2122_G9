@@ -1,0 +1,104 @@
+Quest 2: Schema
+Student(MatrNr, SName, Birthday, Semester)
+Lecture(LectNr, Title, Credits)
+Professor(ProfNr, PName, RoomNr)
+attends(MatrNr, LectNr)
+gives(ProfNr, LectNr)
+Examination(ProfNr, LectNr, MatrNr, Grade)
+
+- ANSWER
+Create table Student(
+MatrNr integer primary key,
+SName varchar(100),
+Brithday varchar(100),
+Semester varchar(100),
+check(Semester>=1 and Semester<=20)
+)
+
+Create table Lecture(
+LectNr integer primary key,
+Title varchar(100),
+Credits integer
+)
+
+Create table Professor(
+ProfNr integer primary key,
+PName varchar(100),
+RoomNr integer,
+unique(RoomNr)
+)
+
+Create table attends(
+MatrNr integer,
+LectNr integer,
+primary key(MatrNr, LectNr)
+)
+
+Create table gives(
+ProfNr integer,
+LectNr integer primary key,
+foreign key (ProfNr) references Professor(ProfNr)
+on update no action
+on delete no action
+)
+
+Create table Examination(
+ProfNr integer,
+LectNr integer,
+MatrNr integer,
+Grade double,
+primary key (LectNr, MatrNr),
+check (Grade>=1.0 and Grade<=5.0),
+foreign key (ProfNr) references Professor(ProfNr)
+on update no action
+on delete no action
+)ts)
+Professor(ProfNr, PName, RoomNr)
+attends(MatrNr, LectNr)
+gives(ProfNr, LectNr)
+Examination(ProfNr, LectNr, MatrNr, Grade)
+
+- ANSWER
+Create table Student(
+MatrNr integer primary key,
+SName varchar(100),
+Brithday varchar(100),
+Semester varchar(100),
+check(Semester>=1 and Semester<=20)
+)
+
+Create table Lecture(
+LectNr integer primary key,
+Title varchar(100),
+Credits integer
+)
+
+Create table Professor(
+ProfNr integer primary key,
+PName varchar(100),
+RoomNr integer,
+unique(RoomNr)
+)
+
+Create table attends(
+MatrNr integer,
+LectNr integer,
+primary key(MatrNr, LectNr)
+)
+
+Create table gives(
+ProfNr integer,
+LectNr integer primary key,
+foreign key (ProfNr) references Professor(ProfNr)
+on update no action
+on delete no action
+)
+
+Create table Examination(
+ProfNr integer,
+LectNr integer,
+MatrNr integer,
+Grade double,
+primary key (LectNr, MatrNr),
+check (Grade>=1.0 and Grade<=5.0),
+forei
